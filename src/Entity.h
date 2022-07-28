@@ -1,6 +1,8 @@
-#pragma once
+#ifndef STROG_ENTITY_H
+#define STROG_ENTITY_H
 
-class Entity;
+#include "utils.h"
+
 enum Genders
 {
 	male,
@@ -14,13 +16,18 @@ enum Genders
 class Entity
 {
 protected:
-	int m_age{};
-	int m_gender;
-	int m_id;
+	uint8_t m_age{};
+	int m_gender{};
+	int m_id{};
 
 public:
-	Entity() = default;
-	int get_age() const { return m_age; }
+	Entity()
+		:m_id{ generate_id() }
+	{}
+	uint8_t get_age() const { return m_age; }
 	int get_gender() const { return m_gender; }
+	int get_id() const { return m_id; }
 	void propagate_beliefs();
 };
+
+#endif // !STROG_ENTITY_H
