@@ -5,5 +5,3 @@ void Entity::propagate_beliefs()
 {
 	std::cout << "Wololo!\n";
 }
-
-
