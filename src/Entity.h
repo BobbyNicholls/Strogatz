@@ -35,12 +35,13 @@ class Entity
 {
 protected:
 	uint8_t m_age{}; // is uint8_t slower than int??? check this
-	uint8_t m_gender{};
+	uint8_t m_gender{}; // make this bool?
 	int m_id{};
 	std::vector<int> m_links;
 	std::vector<int> m_children;
 	int* m_parents[2];
 	float* m_beliefs[2][2];
+	// uint generation{} // is this worth having?
 
 public:
 	Entity();
