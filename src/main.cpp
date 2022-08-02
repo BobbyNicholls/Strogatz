@@ -1,6 +1,8 @@
 // Strogatz.cpp : This file contains the 'main' function.
 
 #include <iostream>
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 
 #include "Entity.h"
 
@@ -12,4 +14,20 @@ int main()
     Entity entity1;
     std::cout << entity1.get_id() << '\n';
     entity.propagate_beliefs();
+
+    sf::Window window(sf::VideoMode(800, 600), "Strogatz");
+    window.setVerticalSyncEnabled(true);
+
+    // run the program as long as the window is open
+    while (window.isOpen())
+    {
+        // check all the window's events that were triggered since the last iteration of the loop
+        sf::Event event;
+        while (window.pollEvent(event)) //The pollEvent function returns true if an event was pending, or false if there was none.
+        {
+            // "close requested" event: we close the window
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+    }
 }
