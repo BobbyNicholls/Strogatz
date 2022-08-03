@@ -5,6 +5,7 @@
 #include <SFML/Window.hpp>
 
 #include "Entity.h"
+#include "Text.h"
 
 int main()
 {
@@ -20,16 +21,9 @@ int main()
     window.setVerticalSyncEnabled(true);
     // Never use both setVerticalSyncEnabled and setFramerateLimit at the same time! They would badly mix and make things worse.
     //window.setFramerateLimit(60); //for if we want a specific frame rate, not 100% reliable, especially for high framerates
-
-    sf::Font font;
-    font.loadFromFile("GLSNECB.TTF");
-
-    sf::Text text;
-    text.setFont(font);
-    text.setString("Welcome to Strogatz");
-    text.setFillColor(sf::Color::Green);
-    text.setPosition(300.f, 250.f);
-
+    sf::Text title_text;
+    sf::Font title_font;
+    get_title_text("Welcome to Strogatz", title_text, title_font);
     // run the program as long as the window is open
     while (window.isOpen())
     {
@@ -100,7 +94,7 @@ int main()
             // for multi-threaded drawing: https://www.sfml-dev.org/tutorials/2.5/graphics-draw.php#drawing-from-threads
             // this is so you can do event handling in the main loop's thread (which is advised) and rendering in another thread. This is a good idea.
             
-            window.draw(text);
+            window.draw(title_text);
             
             window.display();
         }
