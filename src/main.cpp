@@ -27,10 +27,17 @@ int main()
         sf::Event event;
         while (window.pollEvent(event)) //The pollEvent function returns true if an event was pending, or false if there was none.
         {
-            // "close requested" event: we close the window
-            if (event.type == sf::Event::Closed)
+            switch (event.type)
+            {
+                // window closed
+            case sf::Event::Closed:
                 // can put "are you sure?" code here
                 window.close();
+                break;
+
+            default:
+                break;
+            }
         }
     }
     
