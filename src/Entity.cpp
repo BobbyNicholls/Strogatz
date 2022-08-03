@@ -10,4 +10,3 @@ void Entity::propagate_beliefs()
 Entity::Entity()
 	:m_id{ generate_id() }
 {}
-
