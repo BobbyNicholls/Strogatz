@@ -17,6 +17,8 @@ int main()
 
     sf::Window window(sf::VideoMode(800, 600), "Strogatz");
     window.setVerticalSyncEnabled(true);
+    // Never use both setVerticalSyncEnabled and setFramerateLimit at the same time! They would badly mix and make things worse.
+    //window.setFramerateLimit(60); //for if we want a specific frame rate, not 100% reliable, especially for high framerates
 
     // run the program as long as the window is open
     while (window.isOpen())
@@ -27,6 +29,7 @@ int main()
         {
             // "close requested" event: we close the window
             if (event.type == sf::Event::Closed)
+                // can put "are you sure?" code here
                 window.close();
         }
     }

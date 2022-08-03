@@ -15,6 +15,12 @@
 - Probability distributions.
 - Entity linking.
 - Entity propagation.
+- Beleif propagation.
 - Data representation of networks.
 - Visual representation of networks.
+- Meaningful visual entity representation.
+- Add entity AI.
+- Add environments.
+- Add an economy.
+- Add a player.
 - ...etc
