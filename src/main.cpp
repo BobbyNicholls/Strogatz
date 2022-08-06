@@ -56,6 +56,24 @@ int main()
 
             case sf::Event::KeyPressed:
                 {
+                    sf::Vector2f pos{ title_text.getPosition() };
+                    if (event.key.code == sf::Keyboard::D)
+                    {
+                        title_text.move((pos.x > 750.f) ? -5.f : 5.f, 0.f);
+                    }
+                    if (event.key.code == sf::Keyboard::A)
+                    {
+                        title_text.move((pos.x < 50.f) ? 5.f : -5.f, 0.f);
+                    }
+                    if (event.key.code == sf::Keyboard::S)
+                    {
+                        title_text.move(0.f, (pos.y > 550.f) ? -5.f : 5.f);
+                    }
+                    if (event.key.code == sf::Keyboard::W)
+                    {
+                        title_text.move(0.f, (pos.y < 50.f) ? 5.f : -5.f);
+                    }
+
                     if (event.key.code == sf::Keyboard::Escape)
                     {
                         std::cout << "the escape key was pressed" << '\n';

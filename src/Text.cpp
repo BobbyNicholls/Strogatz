@@ -7,10 +7,10 @@ void get_title_text(
     unsigned int const size
 )
 {
-	font.loadFromFile("GLSNECB.TTF");
+	font.loadFromFile("SitkaB.ttc");
     text.setFont(font);
     text.setString(title_text_str);
     text.setCharacterSize(size);
     text.setFillColor(sf::Color::Green);
-    text.setPosition(300.f, 250.f);
+    text.setPosition(150.f, 250.f);
 }
