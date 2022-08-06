@@ -6,6 +6,11 @@
 
 #include "Entity.h"
 #include "Text.h"
+#include "utils.h"
+
+extern const int game_width{ 800 };
+extern const int game_height{ 600 };
+extern const int edge_buffer{ 10 };
 
 int main()
 {
@@ -16,9 +21,6 @@ int main()
     std::cout << entity1.get_id() << '\n';
     entity.propagate_beliefs();
 
-    const int game_width = 800;
-    const int game_height = 600;
-    const int edge_buffer = 10;
     const float move_speed = 150.f;
     
     sf::RenderWindow window(sf::VideoMode(game_width, game_height), "Strogatz");
@@ -42,26 +44,8 @@ int main()
         
         if (time_counter >= time_step)
         {
-            sf::Vector2f pos{ title_text.getPosition() };
-            float move_distance{ move_speed * time_counter };
+            keyboard_move_entity(title_text, move_speed, time_counter);
             time_counter -= time_step;
-            //std::cout << move_distance << '\n';
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-            {
-                title_text.move((pos.x < edge_buffer) ? move_distance : -move_distance, 0.f);
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-            {
-                title_text.move((pos.x > (game_width - edge_buffer)) ? -move_distance : move_distance, 0.f);
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-            {
-                title_text.move(0.f, (pos.y < edge_buffer) ? move_distance : -move_distance);
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-            {
-                title_text.move(0.f, (pos.y > (game_height - edge_buffer)) ? -move_distance : move_distance);
-            }
         }
 
         // Check all the window's events that were triggered since the last
