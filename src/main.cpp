@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
-#include "Entity.h"
+#include "EntityCircle.h"
 #include "Text.h"
 #include "utils.h"
 
@@ -15,13 +15,13 @@ extern const int edge_buffer{ 10 };
 int main()
 {
     std::cout << "Welcome to Strogatz!\n";
-    Entity entity;
+    EntityCircle entity;
     std::cout << entity.get_id() << '\n';
-    Entity entity1;
+    EntityCircle entity1;
     std::cout << entity1.get_id() << '\n';
     entity.propagate_beliefs();
 
-    const float move_speed{ 150.f };
+    const float move_speed{ 100.f };
     
     sf::RenderWindow window(sf::VideoMode(game_width, game_height), "Strogatz");
     window.setVerticalSyncEnabled(true);
