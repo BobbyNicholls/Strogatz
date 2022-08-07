@@ -21,7 +21,7 @@ int main()
     std::cout << entity1.get_id() << '\n';
     entity.propagate_beliefs();
 
-    const float move_speed{ 100.f };
+    const float move_speed{ 150.f };
     
     sf::RenderWindow window(sf::VideoMode(game_width, game_height), "Strogatz");
     window.setVerticalSyncEnabled(true);
@@ -43,7 +43,7 @@ int main()
         
         if (time_counter >= time_step)
         {
-            keyboard_move_entity(title_text, move_speed, time_counter);
+            keyboard_move_entity(entity.m_shape, move_speed, time_counter);
             time_counter -= time_step;
         }
 
@@ -130,6 +130,8 @@ int main()
         // This is a good idea.
 
         window.draw(title_text);
+        window.draw(entity.m_shape);
+        window.draw(entity1.m_shape);
 
         window.display();
     }
