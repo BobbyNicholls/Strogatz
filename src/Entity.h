@@ -49,6 +49,8 @@ public:
 	uint8_t get_age() const { return m_age; }
 	int get_gender() const { return m_gender; }
 	int get_id() const { return m_id; }
+	void add_link(int id);
+	void print_links();
 	void propagate_beliefs();
 };
 

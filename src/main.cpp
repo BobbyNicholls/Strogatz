@@ -11,15 +11,19 @@
 extern const int game_width{ 800 };
 extern const int game_height{ 600 };
 extern const int edge_buffer{ 10 };
+const int entity_limit{ 100 };
 
 int main()
 {
+    EntityCircle* entities[entity_limit];
     std::cout << "Welcome to Strogatz!\n";
     EntityCircle entity;
-    std::cout << entity.get_id() << '\n';
+    entities[entity.get_id()] = &entity;
     EntityCircle entity1;
-    std::cout << entity1.get_id() << '\n';
-    entity.propagate_beliefs();
+    entities[entity1.get_id()] = &entity1;
+    link_entities(entities[0], entities[1]);
+    entities[0]->print_links();
+    entities[1]->print_links();
 
     const float move_speed{ 150.f };
     

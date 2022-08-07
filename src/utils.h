@@ -7,7 +7,20 @@ extern const int game_width;
 extern const int game_height;
 extern const int edge_buffer;
 
+
 int generate_id();
+
+
+template <typename Entity>
+void link_entities(
+    Entity* entity_from,
+    Entity* entity_to
+)
+{
+    entity_from->add_link(entity_to->get_id());
+    entity_to->add_link(entity_from->get_id());
+}
+
 
 template <typename Entity>
 void keyboard_move_entity(
@@ -36,5 +49,6 @@ void keyboard_move_entity(
         entity.move(0.f, (pos.y > (game_height - edge_buffer)) ? -move_distance : move_distance);
     }
 }
+
 
 #endif
