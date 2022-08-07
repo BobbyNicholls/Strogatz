@@ -15,13 +15,15 @@ const int entity_limit{ 100 };
 
 int main()
 {
-    EntityCircle* entities[entity_limit];
+    unsigned int link_counter{ 0 };
+    EntityCircle* entities[entity_limit]{};
+    int links[link_limit][2]{};
     std::cout << "Welcome to Strogatz!\n";
     EntityCircle entity;
     entities[entity.get_id()] = &entity;
     EntityCircle entity1;
     entities[entity1.get_id()] = &entity1;
-    link_entities(entities[0], entities[1]);
+    link_entities(entities[0], entities[1], links, link_counter);
     entities[0]->print_links();
     entities[1]->print_links();
 
@@ -133,6 +135,19 @@ int main()
         // thread (which is advised) and rendering in another thread.
         // This is a good idea.
 
+        for (unsigned int counter{ 0 }; counter < link_counter; ++counter)
+        {
+            sf::Vector2f pos0{ entities[0]->m_shape.getPosition() };
+            sf::Vector2f pos1{ entities[1]->m_shape.getPosition() };
+            float radius0{ entities[0]->get_radius()};
+            float radius1{ entities[1]->get_radius() };
+            sf::Vertex line[] =
+            {
+                sf::Vertex(sf::Vector2f(pos0.x + radius0, pos0.y + radius0)),
+                sf::Vertex(sf::Vector2f(pos1.x + radius1, pos1.y + radius1))
+            };
+            window.draw(line, 2, sf::Lines);
+        }
         window.draw(title_text);
         window.draw(entity.m_shape);
         window.draw(entity1.m_shape);

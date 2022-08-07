@@ -7,6 +7,8 @@ extern const int game_width;
 extern const int game_height;
 extern const int edge_buffer;
 
+const int link_limit{ 1000 };
+
 
 int generate_id();
 
@@ -14,11 +16,17 @@ int generate_id();
 template <typename Entity>
 void link_entities(
     Entity* entity_from,
-    Entity* entity_to
+    Entity* entity_to,
+    int links[link_limit][2],
+    unsigned int& counter
 )
 {
-    entity_from->add_link(entity_to->get_id());
-    entity_to->add_link(entity_from->get_id());
+    int to_id{ entity_to->get_id() };
+    int from_id{ entity_from->get_id() };
+    entity_from->add_link(to_id);
+    entity_to->add_link(from_id);
+    links[counter][0] = from_id;
+    links[counter++][1] = to_id;
 }
 
 
