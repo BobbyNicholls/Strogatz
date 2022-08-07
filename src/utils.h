@@ -18,7 +18,7 @@ void keyboard_move_entity(
 {
     sf::Vector2f pos{ entity.getPosition() };
     float move_distance{ move_speed * time_counter };
-    //std::cout << move_distance << '\n';
+
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
         entity.move((pos.x < edge_buffer) ? move_distance : -move_distance, 0.f);

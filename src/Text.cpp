@@ -7,7 +7,7 @@ void get_title_text(
     unsigned int const size
 )
 {
-	font.loadFromFile("SitkaB.ttc");
+    font.loadFromFile("SitkaB.ttc");
     text.setFont(font);
     text.setString(title_text_str);
     text.setCharacterSize(size);
