@@ -4,10 +4,10 @@
 #include <SFML/Graphics.hpp>
 
 void get_title_text(
-	const std::string& title_text_str,
-	sf::Text& text,
-	sf::Font& font,
-	unsigned int const size = 50
+    const std::string& title_text_str,
+    sf::Text& text,
+    sf::Font& font,
+    unsigned int const size = 50
 );
 
 #endif

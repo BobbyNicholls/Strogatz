@@ -21,7 +21,7 @@ int main()
     std::cout << entity1.get_id() << '\n';
     entity.propagate_beliefs();
 
-    const float move_speed = 150.f;
+    const float move_speed{ 150.f };
     
     sf::RenderWindow window(sf::VideoMode(game_width, game_height), "Strogatz");
     window.setVerticalSyncEnabled(true);
@@ -35,9 +35,8 @@ int main()
     
     sf::Clock clock;
     float time_counter{ 0 };
-    constexpr float time_step = 1.0f / 60.0f;
+    constexpr float time_step{ 1.0f / 60.0f };
 
-    // run the program as long as the window is open
     while (window.isOpen())
     {
         time_counter += clock.restart().asSeconds();
