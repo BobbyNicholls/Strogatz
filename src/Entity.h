@@ -14,6 +14,7 @@ It contains information regarding things every entity must have:
 		 - structure-freedom
 		 - communal-independent
 */
+
 #ifndef STROG_ENTITY_H
 #define STROG_ENTITY_H
 
@@ -33,7 +34,7 @@ enum Genders
 
 class Entity
 {
-protected:
+private:
 	uint8_t m_age{}; // is uint8_t slower than int??? check this
 	uint8_t m_gender{}; // make this bool?
 	int m_id{};
