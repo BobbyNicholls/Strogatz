@@ -50,7 +50,7 @@ int main()
         if (time_counter >= time_step)
         {
             keyboard_move_entity(entity.m_shape, move_speed, time_counter);
-            time_counter -= time_step;
+            time_counter = 0;
         }
 
         // Check all the window's events that were triggered since the last
