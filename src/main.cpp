@@ -23,11 +23,15 @@ int main()
     entities[entity.get_id()] = &entity;
     EntityCircle entity1;
     entities[entity1.get_id()] = &entity1;
+    EntityCircle entity2;
+    entities[entity2.get_id()] = &entity2;
     link_entities(entities[0], entities[1], links, link_counter);
+    link_entities(entities[0], entities[2], links, link_counter);
     entities[0]->print_links();
     entities[1]->print_links();
-
-    const float move_speed{ 150.f };
+    entities[2]->print_links();
+    entity2.m_shape.setPosition(200.f, 50.f);
+    const float move_speed{ 200.f };
     
     sf::RenderWindow window(sf::VideoMode(game_width, game_height), "Strogatz");
     window.setVerticalSyncEnabled(true);
@@ -134,23 +138,23 @@ int main()
         // this is so you can do event handling in the main loop's
         // thread (which is advised) and rendering in another thread.
         // This is a good idea.
-
+        
+        window.draw(title_text);
         for (unsigned int counter{ 0 }; counter < link_counter; ++counter)
         {
-            sf::Vector2f pos0{ entities[0]->m_shape.getPosition() };
-            sf::Vector2f pos1{ entities[1]->m_shape.getPosition() };
-            float radius0{ entities[0]->get_radius()};
-            float radius1{ entities[1]->get_radius() };
-            sf::Vertex line[] =
-            {
+            sf::Vector2f pos0{ entities[links[counter][0]]->m_shape.getPosition() };
+            sf::Vector2f pos1{ entities[links[counter][1]]->m_shape.getPosition() };
+            float radius0{ entities[links[counter][0]]->get_radius() };
+            float radius1{ entities[links[counter][0]]->get_radius() };
+            sf::Vertex line[2]{
                 sf::Vertex(sf::Vector2f(pos0.x + radius0, pos0.y + radius0)),
                 sf::Vertex(sf::Vector2f(pos1.x + radius1, pos1.y + radius1))
             };
             window.draw(line, 2, sf::Lines);
         }
-        window.draw(title_text);
         window.draw(entity.m_shape);
         window.draw(entity1.m_shape);
+        window.draw(entity2.m_shape);
 
         window.display();
     }
