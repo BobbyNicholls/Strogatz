@@ -17,7 +17,7 @@ int main()
 {
     unsigned int link_counter{ 0 };
     EntityCircle* entities[entity_limit]{};
-    int links[link_limit][2]{};
+    id_t links[link_limit][2]{};
     std::cout << "Welcome to Strogatz!\n";
     EntityCircle entity;
     entities[entity.get_id()] = &entity;

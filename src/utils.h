@@ -9,22 +9,23 @@ extern const int edge_buffer;
 
 const int link_limit{ 1000 };
 
+using id_t = std::uint_fast8_t;
 
-int generate_id();
+id_t generate_id();
 
 
 template <typename Entity>
 void link_entities(
     Entity* entity_from,
     Entity* entity_to,
-    int links[link_limit][2],
+    id_t links[link_limit][2],
     unsigned int& counter
 )
 {
-    int to_id{ entity_to->get_id() };
-    int from_id{ entity_from->get_id() };
-    entity_from->add_link(to_id);
-    entity_to->add_link(from_id);
+    id_t from_id{ entity_from->get_id() };
+    id_t to_id{ entity_to->get_id() };
+    entity_from->add_link(entity_to);
+    entity_to->add_link(entity_from);
     links[counter][0] = from_id;
     links[counter++][1] = to_id;
 }

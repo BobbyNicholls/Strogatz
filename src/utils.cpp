@@ -1,7 +1,7 @@
 #include "utils.h"
 
-int generate_id() 
+id_t generate_id()
 {
-    static int s_entity_id{ 0 };
+    static id_t s_entity_id{ 0 };
     return s_entity_id++;
 }

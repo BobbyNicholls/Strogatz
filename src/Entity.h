@@ -35,23 +35,25 @@ enum Genders
 class Entity
 {
 private:
-	uint8_t m_age{}; // is uint8_t slower than int??? check this
-	uint8_t m_gender{}; // make this bool?
-	int m_id{};
-	std::vector<int> m_links;
-	std::vector<int> m_children;
-	int* m_parents[2];
+	std::uint_fast8_t m_age; // is this slower than int?
+	uint8_t m_gender; // make this bool?
+	id_t m_id;
+	std::vector<Entity*> m_links;
+	std::vector<Entity*> m_children;
+	Entity* m_parents[2]; // ref wrapper here too??
 	float* m_beliefs[2][2];
 	// uint generation{} // is this worth having?
 
 public:
 	Entity();
-	uint8_t get_age() const { return m_age; }
-	int get_gender() const { return m_gender; }
-	int get_id() const { return m_id; }
-	void add_link(int id);
-	void print_links();
+	std::uint_fast8_t get_age() const { return m_age; }
+	uint8_t get_gender() const { return m_gender; }
+	id_t get_id() const { return m_id; }
+	void add_link(Entity* entity);
+	void print_links() const;
 	void propagate_beliefs();
 };
+
+
 
 #endif // !STROG_ENTITY_H
