@@ -7,9 +7,10 @@ extern const int game_width;
 extern const int game_height;
 extern const int edge_buffer;
 
+// should use inline variables to save memory if multiple inclusions
 const int link_limit{ 1000 };
 
-using id_t = std::uint_fast8_t;
+using id_t = std::uint_fast32_t;
 
 id_t generate_id();
 
@@ -43,19 +44,23 @@ void keyboard_move_entity(
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
-        entity.move((pos.x < edge_buffer) ? move_distance : -move_distance, 0.f);
+        entity.move((pos.x < edge_buffer) ? 
+            move_distance : -move_distance, 0.f);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
-        entity.move((pos.x > (game_width - edge_buffer)) ? -move_distance : move_distance, 0.f);
+        entity.move((pos.x > (game_width - edge_buffer)) ? 
+            -move_distance : move_distance, 0.f);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {
-        entity.move(0.f, (pos.y < edge_buffer) ? move_distance : -move_distance);
+        entity.move(0.f, (pos.y < edge_buffer) ? 
+            move_distance : -move_distance);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
-        entity.move(0.f, (pos.y > (game_height - edge_buffer)) ? -move_distance : move_distance);
+        entity.move(0.f, (pos.y > (game_height - edge_buffer)) ? 
+            -move_distance : move_distance);
     }
 }
 
