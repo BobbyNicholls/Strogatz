@@ -1,3 +1,4 @@
+#include "Distributions.h"
 #include "EntityCircle.h"
 
 EntityCircle::EntityCircle(
@@ -15,5 +16,8 @@ EntityCircle::EntityCircle(
 	m_shape.setFillColor(m_fill_colour);
 	m_shape.setOutlineThickness(m_outline_thickness);
 	m_shape.setOutlineColor(m_outline_colour);
-	m_shape.setPosition(10.f, 50.f);
+	m_shape.setPosition(
+		static_cast<float>(uniform_distribution(10, 790)), 
+		static_cast<float>(uniform_distribution(10, 490))
+	);
 }

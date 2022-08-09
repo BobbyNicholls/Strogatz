@@ -5,7 +5,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
-#include "Distributions.h"
 #include "EntityCircle.h"
 #include "Text.h"
 #include "utils.h"
@@ -18,25 +17,36 @@ const int entity_limit{ 100 };
 int main()
 {
     unsigned int link_counter{ 0 };
-    EntityCircle* entities[entity_limit]{};
-    for (int i{ 0 }; i < 10; ++i)
-    {
-        std::cout << uniform_distribution(0, 5) << '\n';
-    }
+    EntityCircle* entities[entity_limit]{}; // consider dynamic allocation: https://www.learncpp.com/cpp-tutorial/dynamically-allocating-arrays/
     id_t links[link_limit][2]{};
     std::cout << "Welcome to Strogatz!\n";
-    EntityCircle entity;
-    entities[entity.get_id()] = &entity;
-    EntityCircle entity1;
-    entities[entity1.get_id()] = &entity1;
-    EntityCircle entity2;
-    entities[entity2.get_id()] = &entity2;
+    for (int i{ 0 }; i < 3; ++i)
+    {
+        std::cout << i;
+        // dynamically allocate an EntityCircle and assign the address to entity_pointer
+        EntityCircle* entity_pointer{ new EntityCircle };
+        // value will be set to a null pointer if the integer allocation fails:
+        //EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle }; 
+        //if (!entity_pointer) // handle case where new returned null
+        //{
+        //    // Do error handling here
+        //    std::cerr << "Could not allocate memory\n";
+        //}
+        entities[entity_pointer->get_id()] = entity_pointer;
+
+    }
+    //EntityCircle entity;
+    //entities[entity.get_id()] = &entity;
+    //EntityCircle entity1;
+    //entities[entity1.get_id()] = &entity1;
+    //EntityCircle entity2;
+    //entities[entity2.get_id()] = &entity2;
     link_entities(entities[0], entities[1], links, link_counter);
     link_entities(entities[0], entities[2], links, link_counter);
     entities[0]->print_links();
     entities[1]->print_links();
     entities[2]->print_links();
-    entity2.m_shape.setPosition(200.f, 50.f);
+    entities[2]->m_shape.setPosition(200.f, 50.f);
     const float move_speed{ 200.f };
     
     sf::RenderWindow window(sf::VideoMode(game_width, game_height), "Strogatz");
@@ -59,7 +69,7 @@ int main()
         
         if (time_counter >= time_step)
         {
-            keyboard_move_entity(entity.m_shape, move_speed, time_counter);
+            keyboard_move_entity(entities[0]->m_shape, move_speed, time_counter);
             time_counter = 0;
         }
 
@@ -158,9 +168,14 @@ int main()
             };
             window.draw(line, 2, sf::Lines);
         }
-        window.draw(entity.m_shape);
-        window.draw(entity1.m_shape);
-        window.draw(entity2.m_shape);
+        for (EntityCircle* entity : entities)
+        {
+            if (!entity) break;
+            window.draw(entity->m_shape);
+        }
+        //window.draw(entity.m_shape);
+        //window.draw(entity1.m_shape);
+        //window.draw(entity2.m_shape);
 
         window.display();
     }
