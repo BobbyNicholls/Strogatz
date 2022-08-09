@@ -3,6 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "Distributions.h"
+
 extern const int game_width;
 extern const int game_height;
 extern const int edge_buffer;
@@ -62,6 +64,21 @@ void keyboard_move_entity(
         entity.move(0.f, (pos.y > (game_height - edge_buffer)) ? 
             -move_distance : move_distance);
     }
+}
+
+
+template <typename Entity>
+void random_move_entity(
+    Entity& entity
+)
+{
+    sf::Vector2f pos{ entity.getPosition() };
+    float x_move{ static_cast<float>(uniform_distribution(-10, 10)) };
+    float y_move{ static_cast<float>(uniform_distribution(-10, 10)) };
+    entity.move(
+        (pos.x > (game_width - edge_buffer)) ? -x_move : x_move, 
+        (pos.y > (game_height - edge_buffer)) ? -y_move : y_move
+    );
 }
 
 

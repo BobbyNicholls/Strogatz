@@ -12,7 +12,7 @@
 extern const int game_width{ 800 };
 extern const int game_height{ 600 };
 extern const int edge_buffer{ 10 };
-const int entity_limit{ 100 };
+const int entity_limit{ 50 };
 
 int main()
 {
@@ -20,9 +20,8 @@ int main()
     EntityCircle* entities[entity_limit]{}; // consider dynamic allocation: https://www.learncpp.com/cpp-tutorial/dynamically-allocating-arrays/
     id_t links[link_limit][2]{};
     std::cout << "Welcome to Strogatz!\n";
-    for (int i{ 0 }; i < 3; ++i)
+    for (int i{ 0 }; i < entity_limit-1; ++i)
     {
-        std::cout << i;
         // dynamically allocate an EntityCircle and assign the address to entity_pointer
         EntityCircle* entity_pointer{ new EntityCircle };
         // value will be set to a null pointer if the integer allocation fails:
@@ -70,6 +69,10 @@ int main()
         if (time_counter >= time_step)
         {
             keyboard_move_entity(entities[0]->m_shape, move_speed, time_counter);
+            for (int i{ 1 }; entities[i]; ++i)
+            {
+                random_move_entity(entities[i]->m_shape);
+            }
             time_counter = 0;
         }
 
