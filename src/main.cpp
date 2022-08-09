@@ -1,9 +1,11 @@
 // Strogatz.cpp : This file contains the 'main' function.
 
 #include <iostream>
+#include <random>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
+#include "Distributions.h"
 #include "EntityCircle.h"
 #include "Text.h"
 #include "utils.h"
@@ -17,6 +19,10 @@ int main()
 {
     unsigned int link_counter{ 0 };
     EntityCircle* entities[entity_limit]{};
+    for (int i{ 0 }; i < 10; ++i)
+    {
+        std::cout << uniform_distribution(0, 5) << '\n';
+    }
     id_t links[link_limit][2]{};
     std::cout << "Welcome to Strogatz!\n";
     EntityCircle entity;
