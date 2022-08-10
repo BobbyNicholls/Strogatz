@@ -9,14 +9,14 @@
 #include "Text.h"
 #include "utils.h"
 
+extern const int edge_buffer{ 10 };
+const float move_speed{ 200.f };
 extern const int game_width{ 800 };
 extern const int game_height{ 600 };
-extern const int edge_buffer{ 10 };
-const int entity_limit{ 50 };
 
 int main()
 {
-    unsigned int link_counter{ 0 };
+    unsigned int link_counter{ 0 }; // just using int is better practice? see learncpp
     EntityCircle* entities[entity_limit]{}; // consider dynamic allocation: https://www.learncpp.com/cpp-tutorial/dynamically-allocating-arrays/
     id_t links[link_limit][2]{};
     std::cout << "Welcome to Strogatz!\n";
@@ -31,22 +31,14 @@ int main()
         //    // Do error handling here
         //    std::cerr << "Could not allocate memory\n";
         //}
-        entities[entity_pointer->get_id()] = entity_pointer;
-
+        id_t entity_id{ entity_pointer->get_id() };
+        entities[entity_id] = entity_pointer;
+        if (i==1) link_entities(entities[0], entities[1], links, link_counter);
+        if (i > 1)
+        {
+            add_semi_random_links(entities, entities[entity_id], links, link_counter);
+        }
     }
-    //EntityCircle entity;
-    //entities[entity.get_id()] = &entity;
-    //EntityCircle entity1;
-    //entities[entity1.get_id()] = &entity1;
-    //EntityCircle entity2;
-    //entities[entity2.get_id()] = &entity2;
-    link_entities(entities[0], entities[1], links, link_counter);
-    link_entities(entities[0], entities[2], links, link_counter);
-    entities[0]->print_links();
-    entities[1]->print_links();
-    entities[2]->print_links();
-    entities[2]->m_shape.setPosition(200.f, 50.f);
-    const float move_speed{ 200.f };
     
     sf::RenderWindow window(sf::VideoMode(game_width, game_height), "Strogatz");
     window.setVerticalSyncEnabled(true);
