@@ -48,9 +48,9 @@ void add_semi_random_links(
     For now, for `entity` node, just add a link to a node chosen at random weighted by number
     of existing edges.
     */
-    unsigned int link_iloc{ static_cast<unsigned int>(
-        uniform_distribution(1, counter*2)
-        ) };
+    unsigned int link_iloc{ 
+        static_cast<unsigned int>(uniform_distribution(1, counter*2)) 
+    };
     if (link_iloc > counter)
     {
         link_iloc -= (counter + 1);
