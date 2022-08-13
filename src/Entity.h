@@ -39,7 +39,7 @@ private:
 	uint8_t m_gender; // make this bool?
 	id_t m_id;
 	std::vector<Entity*> m_children;
-	Entity* m_parents[2]; // ref wrapper here too??
+	Entity* m_parents[2];
 	float* m_beliefs[2][2];
 	// uint generation{} // is this worth having?
 
