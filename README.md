@@ -13,6 +13,7 @@
 
 # To do:
 - Probability distributions.
+- Add time.
 - Entity propagation.
 - Beleif propagation.
 - Data representation of networks.
