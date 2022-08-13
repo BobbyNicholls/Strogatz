@@ -141,7 +141,7 @@ void slingshot_move_entity(
     auto links{ entity->get_links() };
     for (auto link : links)
     {
-        e_t* link_e_t = static_cast<e_t*>(link);
+        e_t* link_e_t{ static_cast<e_t*>(link) };
         sf::Vector2f link_pos{ link_e_t->m_shape.getPosition() };
         x_sum += link_pos.x;
         y_sum += link_pos.y;
