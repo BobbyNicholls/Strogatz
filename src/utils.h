@@ -121,10 +121,35 @@ void random_move_entity(
     }
     else
     {
-        float x_move{ static_cast<float>(uniform_distribution(-4, 4)) };
-        float y_move{ static_cast<float>(uniform_distribution(-4, 4)) };
+        float x_move{ static_cast<float>(uniform_distribution(-3, 3)) };
+        float y_move{ static_cast<float>(uniform_distribution(-3, 3)) };
         entity.move(x_move, y_move);
     }
+}
+
+
+template <typename e_t>
+void slingshot_move_entity(
+    e_t* entity,
+    float attraction_percent = 0.005f
+)
+{
+    float x_sum{};
+    float y_sum{};
+
+    sf::Vector2f pos{ entity->m_shape.getPosition() };
+    auto links{ entity->get_links() };
+    for (auto link : links)
+    {
+        e_t* link_e_t = static_cast<e_t*>(link);
+        sf::Vector2f link_pos{ link_e_t->m_shape.getPosition() };
+        x_sum += link_pos.x;
+        y_sum += link_pos.y;
+    }
+    entity->m_shape.move(
+        ((x_sum / links.size()) - pos.x) * attraction_percent,
+        ((y_sum / links.size()) - pos.y) * attraction_percent
+    );
 }
 
 

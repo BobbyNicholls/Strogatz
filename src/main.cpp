@@ -64,6 +64,7 @@ int main()
             for (int i{ 1 }; entities[i]; ++i)
             {
                 random_move_entity(entities[i]->m_shape);
+                slingshot_move_entity(entities[i]);
             }
             time_counter = 0;
         }

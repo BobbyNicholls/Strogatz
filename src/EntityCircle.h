@@ -28,7 +28,8 @@ public:
         sf::Color fill_colour = sf::Color(150, 50, 250), // consider pass by ref?
         sf::Color outline_colour = sf::Color(250, 150, 100)
     );
-    float get_radius() { return m_radius; }
+    float get_radius() const { return m_radius; }
+    std::vector<Entity*>& get_links() { return m_links; }
     sf::CircleShape m_shape;
 
 };
