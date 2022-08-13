@@ -1,27 +1,44 @@
 // Strogatz.cpp : This file contains the 'main' function.
 
 #include <iostream>
+#include <random>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
-#include "Entity.h"
+#include "EntityCircle.h"
 #include "Text.h"
 #include "utils.h"
 
+extern const int edge_buffer{ 10 };
+const float move_speed{ 200.f };
 extern const int game_width{ 800 };
 extern const int game_height{ 600 };
-extern const int edge_buffer{ 10 };
 
 int main()
 {
+    unsigned int link_counter{ 0 }; // just using int is better practice? see learncpp
+    EntityCircle* entities[entity_limit]{}; // consider dynamic allocation: https://www.learncpp.com/cpp-tutorial/dynamically-allocating-arrays/
+    id_t links[link_limit][2]{};
     std::cout << "Welcome to Strogatz!\n";
-    Entity entity;
-    std::cout << entity.get_id() << '\n';
-    Entity entity1;
-    std::cout << entity1.get_id() << '\n';
-    entity.propagate_beliefs();
-
-    const float move_speed{ 150.f };
+    for (int i{ 0 }; i < entity_limit-1; ++i)
+    {
+        // dynamically allocate an EntityCircle and assign the address to entity_pointer
+        EntityCircle* entity_pointer{ new EntityCircle };
+        // value will be set to a null pointer if the integer allocation fails:
+        //EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle }; 
+        //if (!entity_pointer) // handle case where new returned null
+        //{
+        //    // Do error handling here
+        //    std::cerr << "Could not allocate memory\n";
+        //}
+        id_t entity_id{ entity_pointer->get_id() };
+        entities[entity_id] = entity_pointer;
+        if (i==1) link_entities(entities[0], entities[1], links, link_counter);
+        if (i > 1)
+        {
+            add_semi_random_links(entities, entities[entity_id], links, link_counter);
+        }
+    }
     
     sf::RenderWindow window(sf::VideoMode(game_width, game_height), "Strogatz");
     window.setVerticalSyncEnabled(true);
@@ -43,8 +60,13 @@ int main()
         
         if (time_counter >= time_step)
         {
-            keyboard_move_entity(title_text, move_speed, time_counter);
-            time_counter -= time_step;
+            keyboard_move_entity(entities[0]->m_shape, move_speed, time_counter);
+            for (int i{ 1 }; entities[i]; ++i)
+            {
+                random_move_entity(entities[i]->m_shape);
+                slingshot_move_entity(entities[i]);
+            }
+            time_counter = 0;
         }
 
         // Check all the window's events that were triggered since the last
@@ -128,8 +150,28 @@ int main()
         // this is so you can do event handling in the main loop's
         // thread (which is advised) and rendering in another thread.
         // This is a good idea.
-
+        
         window.draw(title_text);
+        for (unsigned int counter{ 0 }; counter < link_counter; ++counter)
+        {
+            sf::Vector2f pos0{ entities[links[counter][0]]->m_shape.getPosition() };
+            sf::Vector2f pos1{ entities[links[counter][1]]->m_shape.getPosition() };
+            float radius0{ entities[links[counter][0]]->get_radius() };
+            float radius1{ entities[links[counter][0]]->get_radius() };
+            sf::Vertex line[2]{
+                sf::Vertex(sf::Vector2f(pos0.x + radius0, pos0.y + radius0)),
+                sf::Vertex(sf::Vector2f(pos1.x + radius1, pos1.y + radius1))
+            };
+            window.draw(line, 2, sf::Lines);
+        }
+        for (EntityCircle* entity : entities)
+        {
+            if (!entity) break;
+            window.draw(entity->m_shape);
+        }
+        //window.draw(entity.m_shape);
+        //window.draw(entity1.m_shape);
+        //window.draw(entity2.m_shape);
 
         window.display();
     }

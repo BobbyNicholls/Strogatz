@@ -13,9 +13,10 @@
 
 # To do:
 - Probability distributions.
-- Entity linking.
+- Add time.
 - Entity propagation.
 - Beleif propagation.
+- Split rendering and event handling out in to seperate threads.
 - Data representation of networks.
 - Visual representation of networks.
 - Meaningful visual entity representation.
