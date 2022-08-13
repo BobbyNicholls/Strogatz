@@ -131,7 +131,7 @@ void random_move_entity(
 template <typename e_t>
 void slingshot_move_entity(
     e_t* entity,
-    float attraction_percent = 0.005f
+    float attraction_percent = 0.008f
 )
 {
     float x_sum{};

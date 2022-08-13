@@ -13,7 +13,6 @@
 
 # To do:
 - Probability distributions.
-- Entity linking.
 - Entity propagation.
 - Beleif propagation.
 - Data representation of networks.
