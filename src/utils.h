@@ -136,17 +136,17 @@ void slingshot_move_entity(
 {
     float x_sum{};
     float y_sum{};
-    sf::Vector2f pos{ entity->m_shape.getPosition() };
+    sf::Vector2f pos{ entity->get_shape().getPosition() };
     auto links{ entity->get_links() };
 
     for (auto link : links)
     {
         e_t* link_e_t{ static_cast<e_t*>(link) };
-        sf::Vector2f link_pos{ link_e_t->m_shape.getPosition() };
+        sf::Vector2f link_pos{ link_e_t->get_shape().getPosition() };
         x_sum += link_pos.x;
         y_sum += link_pos.y;
     }
-    entity->m_shape.move(
+    entity->get_shape().move(
         ((x_sum / links.size()) - pos.x) * attraction_percent,
         ((y_sum / links.size()) - pos.y) * attraction_percent
     );

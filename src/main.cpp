@@ -61,10 +61,10 @@ int main()
         
         if (time_counter >= time_step)
         {
-            keyboard_move_entity(entities[0]->m_shape, move_speed, time_counter);
+            keyboard_move_entity(entities[0]->get_shape(), move_speed, time_counter);
             for (int i{ 1 }; entities[i]; ++i)
             {
-                random_move_entity(entities[i]->m_shape);
+                random_move_entity(entities[i]->get_shape());
                 slingshot_move_entity(entities[i]);
             }
             time_counter = 0;
@@ -155,8 +155,8 @@ int main()
         window.draw(title_text);
         for (unsigned int counter{ 0 }; counter < link_counter; ++counter)
         {
-            sf::Vector2f pos0{ entities[links[counter][0]]->m_shape.getPosition() };
-            sf::Vector2f pos1{ entities[links[counter][1]]->m_shape.getPosition() };
+            sf::Vector2f pos0{ entities[links[counter][0]]->get_shape().getPosition() };
+            sf::Vector2f pos1{ entities[links[counter][1]]->get_shape().getPosition() };
             float radius0{ entities[links[counter][0]]->get_radius() };
             float radius1{ entities[links[counter][0]]->get_radius() };
             sf::Vertex line[2]{
@@ -168,11 +168,8 @@ int main()
         for (EntityCircle* entity : entities)
         {
             if (!entity) break;
-            window.draw(entity->m_shape);
+            window.draw(entity->get_shape());
         }
-        //window.draw(entity.m_shape);
-        //window.draw(entity1.m_shape);
-        //window.draw(entity2.m_shape);
 
         window.display();
     }

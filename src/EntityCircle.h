@@ -20,6 +20,7 @@ private:
     float m_outline_thickness;
     sf::Color m_fill_colour;
     sf::Color m_outline_colour;
+    sf::CircleShape m_shape;
 
 public:
     EntityCircle(
@@ -30,8 +31,7 @@ public:
     );
     float get_radius() const { return m_radius; }
     std::vector<Entity*>& get_links() { return m_links; }
-    sf::CircleShape m_shape;
-
+    sf::CircleShape& get_shape() { return m_shape; };
 };
 
 #endif
