@@ -17,6 +17,18 @@ extern const int game_height{ 600 };
 int main()
 {
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
+    for (int i{ 0 }; i < 1000; ++i) 
+    {
+        float b{ strong_affinity() };
+        int stars{ static_cast<int>(b * 10)  };
+        for (int j{ 0 }; j < stars; ++j)
+        {
+            std::cout << '*';
+        }
+        std::cout << " : " << static_cast<int>(b*10) << '\n';
+        //std::cout << '\n';
+    };
+    
     unsigned int link_counter{ 0 }; // just using int is better practice? see learncpp
     EntityCircle* entities[entity_limit]{}; // consider dynamic allocation: https://www.learncpp.com/cpp-tutorial/dynamically-allocating-arrays/
     id_t links[link_limit][2]{};
