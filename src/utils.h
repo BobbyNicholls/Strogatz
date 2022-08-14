@@ -49,7 +49,7 @@ void add_semi_random_links(
     of existing edges.
     */
     unsigned int link_iloc{ 
-        static_cast<unsigned int>(uniform_distribution(1, counter*2)) 
+        static_cast<unsigned int>(uniform_distribution_int(1, counter*2)) 
     };
     if (link_iloc > counter)
     {
@@ -121,8 +121,8 @@ void random_move_entity(
     }
     else
     {
-        float x_move{ static_cast<float>(uniform_distribution(-3, 3)) };
-        float y_move{ static_cast<float>(uniform_distribution(-3, 3)) };
+        float x_move{ uniform_distribution_float(-3, 3) };
+        float y_move{ uniform_distribution_float(-3, 3) };
         entity.move(x_move, y_move);
     }
 }

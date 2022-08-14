@@ -17,7 +17,7 @@ EntityCircle::EntityCircle(
 	m_shape.setOutlineThickness(m_outline_thickness);
 	m_shape.setOutlineColor(m_outline_colour);
 	m_shape.setPosition(
-		static_cast<float>(uniform_distribution(10, 790)), 
-		static_cast<float>(uniform_distribution(10, 490))
+		uniform_distribution_float(10, 790), 
+		uniform_distribution_float(10, 490)
 	);
 }
