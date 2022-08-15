@@ -12,7 +12,7 @@ extern const int edge_buffer;
 
 // should use inline variables to save memory if multiple inclusions
 const int link_limit{ 1000 };
-const int entity_limit{ 150 };
+const int entity_limit{ 35 };
 
 using id_t = std::uint_fast32_t;
 

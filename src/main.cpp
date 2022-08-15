@@ -10,24 +10,13 @@
 #include "utils.h"
 
 extern const int edge_buffer{ 10 };
-const float move_speed{ 200.f };
-extern const int game_width{ 800 };
 extern const int game_height{ 600 };
+extern const int game_width{ 800 };
+const float move_speed{ 200.f };
 
 int main()
 {
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
-    for (int i{ 0 }; i < 1000; ++i) 
-    {
-        float b{ strong_affinity() };
-        int stars{ static_cast<int>(b * 10)  };
-        for (int j{ 0 }; j < stars; ++j)
-        {
-            std::cout << '*';
-        }
-        std::cout << " : " << static_cast<int>(b*10) << '\n';
-        //std::cout << '\n';
-    };
     
     unsigned int link_counter{ 0 }; // just using int is better practice? see learncpp
     EntityCircle* entities[entity_limit]{}; // consider dynamic allocation: https://www.learncpp.com/cpp-tutorial/dynamically-allocating-arrays/
@@ -44,6 +33,7 @@ int main()
         //    // Do error handling here
         //    std::cerr << "Could not allocate memory\n";
         //}
+        entity_pointer->print_beliefs();
         id_t entity_id{ entity_pointer->get_id() };
         entities[entity_id] = entity_pointer;
         if (i==1) link_entities(entities[0], entities[1], links, link_counter);
