@@ -66,32 +66,32 @@ void add_semi_random_links(
 
 template <typename Shape_t>
 void keyboard_move_entity(
-    Shape_t& entity,
+    Shape_t& shape,
     const float move_speed,
     const float time_counter
 )
 {
-    sf::Vector2f pos{ entity.getPosition() };
+    sf::Vector2f pos{ shape.getPosition() };
     float move_distance{ move_speed * time_counter };
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
-        entity.move((pos.x < edge_buffer) ? 
+        shape.move((pos.x < edge_buffer) ? 
             move_distance : -move_distance, 0.f);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
-        entity.move((pos.x > (game_width - edge_buffer)) ? 
+        shape.move((pos.x > (game_width - edge_buffer)) ? 
             -move_distance : move_distance, 0.f);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {
-        entity.move(0.f, (pos.y < edge_buffer) ? 
+        shape.move(0.f, (pos.y < edge_buffer) ? 
             move_distance : -move_distance);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
-        entity.move(0.f, (pos.y > (game_height - edge_buffer)) ? 
+        shape.move(0.f, (pos.y > (game_height - edge_buffer)) ? 
             -move_distance : move_distance);
     }
 }
