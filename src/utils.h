@@ -51,7 +51,6 @@ void add_semi_random_links(
     unsigned int link_iloc{ 
         static_cast<unsigned int>(uniform_distribution_int(1, counter*2)) 
     };
-    std::cout << "link_iloc = " << link_iloc << '\n';
     if (link_iloc > counter)
     {
         link_iloc -= (counter + 1);
@@ -65,9 +64,9 @@ void add_semi_random_links(
 }
 
 
-template <typename Entity>
+template <typename Shape_t>
 void keyboard_move_entity(
-    Entity& entity,
+    Shape_t& entity,
     const float move_speed,
     const float time_counter
 )

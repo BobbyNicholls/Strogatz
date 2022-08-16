@@ -88,6 +88,7 @@ int main()
             window.clear(sf::Color::Black);
 
             keyboard_move_entity(entities[0]->get_shape(), move_speed, time_counter);
+            window.draw(entities[0]->get_shape());
             for (int i{ 1 }; entities[i]; ++i) // more efficient to iterate implicitly?
             {
                 random_move_entity(entities[i]->get_shape());
@@ -95,12 +96,12 @@ int main()
                 window.draw(entities[i]->get_shape());
             }
 
-            for (unsigned int counter{ 0 }; counter < link_counter; ++counter)
+            for (unsigned int i{ 0 }; i < link_counter; ++i)
             {
-                sf::Vector2f pos0{ entities[links[counter][0]]->get_shape().getPosition() };
-                sf::Vector2f pos1{ entities[links[counter][1]]->get_shape().getPosition() };
-                float radius0{ entities[links[counter][0]]->get_radius() };
-                float radius1{ entities[links[counter][0]]->get_radius() };
+                sf::Vector2f pos0{ entities[links[i][0]]->get_shape().getPosition() };
+                sf::Vector2f pos1{ entities[links[i][1]]->get_shape().getPosition() };
+                float radius0{ entities[links[i][0]]->get_radius() };
+                float radius1{ entities[links[i][0]]->get_radius() };
                 sf::Vertex line[2]{
                     sf::Vertex(sf::Vector2f(pos0.x + radius0, pos0.y + radius0)),
                     sf::Vertex(sf::Vector2f(pos1.x + radius1, pos1.y + radius1))
