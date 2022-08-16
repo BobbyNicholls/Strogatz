@@ -3,8 +3,8 @@
 #include "Entity.h"
 
 
-Entity::Entity()
-	:m_id{ generate_id() }
+Entity::Entity(id_t id)
+	:m_id{ id }
 {
     m_beliefs[0][0] = mild_aversion();
     m_beliefs[0][1] = mild_aversion();

@@ -7,7 +7,7 @@ void get_text(
     const std::string& title_text_str,
     sf::Text& text,
     sf::Font& font,
-    unsigned int const size = 50
+    unsigned int const size = 20
 );
 
 #endif

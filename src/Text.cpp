@@ -12,5 +12,5 @@ void get_text(
     text.setString(text_str);
     text.setCharacterSize(size);
     text.setFillColor(sf::Color::Green);
-    text.setPosition(10.f, 10.f);
+    text.setPosition(10.f, 5.f);
 }

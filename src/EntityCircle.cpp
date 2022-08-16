@@ -2,11 +2,13 @@
 #include "EntityCircle.h"
 
 EntityCircle::EntityCircle(
+	id_t id,
 	float radius,
 	float outline_thickness, 
 	sf::Color outline_colour
 )
-	: m_radius{ radius },
+	: Entity{ id },
+	m_radius{ radius },
 	m_outline_thickness{ outline_thickness }, 
 	m_outline_colour{ outline_colour }
 {

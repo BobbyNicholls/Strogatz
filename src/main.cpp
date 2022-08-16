@@ -29,7 +29,7 @@ int main()
         // dynamically allocate an EntityCircle and assign the address to entity_pointer
         //EntityCircle* entity_pointer{ new EntityCircle };
         // value will be set to a null pointer if the integer allocation fails:
-        EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle }; 
+        EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle(i) };
         if (!entity_pointer) // handle case where new returned null
         {
             // Do error handling here
@@ -50,6 +50,14 @@ int main()
         }
 
     }
+
+    for (int i{ 0 }; i < entity_limit; ++i)
+    {
+        std::cout << "i = " << i << '\n';
+        std::cout << "links[i][0] = " << links[i][0] << '\n';
+        std::cout << "links[i][1] = " << links[i][1] << '\n';
+        std::cout << "entities[i]->get_id() = " << entities[i]->get_id() << "\n\n";
+    }
     
     sf::RenderWindow window(sf::VideoMode(game_width, game_height), "Strogatz");
     window.setVerticalSyncEnabled(true);
@@ -65,12 +73,13 @@ int main()
     constexpr float time_step{ 1.0f / 60.0f };
     unsigned int time_period_counter{ 0 };
     unsigned int frame_counter{ 0 };
+    constexpr unsigned int frames_per_period{ 600 };
 
     while (window.isOpen())
     {
         time_counter += clock.restart().asSeconds();
         
-        if (frame_counter >= 600)
+        if (frame_counter >= frames_per_period)
         {
             frame_counter = 0;
             time_str = time_str.substr(0, 6);
@@ -80,8 +89,8 @@ int main()
         if (time_counter >= time_step)
         {
 
-            time_counter = 0;
             ++frame_counter;
+            sf::Event event;
 
             // Clear the window with black color (doesnt activate until 
             // window.display(), so has no immediate impact)
@@ -109,10 +118,6 @@ int main()
                 window.draw(line, 2, sf::Lines);
             }
 
-
-            // Check all the window's events that were triggered since the last
-            // iteration of the loop.
-            sf::Event event;
             // The pollEvent function returns true if an event was pending, or 
             // false if there was none.
             while (window.pollEvent(event))
@@ -172,6 +177,7 @@ int main()
             // should only be doing this once every frame:
             window.draw(text);
             window.display();
+            time_counter = 0;
         }
     }
     

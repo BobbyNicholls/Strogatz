@@ -48,7 +48,7 @@ protected:
 	float m_beliefs[2][2];
 
 public:
-	Entity();
+	Entity(id_t id);
 	std::uint_fast8_t get_age() const { return m_age; }
 	uint8_t get_gender() const { return m_gender; }
 	id_t get_id() const { return m_id; }
