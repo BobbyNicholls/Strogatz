@@ -16,6 +16,7 @@ const int entity_limit{ 50 };
 
 using id_t = std::uint_fast32_t;
 
+
 id_t generate_id();
 
 
@@ -97,33 +98,33 @@ void keyboard_move_entity(
 }
 
 
-template <typename Entity>
+template <typename Shape_t>
 void random_move_entity(
-    Entity& entity
+    Shape_t& shape
 )
 {
-    const sf::Vector2f& pos{ entity.getPosition() };
+    const sf::Vector2f& pos{ shape.getPosition() };
     if (pos.x > (game_width - edge_buffer)) // make this a case switch somehow?
     {
-        entity.move(-25.f, 0.f);
+        shape.move(-25.f, 0.f);
     }
     else if (pos.x < edge_buffer)
     {
-        entity.move(25.f, 0.f);
+        shape.move(25.f, 0.f);
     }
     else if (pos.y > (game_height - edge_buffer))
     {
-        entity.move(0.f, -25.f);
+        shape.move(0.f, -25.f);
     }
     else if (pos.y < edge_buffer)
     {
-        entity.move(0.f, 25.f);
+        shape.move(0.f, 25.f);
     }
     else
     {
         float x_move{ uniform_distribution_float(-3, 3) };
         float y_move{ uniform_distribution_float(-3, 3) };
-        entity.move(x_move, y_move);
+        shape.move(x_move, y_move);
     }
 }
 
