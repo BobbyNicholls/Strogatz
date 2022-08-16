@@ -95,6 +95,19 @@ int main()
                 window.draw(entities[i]->get_shape());
             }
 
+            for (unsigned int counter{ 0 }; counter < link_counter; ++counter)
+            {
+                sf::Vector2f pos0{ entities[links[counter][0]]->get_shape().getPosition() };
+                sf::Vector2f pos1{ entities[links[counter][1]]->get_shape().getPosition() };
+                float radius0{ entities[links[counter][0]]->get_radius() };
+                float radius1{ entities[links[counter][0]]->get_radius() };
+                sf::Vertex line[2]{
+                    sf::Vertex(sf::Vector2f(pos0.x + radius0, pos0.y + radius0)),
+                    sf::Vertex(sf::Vector2f(pos1.x + radius1, pos1.y + radius1))
+                };
+                window.draw(line, 2, sf::Lines);
+            }
+
 
             // Check all the window's events that were triggered since the last
             // iteration of the loop.
@@ -157,11 +170,6 @@ int main()
 
             // should only be doing this once every frame:
             window.draw(text);
-
-            //for (int i{ 0 }; i < entity_limit-1; ++i)
-            //{
-            //    window.draw(entities[i]->get_shape());
-            //}
             window.display();
         }
     }
