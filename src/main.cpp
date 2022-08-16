@@ -19,28 +19,40 @@ int main()
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
     
     unsigned int link_counter{ 0 }; // just using int is better practice? see learncpp
-    EntityCircle* entities[entity_limit]{}; // consider dynamic allocation: https://www.learncpp.com/cpp-tutorial/dynamically-allocating-arrays/
+    //EntityCircle* entities[entity_limit]{}; // consider dynamic allocation: https://www.learncpp.com/cpp-tutorial/dynamically-allocating-arrays/
+    // re-sizing is computationally expensive, so set capacity here:
+    std::vector<EntityCircle*> entities(entity_limit+1);
+    //EntityCircle** entities{ new EntityCircle*[entity_limit] };
     id_t links[link_limit][2]{};
     std::cout << "Welcome to Strogatz!\n";
-    for (int i{ 0 }; i < entity_limit-1; ++i)
+    for (int i{ 0 }; i < entity_limit; ++i)
     {
         // dynamically allocate an EntityCircle and assign the address to entity_pointer
-        EntityCircle* entity_pointer{ new EntityCircle };
+        //EntityCircle* entity_pointer{ new EntityCircle };
         // value will be set to a null pointer if the integer allocation fails:
-        //EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle }; 
-        //if (!entity_pointer) // handle case where new returned null
-        //{
-        //    // Do error handling here
-        //    std::cerr << "Could not allocate memory\n";
-        //}
-        entity_pointer->print_beliefs();
-        id_t entity_id{ entity_pointer->get_id() };
-        entities[entity_id] = entity_pointer;
-        if (i==1) link_entities(entities[0], entities[1], links, link_counter);
-        if (i > 1)
+        EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle }; 
+        std::cout << "i = " << i << '\n';
+        std::cout << "entities.size() = " << entities.size() << '\n';
+        std::cout << "link_counter = " << link_counter << '\n';
+        if (!entity_pointer) // handle case where new returned null
         {
-            add_semi_random_links(entities, entities[entity_id], links, link_counter);
+            // Do error handling here
+            std::cerr << "\n\nCould not allocate memory!!!\n\n";
         }
+        else
+        {
+            entities[i] = entity_pointer;
+            if (i == 1) link_entities(
+                entities[0], entities[1], links, link_counter
+            );
+            if (i > 1)
+            {
+                add_semi_random_links(
+                    entities, entities[i], links, link_counter
+                );
+            }
+        }
+
     }
     
     sf::RenderWindow window(sf::VideoMode(game_width, game_height), "Strogatz");
@@ -172,7 +184,10 @@ int main()
             if (!entity) break;
             window.draw(entity->get_shape());
         }
-
+        //for (int i{ 0 }; i < entity_limit-1; ++i)
+        //{
+        //    window.draw(entities[i]->get_shape());
+        //}
         window.display();
     }
     

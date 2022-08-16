@@ -11,8 +11,8 @@ extern const int game_height;
 extern const int edge_buffer;
 
 // should use inline variables to save memory if multiple inclusions
-const int link_limit{ 1000 };
-const int entity_limit{ 35 };
+const int link_limit{ 10000 };
+const int entity_limit{ 5000 };
 
 using id_t = std::uint_fast32_t;
 
@@ -36,9 +36,9 @@ void link_entities(
 }
 
 
-template <typename EntityList_t, typename Entity_t>
+template <typename Entity_t>
 void add_semi_random_links(
-    EntityList_t entities[entity_limit],
+    const std::vector<Entity_t*>& entities,
     Entity_t* entity,
     id_t links[link_limit][2],
     unsigned int& counter
@@ -51,6 +51,7 @@ void add_semi_random_links(
     unsigned int link_iloc{ 
         static_cast<unsigned int>(uniform_distribution_int(1, counter*2)) 
     };
+    std::cout << "link_iloc = " << link_iloc << '\n';
     if (link_iloc > counter)
     {
         link_iloc -= (counter + 1);
@@ -102,7 +103,7 @@ void random_move_entity(
     Entity& entity
 )
 {
-    sf::Vector2f pos{ entity.getPosition() };
+    const sf::Vector2f& pos{ entity.getPosition() };
     if (pos.x > (game_width - edge_buffer)) // make this a case switch somehow?
     {
         entity.move(-25.f, 0.f);
@@ -139,10 +140,10 @@ void slingshot_move_entity(
     sf::Vector2f pos{ entity->get_shape().getPosition() };
     auto links{ entity->get_links() };
 
-    for (auto link : links)
+    for (const auto& link : links)
     {
         e_t* link_e_t{ static_cast<e_t*>(link) };
-        sf::Vector2f link_pos{ link_e_t->get_shape().getPosition() };
+        const sf::Vector2f& link_pos{ link_e_t->get_shape().getPosition() };
         x_sum += link_pos.x;
         y_sum += link_pos.y;
     }
