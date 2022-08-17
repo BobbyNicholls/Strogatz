@@ -12,7 +12,7 @@ extern const int edge_buffer;
 
 // should use inline variables to save memory if multiple inclusions
 const int link_limit{ 100 };
-const int entity_limit{ 50 };
+const int entity_limit{ 100 };
 
 using id_t = std::uint_fast32_t;
 
@@ -38,7 +38,7 @@ void link_entities(
 
 
 template <typename Entity_t>
-void add_semi_random_links(
+unsigned int add_semi_random_links(
     const std::vector<Entity_t*>& entities,
     Entity_t* entity,
     id_t links[link_limit][2],
@@ -62,6 +62,7 @@ void add_semi_random_links(
         link_iloc -= 1;
         link_entities(entities[links[link_iloc][0]], entity, links, counter);
     }
+    return link_iloc;
 }
 
 
@@ -102,7 +103,7 @@ template <typename Shape_t>
 void random_move_entity(
     Shape_t& shape,
     float buffer_distance = 15.f,
-    int move_range = 2
+    int move_range = 1
 )
 {
     const sf::Vector2f& pos{ shape.getPosition() };

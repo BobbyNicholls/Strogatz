@@ -24,6 +24,7 @@ int main()
     unsigned int link_counter{ 0 }; // just using int is better practice?
     id_t links[link_limit][2]{};
     
+    unsigned int link_iloc_anchor{ 0 };
     for (int i{ 0 }; i < entity_limit; ++i)
     {
         // dynamically allocate an EntityCircle and assign the address to entity_pointer
@@ -38,31 +39,31 @@ int main()
         else
         {
             entities[i] = entity_pointer;
-            if (i == 1) link_entities(
-                entities[0], entities[1], links, link_counter
-            );
-            if (i > 1)
+            if (i == 0)
             {
-                add_semi_random_links(
-                    entities, entities[i], links, link_counter
-                );
+                entities[i]->set_position_randomly();
             }
+            else if (i == 1)
+            {
+                link_entities(entities[0], entities[1], links, link_counter);
+                entities[i]->set_position_randomly();
+            }
+            else
+            {
+                unsigned int link_iloc{
+                    add_semi_random_links(entities, entities[i], links, link_counter)
+                };
+                if (link_iloc == link_iloc_anchor) entities[i]->set_position_randomly();
+                else
+                {
+                    entities[i]->set_position_relative_to_links();
+                    link_iloc_anchor = link_iloc;
+                }
+            }
+
         }
 
     }
-
-    //for (int i{ 0 }; i < entity_limit; ++i)
-    //{
-    //    id_t from_entity_id{ links[i][0] };
-    //    id_t to_entity_id{ links[i][1] };
-    //    std::cout << "From entity: " << '\n';
-    //    entities[from_entity_id]->print_beliefs();
-    //    std::cout << "To entity before: " << '\n';
-    //    entities[to_entity_id]->print_beliefs();
-    //    entities[to_entity_id]->update_beliefs(entities[from_entity_id]);
-    //    std::cout << "To entity after: " << '\n';
-    //    entities[to_entity_id]->print_beliefs();
-    //}
     
     sf::RenderWindow window(sf::VideoMode(game_width, game_height), "Strogatz");
     window.setVerticalSyncEnabled(true);
@@ -78,7 +79,7 @@ int main()
     constexpr float time_step{ 1.0f / 60.0f };
     unsigned int time_period_counter{ 0 };
     unsigned int frame_counter{ 0 };
-    constexpr unsigned int frames_per_period{ 600 };
+    constexpr unsigned int frames_per_period{ 100 };
 
     while (window.isOpen())
     {
@@ -89,7 +90,8 @@ int main()
             frame_counter = 0;
             time_str = time_str.substr(0, 6);
             text.setString(time_str.append(std::to_string(++time_period_counter)));
-            for (int i{ 0 }; i < entity_limit; ++i)
+            entities[0]->print_beliefs();
+            for (int i{ 0 }; i < entity_limit-1; ++i)
             {
                 entities[links[i][1]]->update_beliefs(entities[links[i][0]]);
                 entities[links[i][1]]->update_colour();
@@ -112,7 +114,7 @@ int main()
             for (int i{ 1 }; entities[i]; ++i) // more efficient to iterate implicitly?
             {
                 random_move_entity(entities[i]->get_shape());
-                slingshot_move_entity(entities[i]);
+                //slingshot_move_entity(entities[i]);
                 window.draw(entities[i]->get_shape());
             }
 

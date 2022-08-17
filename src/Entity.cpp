@@ -8,7 +8,7 @@ Entity::Entity(id_t id)
 {
     m_beliefs[0][0] = mild_aversion();
     m_beliefs[0][1] = mild_aversion();
-    m_beliefs[1][0] = mild_affinity();
+    m_beliefs[1][0] = mild_aversion();
     m_beliefs[1][1] = mild_aversion();
 }
 

@@ -5,10 +5,16 @@
 - To visualise dynamic networks somehow.
 
 ## Strogatz consists of:
-- utils.h
-- utils.cpp
-- entity.h
-- entity.cpp
+- Distributions.h: for drawing vlaues from probability distributions
+- Distributions.cpp: for drawing vlaues from probability distributions
+- Entity.h: for the Entity base class from which units / nodes are generated.
+- Entity.cpp: for the Entity base class from which units / nodes are generated.
+- EntityCircle.h: for the EntityCircle derived class, represents Entities as circles.
+- EntityCircle.cpp: for the EntityCircle derived class, represents Entities as circles.
+- Text.h: text display functions
+- Text.cpp: text display functions
+- utils.h: for general utilities
+- utils.cpp: for general utilities
 - main.cpp
 
 # To do:

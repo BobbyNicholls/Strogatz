@@ -16,10 +16,7 @@ EntityCircle::EntityCircle(
 	update_colour();
 	m_shape.setOutlineThickness(m_outline_thickness);
 	m_shape.setOutlineColor(m_outline_colour);
-	m_shape.setPosition(
-		uniform_distribution_float(10, 790), 
-		uniform_distribution_float(10, 490)
-	);
+
 }
 
 
@@ -47,4 +44,32 @@ void EntityCircle::update_colour()
 	m_beliefs[1][0] /= beliefs_sum;
 	m_beliefs[1][1] /= beliefs_sum;
 
+}
+
+
+void EntityCircle::set_position_randomly()
+{
+	m_shape.setPosition(
+		uniform_distribution_float(10, 790),
+		uniform_distribution_float(10, 490)
+	);
+}
+
+
+void EntityCircle::set_position_relative_to_links(int offset)
+{
+	float x_sum{ 0 };
+	float y_sum{ 0 };
+	for (auto link : m_links)
+	{
+		EntityCircle* link_ec_t{ static_cast<EntityCircle*>(link) };
+		const sf::Vector2f& link_pos{ link_ec_t->get_shape().getPosition() };
+		x_sum += link_pos.x;
+		y_sum += link_pos.y;
+	}
+
+	m_shape.setPosition(
+		x_sum + uniform_distribution_float(-offset, offset),
+		y_sum + uniform_distribution_float(-offset, offset)
+	);
 }

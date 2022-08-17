@@ -59,5 +59,4 @@ public:
 };
 
 
-
 #endif // !STROG_ENTITY_H
