@@ -51,13 +51,18 @@ int main()
 
     }
 
-    for (int i{ 0 }; i < entity_limit; ++i)
-    {
-        std::cout << "i = " << i << '\n';
-        std::cout << "links[i][0] = " << links[i][0] << '\n';
-        std::cout << "links[i][1] = " << links[i][1] << '\n';
-        std::cout << "entities[i]->get_id() = " << entities[i]->get_id() << "\n\n";
-    }
+    //for (int i{ 0 }; i < entity_limit; ++i)
+    //{
+    //    id_t from_entity_id{ links[i][0] };
+    //    id_t to_entity_id{ links[i][1] };
+    //    std::cout << "From entity: " << '\n';
+    //    entities[from_entity_id]->print_beliefs();
+    //    std::cout << "To entity before: " << '\n';
+    //    entities[to_entity_id]->print_beliefs();
+    //    entities[to_entity_id]->update_beliefs(entities[from_entity_id]);
+    //    std::cout << "To entity after: " << '\n';
+    //    entities[to_entity_id]->print_beliefs();
+    //}
     
     sf::RenderWindow window(sf::VideoMode(game_width, game_height), "Strogatz");
     window.setVerticalSyncEnabled(true);
@@ -73,7 +78,7 @@ int main()
     constexpr float time_step{ 1.0f / 60.0f };
     unsigned int time_period_counter{ 0 };
     unsigned int frame_counter{ 0 };
-    constexpr unsigned int frames_per_period{ 600 };
+    constexpr unsigned int frames_per_period{ 300 };
 
     while (window.isOpen())
     {
@@ -84,6 +89,12 @@ int main()
             frame_counter = 0;
             time_str = time_str.substr(0, 6);
             text.setString(time_str.append(std::to_string(++time_period_counter)));
+            for (int i{ 0 }; i < entity_limit; ++i)
+            {
+                entities[links[i][1]]->update_beliefs(entities[links[i][0]]);
+                entities[links[i][1]]->update_colour();
+                entities[links[i][1]]->print_beliefs();
+            }
         }
 
         if (time_counter >= time_step)

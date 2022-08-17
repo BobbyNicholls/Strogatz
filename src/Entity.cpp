@@ -8,14 +8,29 @@ Entity::Entity(id_t id)
 {
     m_beliefs[0][0] = mild_aversion();
     m_beliefs[0][1] = mild_aversion();
-    m_beliefs[1][0] = mild_aversion();
+    m_beliefs[1][0] = mild_affinity();
     m_beliefs[1][1] = mild_aversion();
 }
 
 
-void Entity::propagate_beliefs()
+void Entity::update_beliefs(Entity* influencer)
 {
-	std::cout << "Wololo!\n";
+    float result[2][2];
+    for (int i{ 0 }; i < 2; ++i) // row number
+    {
+        for (int j{ 0 }; j < 2; ++j) // column number
+        {
+            // traverse row of influencer, column of influencee
+            result[i][j] = (
+                influencer->m_beliefs[i][0] * m_beliefs[0][j] +
+                influencer->m_beliefs[i][1] * m_beliefs[1][j]
+            );
+        }
+    }
+    m_beliefs[0][0] = result[0][0];
+    m_beliefs[0][1] = result[0][1];
+    m_beliefs[1][0] = result[1][0];
+    m_beliefs[1][1] = result[1][1];
 }
 
 

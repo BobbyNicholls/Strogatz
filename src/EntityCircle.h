@@ -31,6 +31,7 @@ public:
     float get_radius() const { return m_radius; }
     std::vector<Entity*>& get_links() { return m_links; }
     sf::CircleShape& get_shape() { return m_shape; };
+    void update_colour();
 };
 
 #endif

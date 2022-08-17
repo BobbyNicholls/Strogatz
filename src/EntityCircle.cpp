@@ -13,21 +13,38 @@ EntityCircle::EntityCircle(
 	m_outline_colour{ outline_colour }
 {
 	m_shape.setRadius(m_radius);
-	float m_beliefs_sum{
-		m_beliefs[0][0] + m_beliefs[0][1] + m_beliefs[1][0]
-	};
-	m_shape.setFillColor(
-		sf::Color(
-			static_cast<sf::Uint8>((m_beliefs[0][0]/m_beliefs_sum)*255), 
-			static_cast<sf::Uint8>((m_beliefs[0][1]/m_beliefs_sum)*255),
-			static_cast<sf::Uint8>((m_beliefs[1][0]/m_beliefs_sum)*255)
-			//static_cast<sf::Uint8>((m_beliefs[1][1]/m_beliefs_sum)*255)
-		)
-	);
+	update_colour();
 	m_shape.setOutlineThickness(m_outline_thickness);
 	m_shape.setOutlineColor(m_outline_colour);
 	m_shape.setPosition(
 		uniform_distribution_float(10, 790), 
 		uniform_distribution_float(10, 490)
 	);
+}
+
+
+void EntityCircle::update_colour()
+{
+
+	float beliefs_sum{
+		m_beliefs[0][0] + m_beliefs[0][1] + m_beliefs[1][0]
+	};
+
+	m_shape.setFillColor(
+		sf::Color(
+			static_cast<sf::Uint8>((m_beliefs[0][0] / beliefs_sum) * 255),
+			static_cast<sf::Uint8>((m_beliefs[0][1] / beliefs_sum) * 255),
+			static_cast<sf::Uint8>((m_beliefs[1][0] / beliefs_sum) * 255)
+			//static_cast<sf::Uint8>((m_beliefs[1][1]/beliefs_sum)*255)
+		)
+	);
+
+	beliefs_sum += m_beliefs[1][1];
+
+	// this should be functionalised, maybe as a virtual function:
+	m_beliefs[0][0] /= beliefs_sum;
+	m_beliefs[0][1] /= beliefs_sum;
+	m_beliefs[1][0] /= beliefs_sum;
+	m_beliefs[1][1] /= beliefs_sum;
+
 }

@@ -100,25 +100,26 @@ void keyboard_move_entity(
 
 template <typename Shape_t>
 void random_move_entity(
-    Shape_t& shape
+    Shape_t& shape,
+    float move_distance = 15.f
 )
 {
     const sf::Vector2f& pos{ shape.getPosition() };
     if (pos.x > (game_width - edge_buffer)) // make this a case switch somehow?
     {
-        shape.move(-25.f, 0.f);
+        shape.move(-move_distance, 0.f);
     }
     else if (pos.x < edge_buffer)
     {
-        shape.move(25.f, 0.f);
+        shape.move(move_distance, 0.f);
     }
     else if (pos.y > (game_height - edge_buffer))
     {
-        shape.move(0.f, -25.f);
+        shape.move(0.f, -move_distance);
     }
     else if (pos.y < edge_buffer)
     {
-        shape.move(0.f, 25.f);
+        shape.move(0.f, move_distance);
     }
     else
     {
@@ -132,7 +133,7 @@ void random_move_entity(
 template <typename e_t>
 void slingshot_move_entity(
     e_t* entity,
-    float attraction_percent = 0.008f
+    float attraction_percent = 0.003f
 )
 {
     float x_sum{};

@@ -53,9 +53,9 @@ public:
 	uint8_t get_gender() const { return m_gender; }
 	id_t get_id() const { return m_id; }
 	void add_link(Entity* entity);
-	void print_links() const;
 	void print_beliefs() const;
-	void propagate_beliefs();
+	void print_links() const;
+	void update_beliefs(Entity* influencer);
 };
 
 
