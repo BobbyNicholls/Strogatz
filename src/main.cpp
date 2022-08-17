@@ -78,7 +78,7 @@ int main()
     constexpr float time_step{ 1.0f / 60.0f };
     unsigned int time_period_counter{ 0 };
     unsigned int frame_counter{ 0 };
-    constexpr unsigned int frames_per_period{ 300 };
+    constexpr unsigned int frames_per_period{ 600 };
 
     while (window.isOpen())
     {

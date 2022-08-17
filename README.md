@@ -12,13 +12,10 @@
 - main.cpp
 
 # To do:
-- Probability distributions.
-- Add time.
 - Entity propagation.
-- Beleif propagation.
+- Refactor and functionalise main.
 - Split rendering and event handling out in to seperate threads.
 - Data representation of networks.
-- Visual representation of networks.
 - Meaningful visual entity representation.
 - Add entity AI.
 - Add environments.

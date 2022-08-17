@@ -101,30 +101,31 @@ void keyboard_move_entity(
 template <typename Shape_t>
 void random_move_entity(
     Shape_t& shape,
-    float move_distance = 15.f
+    float buffer_distance = 15.f,
+    int move_range = 2
 )
 {
     const sf::Vector2f& pos{ shape.getPosition() };
     if (pos.x > (game_width - edge_buffer)) // make this a case switch somehow?
     {
-        shape.move(-move_distance, 0.f);
+        shape.move(-buffer_distance, 0.f);
     }
     else if (pos.x < edge_buffer)
     {
-        shape.move(move_distance, 0.f);
+        shape.move(buffer_distance, 0.f);
     }
     else if (pos.y > (game_height - edge_buffer))
     {
-        shape.move(0.f, -move_distance);
+        shape.move(0.f, -buffer_distance);
     }
     else if (pos.y < edge_buffer)
     {
-        shape.move(0.f, move_distance);
+        shape.move(0.f, buffer_distance);
     }
     else
     {
-        float x_move{ uniform_distribution_float(-3, 3) };
-        float y_move{ uniform_distribution_float(-3, 3) };
+        float x_move{ uniform_distribution_float(-move_range, move_range) };
+        float y_move{ uniform_distribution_float(-move_range, move_range) };
         shape.move(x_move, y_move);
     }
 }
