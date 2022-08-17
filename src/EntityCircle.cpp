@@ -69,7 +69,7 @@ void EntityCircle::set_position_relative_to_links(int offset)
 	}
 
 	m_shape.setPosition(
-		x_sum + uniform_distribution_float(-offset, offset),
-		y_sum + uniform_distribution_float(-offset, offset)
+		(x_sum / m_links.size()) + uniform_distribution_float(-offset, offset),
+		(y_sum / m_links.size()) + uniform_distribution_float(-offset, offset)
 	);
 }
