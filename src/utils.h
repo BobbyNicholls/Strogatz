@@ -12,7 +12,7 @@ extern const int edge_buffer;
 
 // should use inline variables to save memory if multiple inclusions
 const int link_limit{ 100 };
-const int entity_limit{ 100 };
+const int entity_limit{ 45 };
 
 using id_t = std::uint_fast32_t;
 
@@ -135,7 +135,7 @@ void random_move_entity(
 template <typename e_t>
 void slingshot_move_entity(
     e_t* entity,
-    float attraction_percent = 0.003f
+    float attraction_percent = 0.001f
 )
 {
     float x_sum{};

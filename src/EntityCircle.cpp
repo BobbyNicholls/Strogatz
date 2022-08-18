@@ -1,6 +1,7 @@
 #include "Distributions.h"
 #include "EntityCircle.h"
 
+
 EntityCircle::EntityCircle(
 	id_t id,
 	float radius,
@@ -60,7 +61,7 @@ void EntityCircle::set_position_relative_to_links(int offset)
 {
 	float x_sum{ 0 };
 	float y_sum{ 0 };
-	for (auto link : m_links)
+	for (auto* link : m_links)
 	{
 		EntityCircle* link_ec_t{ static_cast<EntityCircle*>(link) };
 		const sf::Vector2f& link_pos{ link_ec_t->get_shape().getPosition() };

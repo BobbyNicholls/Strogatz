@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <random>
+#include <set>
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
@@ -17,14 +19,12 @@ const float move_speed{ 200.f };
 int main()
 {
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
-    //EntityCircle* entities[entity_limit]{}; // consider dynamic allocation: https://www.learncpp.com/cpp-tutorial/dynamically-allocating-arrays/
-    // re-sizing is computationally expensive, so set capacity here:
     //EntityCircle** entities{ new EntityCircle*[entity_limit] };
     std::vector<EntityCircle*> entities(entity_limit+1);
     unsigned int link_counter{ 0 }; // just using int is better practice?
     id_t links[link_limit][2]{};
-    
-    unsigned int link_iloc_anchor{ 0 };
+
+    std::set<unsigned int> link_anchors{ 0 };
     for (int i{ 0 }; i < entity_limit; ++i)
     {
         // dynamically allocate an EntityCircle and assign the address to entity_pointer
@@ -46,23 +46,24 @@ int main()
             else if (i == 1)
             {
                 link_entities(entities[0], entities[1], links, link_counter);
-                entities[i]->set_position_randomly();
+                entities[i]->set_position_relative_to_links();
             }
             else
             {
                 unsigned int link_iloc{
                     add_semi_random_links(entities, entities[i], links, link_counter)
                 };
-                if (link_iloc == link_iloc_anchor) entities[i]->set_position_randomly();
-                else
+                if (link_anchors.contains(link_iloc))
                 {
                     entities[i]->set_position_relative_to_links();
-                    link_iloc_anchor = link_iloc;
+                }
+                else
+                {
+                    entities[i]->set_position_randomly();
+                    link_anchors.insert(link_iloc);
                 }
             }
-
         }
-
     }
     
     sf::RenderWindow window(sf::VideoMode(game_width, game_height), "Strogatz");
@@ -114,7 +115,7 @@ int main()
             for (int i{ 1 }; entities[i]; ++i) // more efficient to iterate implicitly?
             {
                 random_move_entity(entities[i]->get_shape());
-                //slingshot_move_entity(entities[i]);
+                slingshot_move_entity(entities[i]);
                 window.draw(entities[i]->get_shape());
             }
 
