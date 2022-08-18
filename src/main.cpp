@@ -110,15 +110,6 @@ int main()
             // window.display(), so has no immediate impact)
             window.clear(sf::Color::Black);
 
-            keyboard_move_entity(entities[0]->get_shape(), move_speed, time_counter);
-            window.draw(entities[0]->get_shape());
-            for (int i{ 1 }; entities[i]; ++i) // more efficient to iterate implicitly?
-            {
-                random_move_entity(entities[i]->get_shape());
-                slingshot_move_entity(entities[i]);
-                window.draw(entities[i]->get_shape());
-            }
-
             for (unsigned int i{ 0 }; i < link_counter; ++i)
             {
                 sf::Vector2f pos0{ entities[links[i][0]]->get_shape().getPosition() };
@@ -130,6 +121,15 @@ int main()
                     sf::Vertex(sf::Vector2f(pos1.x + radius1, pos1.y + radius1))
                 };
                 window.draw(line, 2, sf::Lines);
+            }
+
+            keyboard_move_entity(entities[0]->get_shape(), move_speed, time_counter);
+            window.draw(entities[0]->get_shape());
+            for (int i{ 1 }; entities[i]; ++i) // more efficient to iterate implicitly?
+            {
+                random_move_entity(entities[i]->get_shape());
+                slingshot_move_entity(entities[i]);
+                window.draw(entities[i]->get_shape());
             }
 
             // The pollEvent function returns true if an event was pending, or 

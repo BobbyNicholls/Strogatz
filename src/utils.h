@@ -11,8 +11,8 @@ extern const int game_height;
 extern const int edge_buffer;
 
 // should use inline variables to save memory if multiple inclusions
-const int link_limit{ 100 };
-const int entity_limit{ 45 };
+const int link_limit{ 1000 };
+const int entity_limit{ 100 };
 
 using id_t = std::uint_fast32_t;
 
