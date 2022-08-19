@@ -19,17 +19,14 @@ constexpr float move_speed{ 200.f };
 int main()
 {
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
-    //EntityCircle** entities{ new EntityCircle*[entity_limit] };
-    std::vector<EntityCircle*> entities(entity_limit+1);
-    unsigned int link_counter{ 0 }; // just using int is better practice?
+
+    std::vector<EntityCircle*> entities(entity_limit);
     id_t links[link_limit][2]{};
 
     std::set<unsigned int> link_anchors{ 0 };
+    unsigned int link_counter{ 0 }; // just using int is better practice?
     for (int i{ 0 }; i < entity_limit; ++i)
     {
-        // dynamically allocate an EntityCircle and assign the address to entity_pointer
-        //EntityCircle* entity_pointer{ new EntityCircle };
-        // value will be set to a null pointer if the integer allocation fails:
         EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle(i) };
         if (!entity_pointer) // handle case where new returned null
         {
