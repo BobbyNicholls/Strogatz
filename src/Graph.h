@@ -16,6 +16,6 @@ struct Graph
 };
 
 
-Graph get_graph(int entity_limit);
+Graph get_graph();
 
 #endif

@@ -8,6 +8,7 @@
 #include <SFML/Window.hpp>
 
 #include "EntityCircle.h"
+#include "Graph.h"
 #include "Text.h"
 #include "utils.h"
 
@@ -20,49 +21,8 @@ int main()
 {
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
-    std::vector<EntityCircle*> entities(entity_limit);
-    id_t links[link_limit][2]{};
+    Graph graph{ get_graph() };
 
-    std::set<unsigned int> link_anchors{ 0 };
-    unsigned int link_counter{ 0 }; // just using int is better practice?
-    for (int i{ 0 }; i < entity_limit; ++i)
-    {
-        EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle(i) };
-        if (!entity_pointer) // handle case where new returned null
-        {
-            // Do error handling here
-            std::cerr << "\n\nCould not allocate memory!!!\n\n";
-        }
-        else
-        {
-            entities[i] = entity_pointer;
-            if (i == 0)
-            {
-                entities[i]->set_position_randomly();
-            }
-            else if (i == 1)
-            {
-                link_entities(entities[0], entities[1], links, link_counter);
-                entities[i]->set_position_relative_to_links();
-            }
-            else
-            {
-                unsigned int link_iloc{
-                    add_semi_random_links(entities, entities[i], links, link_counter)
-                };
-                if (link_anchors.contains(link_iloc))
-                {
-                    entities[i]->set_position_relative_to_links();
-                }
-                else
-                {
-                    entities[i]->set_position_randomly();
-                    link_anchors.insert(link_iloc);
-                }
-            }
-        }
-    }
-    
     sf::RenderWindow window(sf::VideoMode(game_width, game_height), "Strogatz");
     window.setVerticalSyncEnabled(true);
     // Never use both setVerticalSyncEnabled and setFramerateLimit at the 
@@ -77,7 +37,7 @@ int main()
     constexpr float time_step{ 1.0f / 60.0f };
     unsigned int time_period_counter{ 0 };
     unsigned int frame_counter{ 0 };
-    constexpr unsigned int frames_per_period{ 100 };
+    constexpr unsigned int frames_per_period{ 600 };
 
     while (window.isOpen())
     {
@@ -88,12 +48,14 @@ int main()
             frame_counter = 0;
             time_str = time_str.substr(0, 6);
             text.setString(time_str.append(std::to_string(++time_period_counter)));
-            entities[0]->print_beliefs();
+            graph.entities[0]->print_beliefs();
             for (int i{ 0 }; i < entity_limit-1; ++i)
             {
-                entities[links[i][1]]->update_beliefs(entities[links[i][0]]);
-                entities[links[i][1]]->update_colour();
-                entities[links[i][1]]->print_beliefs();
+                graph.entities[graph.links[i][1]]->update_beliefs(
+                    graph.entities[graph.links[i][0]]
+                );
+                graph.entities[graph.links[i][1]]->update_colour();
+                graph.entities[graph.links[i][1]]->print_beliefs();
             }
         }
 
@@ -107,12 +69,12 @@ int main()
             // window.display(), so has no immediate impact)
             window.clear(sf::Color::Black);
 
-            for (unsigned int i{ 0 }; i < link_counter; ++i)
+            for (unsigned int i{ 0 }; i < graph.link_counter; ++i)
             {
-                sf::Vector2f pos0{ entities[links[i][0]]->get_shape().getPosition() };
-                sf::Vector2f pos1{ entities[links[i][1]]->get_shape().getPosition() };
-                float radius0{ entities[links[i][0]]->get_radius() };
-                float radius1{ entities[links[i][0]]->get_radius() };
+                sf::Vector2f pos0{ graph.entities[graph.links[i][0]]->get_shape().getPosition() };
+                sf::Vector2f pos1{ graph.entities[graph.links[i][1]]->get_shape().getPosition() };
+                float radius0{ graph.entities[graph.links[i][0]]->get_radius() };
+                float radius1{ graph.entities[graph.links[i][0]]->get_radius() };
                 sf::Vertex line[2]{
                     sf::Vertex(sf::Vector2f(pos0.x + radius0, pos0.y + radius0)),
                     sf::Vertex(sf::Vector2f(pos1.x + radius1, pos1.y + radius1))
@@ -120,13 +82,13 @@ int main()
                 window.draw(line, 2, sf::Lines);
             }
 
-            keyboard_move_entity(entities[0]->get_shape(), move_speed, time_counter);
-            window.draw(entities[0]->get_shape());
-            for (int i{ 1 }; entities[i]; ++i) // more efficient to iterate implicitly?
+            keyboard_move_entity(graph.entities[0]->get_shape(), move_speed, time_counter);
+            window.draw(graph.entities[0]->get_shape());
+            for (int i{ 1 }; graph.entities[i]; ++i) // more efficient to iterate implicitly?
             {
-                random_move_entity(entities[i]->get_shape());
-                slingshot_move_entity(entities[i]);
-                window.draw(entities[i]->get_shape());
+                random_move_entity(graph.entities[i]->get_shape());
+                slingshot_move_entity(graph.entities[i]);
+                window.draw(graph.entities[i]->get_shape());
             }
 
             // The pollEvent function returns true if an event was pending, or 

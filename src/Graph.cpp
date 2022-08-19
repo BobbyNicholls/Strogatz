@@ -1,9 +1,10 @@
 #include "Graph.h"
 
-Graph get_graph(int entity_limit)
+Graph get_graph()
 {
     Graph graph{};
     std::set<unsigned int> link_anchors{ 0 };
+    unsigned int link_iloc;
     graph.entities.reserve(entity_limit); // initialise on creation??
     for (int i{ 0 }; i < entity_limit; ++i)
     {
@@ -32,14 +33,12 @@ Graph get_graph(int entity_limit)
             }
             else
             {
-                unsigned int link_iloc{
-                    add_semi_random_links(
-                        graph.entities,
-                        graph.entities[i],
-                        graph.links,
-                        graph.link_counter
-                    )
-                };
+                link_iloc = add_semi_random_links(
+                    graph.entities,
+                    graph.entities[i],
+                    graph.links,
+                    graph.link_counter
+                );
                 if (link_anchors.contains(link_iloc))
                 {
                     graph.entities[i]->set_position_relative_to_links();

@@ -133,6 +133,7 @@
     <ClCompile Include="src\Distributions.cpp" />
     <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\EntityCircle.cpp" />
+    <ClCompile Include="src\Graph.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Text.cpp" />
     <ClCompile Include="src\utils.cpp" />
@@ -141,6 +142,7 @@
     <ClInclude Include="src\Distributions.h" />
     <ClInclude Include="src\Entity.h" />
     <ClInclude Include="src\EntityCircle.h" />
+    <ClInclude Include="src\Graph.h" />
     <ClInclude Include="src\Text.h" />
     <ClInclude Include="src\utils.h" />
   </ItemGroup>
