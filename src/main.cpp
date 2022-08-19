@@ -14,7 +14,7 @@
 extern const int edge_buffer{ 10 };
 extern const int game_height{ 600 };
 extern const int game_width{ 800 };
-const float move_speed{ 200.f };
+constexpr float move_speed{ 200.f };
 
 int main()
 {
