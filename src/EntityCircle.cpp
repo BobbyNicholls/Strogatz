@@ -53,7 +53,7 @@ void EntityCircle::set_position_relative_to_links(int offset)
 {
 	/*
 	Makes the position of the node the average position of all nodes connected to
-	this node plus some offset.
+	this node plus some randomised offset.
 	*/
 	float x_sum{ 0 };
 	float y_sum{ 0 };
