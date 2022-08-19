@@ -33,7 +33,7 @@ public:
     sf::CircleShape& get_shape() { return m_shape; };
     void update_colour();
     void set_position_randomly();
-    void set_position_relative_to_links(int offset = 12);
+    void set_position_relative_to_links(int offset = 40);
 };
 
 #endif

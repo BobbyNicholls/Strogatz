@@ -10,7 +10,7 @@ extern const int edge_buffer;
 extern const int game_height;
 extern const int game_width;
 
-const int entity_limit{ 30 };
+const int entity_limit{ 45 };
 const int link_limit{ 1000 };
 
 using id_t = std::uint_fast32_t;
@@ -51,17 +51,20 @@ unsigned int add_semi_random_links(
     unsigned int link_iloc{ 
         static_cast<unsigned int>(uniform_distribution_int(1, counter*2)) 
     };
+    unsigned int entity_iloc;
     if (link_iloc > counter)
     {
         link_iloc -= (counter + 1);
-        link_entities(entities[links[link_iloc][1]], entity, links, counter);
+        entity_iloc = links[link_iloc][1];
     }
     else
     {
         link_iloc -= 1;
-        link_entities(entities[links[link_iloc][0]], entity, links, counter);
+        entity_iloc = links[link_iloc][0];
     }
-    return link_iloc; // BUG: this needs to be returned above
+
+    link_entities(entities[entity_iloc], entity, links, counter);
+    return entity_iloc;
 }
 
 

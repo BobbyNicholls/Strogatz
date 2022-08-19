@@ -84,11 +84,11 @@ int main()
 
             keyboard_move_entity(graph.entities[0]->get_shape(), move_speed, time_counter);
             window.draw(graph.entities[0]->get_shape());
-            for (int i{ 1 }; graph.entities[i]; ++i) // more efficient to iterate implicitly?
+            for (EntityCircle* entity :  graph.entities) // more efficient to iterate implicitly?
             {
-                random_move_entity(graph.entities[i]->get_shape());
-                slingshot_move_entity(graph.entities[i]);
-                window.draw(graph.entities[i]->get_shape());
+                //random_move_entity(entity->get_shape());
+                //slingshot_move_entity(entity);
+                window.draw(entity->get_shape());
             }
 
             // The pollEvent function returns true if an event was pending, or 

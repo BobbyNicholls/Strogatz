@@ -4,8 +4,8 @@ Graph get_graph()
 {
     Graph graph{};
     std::set<unsigned int> link_anchors{ 0 };
-    unsigned int link_iloc;
-    graph.entities.reserve(entity_limit); // initialise on creation??
+    unsigned int entity_iloc;
+    graph.entities.resize(entity_limit); // initialise on creation??
     for (int i{ 0 }; i < entity_limit; ++i)
     {
         EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle(i) };
@@ -31,22 +31,22 @@ Graph get_graph()
                 );
                 graph.entities[i]->set_position_relative_to_links();
             }
-            else
+            else // todo: make a set of non-anchors then make it less likely to attch to those
             {
-                link_iloc = add_semi_random_links(
+                entity_iloc = add_semi_random_links(
                     graph.entities,
                     graph.entities[i],
                     graph.links,
                     graph.link_counter
                 );
-                if (link_anchors.contains(link_iloc))
+                if (link_anchors.contains(entity_iloc))
                 {
                     graph.entities[i]->set_position_relative_to_links();
                 }
                 else
                 {
                     graph.entities[i]->set_position_randomly();
-                    link_anchors.insert(link_iloc);
+                    link_anchors.insert(i);
                 }
             }
         }
