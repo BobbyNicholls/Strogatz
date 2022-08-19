@@ -15,6 +15,11 @@ Entity::Entity(id_t id)
 
 void Entity::update_beliefs(Entity* influencer)
 {
+    /*
+    Use the sum product algorithm to update the belief of the node given
+    an `influencer` node, which contains the beleifs that will inflience
+    the node.
+    */
     float result[2][2];
     for (int i{ 0 }; i < 2; ++i) // row number
     {
@@ -27,10 +32,15 @@ void Entity::update_beliefs(Entity* influencer)
             );
         }
     }
-    m_beliefs[0][0] = result[0][0];
-    m_beliefs[0][1] = result[0][1];
-    m_beliefs[1][0] = result[1][0];
-    m_beliefs[1][1] = result[1][1];
+
+    // normalise the beliefs to 0-1
+    float result_sum{
+        result[0][0] + result[0][1] + result[1][0] + result[1][1]
+    };
+    m_beliefs[0][0] = result[0][0] / result_sum;
+    m_beliefs[0][1] = result[0][1] / result_sum;
+    m_beliefs[1][0] = result[1][0] / result_sum;
+    m_beliefs[1][1] = result[1][1] / result_sum;
 }
 
 

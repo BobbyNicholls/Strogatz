@@ -37,14 +37,6 @@ void EntityCircle::update_colour()
 		)
 	);
 
-	beliefs_sum += m_beliefs[1][1];
-
-	// this should be functionalised, maybe as a virtual function:
-	m_beliefs[0][0] /= beliefs_sum;
-	m_beliefs[0][1] /= beliefs_sum;
-	m_beliefs[1][0] /= beliefs_sum;
-	m_beliefs[1][1] /= beliefs_sum;
-
 }
 
 
