@@ -11,6 +11,10 @@
 #include "utils.h"
 
 
+const int entities_start_size{ 10 };
+const int entities_reserve_limit{ 100 };
+
+
 struct Graph
 {
 	std::vector<EntityCircle*> entities;

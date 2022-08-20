@@ -6,6 +6,7 @@ Graph get_graph()
     std::set<unsigned int> link_anchors{ 0 };
     unsigned int entity_iloc;
     graph.entities.resize(entity_limit); // initialise on creation??
+    graph.entities.reserve(entity_reserve_limit);
     for (int i{ 0 }; i < entity_limit; ++i)
     {
         EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle(i) };
