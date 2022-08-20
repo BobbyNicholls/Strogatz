@@ -95,7 +95,6 @@ void draw_entities(Graph& graph, sf::RenderWindow& window)
     {
         random_move_entity(graph.entities[i]->get_shape());
         slingshot_move_entity(graph.entities[i]);
-        window.draw(graph.entities[i]->get_shape());
-        ++i;
+        window.draw(graph.entities[i++]->get_shape());
     }
 }

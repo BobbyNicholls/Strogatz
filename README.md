@@ -18,13 +18,17 @@
 - main.cpp
 
 # To do:
-- Entity propagation.
+- Entity propagation and death.
 - Refactor and functionalise main.
+- Multiple graphs.
+- Graph migration.
 - Split rendering and event handling out in to seperate threads.
 - Data representation of networks.
 - Meaningful visual entity representation.
-- Add entity AI.
-- Add environments.
-- Add an economy.
+- Entity AI.
+- Environments.
+- Economy.
+- Conflict.
+- Seed / parameters yaml.
 - Add a player.
 - ...etc
