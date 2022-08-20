@@ -39,17 +39,17 @@ int main()
     while (window.isOpen())
     {
         time_counter += clock.restart().asSeconds();
-        
-        if (frame_counter >= frames_per_period)
-        {
-            frame_counter = 0;
-            time_str = time_str.substr(0, 6);
-            text.setString(time_str.append(std::to_string(++time_period_counter)));
-            forward_propagate_beliefs(graph);
-        }
 
         if (time_counter >= time_step)
         {
+
+            if (frame_counter >= frames_per_period)
+            {
+                frame_counter = 0;
+                time_str = time_str.substr(0, 6);
+                text.setString(time_str.append(std::to_string(++time_period_counter)));
+                forward_propagate_beliefs(graph);
+            }
 
             ++frame_counter;
             sf::Event event;
