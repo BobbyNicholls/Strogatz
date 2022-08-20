@@ -54,3 +54,17 @@ Graph get_graph()
 
     return graph;
 }
+
+
+void forward_propagate_beliefs(Graph& graph)
+{
+    graph.entities[0]->print_beliefs();
+    for (unsigned int i{ 0 }; i < graph.link_counter; ++i)
+    {
+        graph.entities[graph.links[i][1]]->update_beliefs(
+            graph.entities[graph.links[i][0]]
+        );
+        graph.entities[graph.links[i][1]]->update_colour();
+        graph.entities[graph.links[i][1]]->print_beliefs();
+    }
+}

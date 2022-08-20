@@ -10,7 +10,7 @@ extern const int edge_buffer;
 extern const int game_height;
 extern const int game_width;
 
-const int entity_limit{ 45 };
+const int entity_limit{ 5 };
 const int link_limit{ 1000 };
 
 using id_t = std::uint_fast32_t;

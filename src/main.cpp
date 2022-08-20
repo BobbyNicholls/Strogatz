@@ -48,15 +48,7 @@ int main()
             frame_counter = 0;
             time_str = time_str.substr(0, 6);
             text.setString(time_str.append(std::to_string(++time_period_counter)));
-            graph.entities[0]->print_beliefs();
-            for (int i{ 0 }; i < entity_limit-1; ++i)
-            {
-                graph.entities[graph.links[i][1]]->update_beliefs(
-                    graph.entities[graph.links[i][0]]
-                );
-                graph.entities[graph.links[i][1]]->update_colour();
-                graph.entities[graph.links[i][1]]->print_beliefs();
-            }
+            forward_propagate_beliefs(graph);
         }
 
         if (time_counter >= time_step)
@@ -86,8 +78,8 @@ int main()
             window.draw(graph.entities[0]->get_shape());
             for (EntityCircle* entity :  graph.entities) // more efficient to iterate implicitly?
             {
-                //random_move_entity(entity->get_shape());
-                //slingshot_move_entity(entity);
+                random_move_entity(entity->get_shape());
+                slingshot_move_entity(entity);
                 window.draw(entity->get_shape());
             }
 

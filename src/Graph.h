@@ -17,5 +17,7 @@ struct Graph
 
 
 Graph get_graph();
+void forward_propagate_beliefs(Graph& graph);
+
 
 #endif
