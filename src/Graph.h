@@ -20,6 +20,7 @@ struct Graph
 
 
 Graph get_graph();
+void draw_entities(Graph& graph, sf::RenderWindow& window);
 void draw_links(Graph& graph, sf::RenderWindow& window);
 void forward_propagate_beliefs(Graph& graph);
 

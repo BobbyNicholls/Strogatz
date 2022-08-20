@@ -85,3 +85,17 @@ void draw_links(Graph& graph, sf::RenderWindow& window)
         window.draw(line, 2, sf::Lines);
     }
 }
+
+
+void draw_entities(Graph& graph, sf::RenderWindow& window)
+{
+    int i{ 0 };
+    window.draw(graph.entities[i++]->get_shape());
+    while (i != graph.entities.size())
+    {
+        random_move_entity(graph.entities[i]->get_shape());
+        slingshot_move_entity(graph.entities[i]);
+        window.draw(graph.entities[i]->get_shape());
+        ++i;
+    }
+}

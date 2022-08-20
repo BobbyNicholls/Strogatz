@@ -22,11 +22,8 @@ int main()
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
     Graph graph{ get_graph() };
-
     sf::RenderWindow window(sf::VideoMode(game_width, game_height), "Strogatz");
     window.setVerticalSyncEnabled(true);
-    // Never use both setVerticalSyncEnabled and setFramerateLimit at the 
-    // Same time! They would badly mix and make things worse.
     sf::Text text;
     sf::Font font;
     std::string time_str{ "Time: " };
@@ -60,17 +57,9 @@ int main()
             // Clear the window with black color (doesnt activate until 
             // window.display(), so has no immediate impact)
             window.clear(sf::Color::Black);
-            draw_links(graph, window);
-
             keyboard_move_entity(graph.entities[0]->get_shape(), move_speed, time_counter);
-            window.draw(graph.entities[0]->get_shape());
-            for (EntityCircle* entity :  graph.entities) // more efficient to iterate implicitly?
-            {
-                random_move_entity(entity->get_shape());
-                slingshot_move_entity(entity);
-                window.draw(entity->get_shape());
-            }
-
+            draw_links(graph, window);
+            draw_entities(graph, window);
             // The pollEvent function returns true if an event was pending, or 
             // false if there was none.
             while (window.pollEvent(event))
