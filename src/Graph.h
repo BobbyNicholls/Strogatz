@@ -4,6 +4,9 @@
 #include <set>
 #include<vector>
 
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
+
 #include "EntityCircle.h"
 #include "utils.h"
 
@@ -17,7 +20,7 @@ struct Graph
 
 
 Graph get_graph();
+void draw_links(Graph& graph, sf::RenderWindow& window);
 void forward_propagate_beliefs(Graph& graph);
-
 
 #endif

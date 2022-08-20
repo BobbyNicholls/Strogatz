@@ -68,3 +68,20 @@ void forward_propagate_beliefs(Graph& graph)
         graph.entities[graph.links[i][1]]->print_beliefs();
     }
 }
+
+
+void draw_links(Graph& graph, sf::RenderWindow& window)
+{
+    for (unsigned int i{ 0 }; i < graph.link_counter; ++i)
+    {
+        sf::Vector2f pos0{ graph.entities[graph.links[i][0]]->get_shape().getPosition() };
+        sf::Vector2f pos1{ graph.entities[graph.links[i][1]]->get_shape().getPosition() };
+        float radius0{ graph.entities[graph.links[i][0]]->get_radius() };
+        float radius1{ graph.entities[graph.links[i][0]]->get_radius() };
+        sf::Vertex line[2]{
+            sf::Vertex(sf::Vector2f(pos0.x + radius0, pos0.y + radius0)),
+            sf::Vertex(sf::Vector2f(pos1.x + radius1, pos1.y + radius1))
+        };
+        window.draw(line, 2, sf::Lines);
+    }
+}
