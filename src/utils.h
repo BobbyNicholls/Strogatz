@@ -6,15 +6,15 @@
 
 #include "Distributions.h"
 
-extern const int game_width;
-extern const int game_height;
 extern const int edge_buffer;
+extern const int game_height;
+extern const int game_width;
 
-// should use inline variables to save memory if multiple inclusions
+const int entity_limit{ 45 };
 const int link_limit{ 1000 };
-const int entity_limit{ 150 };
 
 using id_t = std::uint_fast32_t;
+
 
 id_t generate_id();
 
@@ -36,9 +36,9 @@ void link_entities(
 }
 
 
-template <typename EntityList_t, typename Entity_t>
-void add_semi_random_links(
-    EntityList_t entities[entity_limit],
+template <typename Entity_t>
+unsigned int add_semi_random_links(
+    const std::vector<Entity_t*>& entities,
     Entity_t* entity,
     id_t links[link_limit][2],
     unsigned int& counter
@@ -49,81 +49,87 @@ void add_semi_random_links(
     of existing edges.
     */
     unsigned int link_iloc{ 
-        static_cast<unsigned int>(uniform_distribution(1, counter*2)) 
+        static_cast<unsigned int>(uniform_distribution_int(1, counter*2)) 
     };
+    unsigned int entity_iloc;
     if (link_iloc > counter)
     {
         link_iloc -= (counter + 1);
-        link_entities(entities[links[link_iloc][1]], entity, links, counter);
+        entity_iloc = links[link_iloc][1];
     }
     else
     {
         link_iloc -= 1;
-        link_entities(entities[links[link_iloc][0]], entity, links, counter);
+        entity_iloc = links[link_iloc][0];
     }
+
+    link_entities(entities[entity_iloc], entity, links, counter);
+    return entity_iloc;
 }
 
 
-template <typename Entity>
+template <typename Shape_t>
 void keyboard_move_entity(
-    Entity& entity,
+    Shape_t& shape,
     const float move_speed,
     const float time_counter
 )
 {
-    sf::Vector2f pos{ entity.getPosition() };
+    sf::Vector2f pos{ shape.getPosition() };
     float move_distance{ move_speed * time_counter };
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
-        entity.move((pos.x < edge_buffer) ? 
+        shape.move((pos.x < edge_buffer) ? 
             move_distance : -move_distance, 0.f);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
-        entity.move((pos.x > (game_width - edge_buffer)) ? 
+        shape.move((pos.x > (game_width - edge_buffer)) ? 
             -move_distance : move_distance, 0.f);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {
-        entity.move(0.f, (pos.y < edge_buffer) ? 
+        shape.move(0.f, (pos.y < edge_buffer) ? 
             move_distance : -move_distance);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
-        entity.move(0.f, (pos.y > (game_height - edge_buffer)) ? 
+        shape.move(0.f, (pos.y > (game_height - edge_buffer)) ? 
             -move_distance : move_distance);
     }
 }
 
 
-template <typename Entity>
+template <typename Shape_t>
 void random_move_entity(
-    Entity& entity
+    Shape_t& shape,
+    float buffer_distance = 15.f,
+    int move_range = 1
 )
 {
-    sf::Vector2f pos{ entity.getPosition() };
+    const sf::Vector2f& pos{ shape.getPosition() };
     if (pos.x > (game_width - edge_buffer)) // make this a case switch somehow?
     {
-        entity.move(-25.f, 0.f);
+        shape.move(-buffer_distance, 0.f);
     }
     else if (pos.x < edge_buffer)
     {
-        entity.move(25.f, 0.f);
+        shape.move(buffer_distance, 0.f);
     }
     else if (pos.y > (game_height - edge_buffer))
     {
-        entity.move(0.f, -25.f);
+        shape.move(0.f, -buffer_distance);
     }
     else if (pos.y < edge_buffer)
     {
-        entity.move(0.f, 25.f);
+        shape.move(0.f, buffer_distance);
     }
     else
     {
-        float x_move{ static_cast<float>(uniform_distribution(-3, 3)) };
-        float y_move{ static_cast<float>(uniform_distribution(-3, 3)) };
-        entity.move(x_move, y_move);
+        float x_move{ uniform_distribution_float(-move_range, move_range) };
+        float y_move{ uniform_distribution_float(-move_range, move_range) };
+        shape.move(x_move, y_move);
     }
 }
 
@@ -131,22 +137,22 @@ void random_move_entity(
 template <typename e_t>
 void slingshot_move_entity(
     e_t* entity,
-    float attraction_percent = 0.008f
+    float attraction_percent = 0.001f
 )
 {
     float x_sum{};
     float y_sum{};
-    sf::Vector2f pos{ entity->m_shape.getPosition() };
+    sf::Vector2f pos{ entity->get_shape().getPosition() };
     auto links{ entity->get_links() };
 
-    for (auto link : links)
+    for (const auto& link : links)
     {
         e_t* link_e_t{ static_cast<e_t*>(link) };
-        sf::Vector2f link_pos{ link_e_t->m_shape.getPosition() };
+        const sf::Vector2f& link_pos{ link_e_t->get_shape().getPosition() };
         x_sum += link_pos.x;
         y_sum += link_pos.y;
     }
-    entity->m_shape.move(
+    entity->get_shape().move(
         ((x_sum / links.size()) - pos.x) * attraction_percent,
         ((y_sum / links.size()) - pos.y) * attraction_percent
     );

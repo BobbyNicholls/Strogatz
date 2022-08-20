@@ -18,6 +18,7 @@ It contains information regarding things every entity must have:
 #ifndef STROG_ENTITY_H
 #define STROG_ENTITY_H
 
+#include "Distributions.h"
 #include "utils.h"
 
 #include<vector>
@@ -40,22 +41,22 @@ private:
 	id_t m_id;
 	std::vector<Entity*> m_children;
 	Entity* m_parents[2];
-	float* m_beliefs[2][2];
 	// uint generation{} // is this worth having?
 
 protected:
 	std::vector<Entity*> m_links;
+	float m_beliefs[2][2];
 
 public:
-	Entity();
+	Entity(id_t id);
 	std::uint_fast8_t get_age() const { return m_age; }
 	uint8_t get_gender() const { return m_gender; }
 	id_t get_id() const { return m_id; }
 	void add_link(Entity* entity);
+	void print_beliefs() const;
 	void print_links() const;
-	void propagate_beliefs();
+	void update_beliefs(Entity* influencer);
 };
-
 
 
 #endif // !STROG_ENTITY_H

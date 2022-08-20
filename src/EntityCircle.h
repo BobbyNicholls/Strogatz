@@ -18,20 +18,22 @@ private:
     // be 15). You can make it extrude towards the center of the shape instead, by setting a 
     // negative thickness.
     float m_outline_thickness;
-    sf::Color m_fill_colour;
     sf::Color m_outline_colour;
+    sf::CircleShape m_shape;
 
 public:
     EntityCircle(
+        id_t id,
         float radius = 10.f,
         float outline_thickness = 1.f,
-        sf::Color fill_colour = sf::Color(150, 50, 250),
         sf::Color outline_colour = sf::Color(250, 150, 100)
     );
     float get_radius() const { return m_radius; }
     std::vector<Entity*>& get_links() { return m_links; }
-    sf::CircleShape m_shape;
-
+    sf::CircleShape& get_shape() { return m_shape; };
+    void update_colour();
+    void set_position_randomly();
+    void set_position_relative_to_links(int offset = 15);
 };
 
 #endif
