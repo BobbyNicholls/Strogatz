@@ -34,7 +34,7 @@ int main()
     constexpr float time_step{ 1.0f / 60.0f };
     unsigned int time_period_counter{ 0 };
     unsigned int frame_counter{ 0 };
-    constexpr unsigned int frames_per_period{ 600 };
+    constexpr unsigned int frames_per_period{ 60 };
 
     while (window.isOpen())
     {
@@ -48,7 +48,11 @@ int main()
                 frame_counter = 0;
                 time_str = time_str.substr(0, 6);
                 text.setString(time_str.append(std::to_string(++time_period_counter)));
+                // we iterate over graphs twice in one frame unnecessarily due to this:
                 forward_propagate_beliefs(graph);
+
+                if (time_period_counter % 10 == 0) propagate_entities(graph);
+
             }
 
             ++frame_counter;

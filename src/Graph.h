@@ -27,5 +27,6 @@ Graph get_graph();
 void draw_entities(Graph& graph, sf::RenderWindow& window);
 void draw_links(Graph& graph, sf::RenderWindow& window);
 void forward_propagate_beliefs(Graph& graph);
+void propagate_entities(Graph& graph, float spawn_chance = 0.5f);
 
 #endif

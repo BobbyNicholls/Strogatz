@@ -18,6 +18,7 @@
 - main.cpp
 
 # To do:
+- Make it so we dont loop through entities and links multiple times unnecessarily.
 - Entity propagation and death.
 - Refactor and functionalise main.
 - Multiple graphs.
@@ -30,5 +31,6 @@
 - Economy.
 - Conflict.
 - Seed / parameters yaml.
+- Play Frostpunk for inspiration??
 - Add a player.
 - ...etc

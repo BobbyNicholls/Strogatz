@@ -10,6 +10,7 @@ Entity::Entity(id_t id)
     m_beliefs[0][1] = mild_aversion();
     m_beliefs[1][0] = mild_aversion();
     m_beliefs[1][1] = mild_aversion();
+    m_sex = uniform_distribution_int(0, 1);
 }
 
 
@@ -44,9 +45,31 @@ void Entity::update_beliefs(Entity* influencer)
 }
 
 
+void Entity::add_child(Entity* entity)
+{
+    m_children.push_back(entity);
+}
+
+
 void Entity::add_link(Entity* entity)
 {
 	m_links.push_back(entity);
+}
+
+
+void Entity::add_parents(Entity* entity1, Entity* entity2)
+{
+    m_parents[0] = entity1;
+    m_parents[1] = entity2;
+}
+
+
+void Entity::add_partner(Entity* entity)
+{
+    m_paired = true;
+    m_partner = entity;
+    entity->m_paired = true;
+    entity->m_partner = this;
 }
 
 

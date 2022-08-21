@@ -23,22 +23,16 @@ It contains information regarding things every entity must have:
 
 #include<vector>
 
-enum Genders
-{
-	male,
-	female,
-	other,
-
-    max_genders,
-};
-
 
 class Entity
 {
 private:
-	std::uint_fast8_t m_age; // is this slower than int?
-	uint8_t m_gender; // make this bool?
+	std::uint_fast8_t m_age{ 0 }; // is this slower than int?
+	bool m_sex;
+	bool m_paired { false };
 	id_t m_id;
+
+	Entity* m_partner{ nullptr };
 	std::vector<Entity*> m_children;
 	Entity* m_parents[2];
 	// uint generation{} // is this worth having?
@@ -49,10 +43,17 @@ protected:
 
 public:
 	Entity(id_t id);
+
 	std::uint_fast8_t get_age() const { return m_age; }
-	uint8_t get_gender() const { return m_gender; }
 	id_t get_id() const { return m_id; }
+	Entity* get_partner() const { return m_partner; };
+	uint8_t get_sex() const { return m_sex; }
+	bool is_paired() const { return m_paired; };
+
+	void add_child(Entity* entity);
 	void add_link(Entity* entity);
+	void add_parents(Entity* entity1, Entity* entity2);
+	void add_partner(Entity* entity);
 	void print_beliefs() const;
 	void print_links() const;
 	void update_beliefs(Entity* influencer);
