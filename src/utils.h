@@ -13,6 +13,7 @@ extern const int game_width;
 const int link_limit{ 1000 };
 
 using id_t = std::uint_fast32_t;
+using time_period_t = std::uint_fast16_t;
 
 
 id_t generate_id();

@@ -1,6 +1,6 @@
 #include "Graph.h"
 
-Graph get_graph()
+Graph get_graph(time_period_t time_period)
 {
     Graph graph{};
     std::set<unsigned int> link_anchors{ 0 };
@@ -9,7 +9,7 @@ Graph get_graph()
     graph.entities.reserve(entities_reserve_limit);
     for (int i{ 0 }; i < entities_start_size; ++i)
     {
-        EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle(i) };
+        EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle(i, time_period) };
         if (!entity_pointer) // handle case where new returned null
         {
             // TODO: error handling here
@@ -57,18 +57,6 @@ Graph get_graph()
 }
 
 
-void forward_propagate_beliefs(Graph& graph)
-{
-    for (unsigned int i{ 0 }; i < graph.link_counter; ++i)
-    {
-        graph.entities[graph.links[i][1]]->update_beliefs(
-            graph.entities[graph.links[i][0]]
-        );
-        graph.entities[graph.links[i][1]]->update_colour();
-    }
-}
-
-
 void draw_entities(Graph& graph, sf::RenderWindow& window)
 {
     int i{ 0 };
@@ -99,7 +87,19 @@ void draw_links(Graph& graph, sf::RenderWindow& window)
 }
 
 
-void propagate_entities(Graph& graph, float spawn_chance)
+void forward_propagate_beliefs(Graph& graph)
+{
+    for (unsigned int i{ 0 }; i < graph.link_counter; ++i)
+    {
+        graph.entities[graph.links[i][1]]->update_beliefs(
+            graph.entities[graph.links[i][0]]
+        );
+        graph.entities[graph.links[i][1]]->update_colour();
+    }
+}
+
+
+void propagate_entities(Graph& graph, time_period_t time_period, float spawn_chance)
 {
     std::cout << "Propagating entities...\n\n";
     for (unsigned int i{ 0 }; i < graph.link_counter; ++i)
@@ -113,8 +113,8 @@ void propagate_entities(Graph& graph, float spawn_chance)
             {
                 std::cout << "Entity is paired, spawning child.\n";
                 EntityCircle* child_entity{ new (std::nothrow) EntityCircle(
-                    static_cast<id_t>(graph.entities.size()) )
-                };
+                    static_cast<id_t>(graph.entities.size()), time_period
+                )};
                 if (!child_entity)
                 {
                     // TODO: error handling here

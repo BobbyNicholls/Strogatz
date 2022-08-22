@@ -21,7 +21,6 @@ int main()
 {
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
-    Graph graph{ get_graph() };
     sf::RenderWindow window(sf::VideoMode(game_width, game_height), "Strogatz");
     window.setVerticalSyncEnabled(true);
     sf::Text text;
@@ -32,9 +31,11 @@ int main()
     sf::Clock clock;
     float time_counter{ 0 };
     constexpr float time_step{ 1.0f / 60.0f };
-    unsigned int time_period_counter{ 0 };
+    time_period_t time_period_counter{ 0 };
     unsigned int frame_counter{ 0 };
     constexpr unsigned int frames_per_period{ 60 };
+
+    Graph graph{ get_graph(time_period_counter) };
 
     while (window.isOpen())
     {
@@ -51,7 +52,9 @@ int main()
                 // we iterate over graphs twice in one frame unnecessarily due to this:
                 forward_propagate_beliefs(graph);
 
-                if (time_period_counter % 10 == 0) propagate_entities(graph);
+                if (time_period_counter % 10 == 0) propagate_entities(
+                    graph, time_period_counter
+                );
 
             }
 

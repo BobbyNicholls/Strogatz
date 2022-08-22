@@ -27,7 +27,7 @@ It contains information regarding things every entity must have:
 class Entity
 {
 private:
-	std::uint_fast8_t m_age{ 0 }; // is this slower than int?
+	time_period_t m_birth_time{ 0 }; // is this slower than int?
 	bool m_sex;
 	bool m_paired { false };
 	id_t m_id;
@@ -42,9 +42,9 @@ protected:
 	float m_beliefs[2][2];
 
 public:
-	Entity(id_t id);
+	Entity(id_t id, time_period_t birth_time);
 
-	std::uint_fast8_t get_age() const { return m_age; }
+	time_period_t get_birth_time() const { return m_birth_time; }
 	id_t get_id() const { return m_id; }
 	Entity* get_partner() const { return m_partner; };
 	uint8_t get_sex() const { return m_sex; }

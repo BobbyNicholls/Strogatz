@@ -24,6 +24,7 @@ private:
 public:
     EntityCircle(
         id_t id,
+        time_period_t birth_time,
         float radius = 10.f,
         float outline_thickness = 1.f,
         sf::Color outline_colour = sf::Color(250, 150, 100)
