@@ -14,37 +14,6 @@ Entity::Entity(id_t id, time_period_t birth_time)
 }
 
 
-void Entity::update_beliefs(Entity* influencer)
-{
-    /*
-    Use the sum product algorithm to update the belief of the node given
-    an `influencer` node, which contains the beleifs that will inflience
-    the node.
-    */
-    float result[2][2];
-    for (int i{ 0 }; i < 2; ++i) // row number
-    {
-        for (int j{ 0 }; j < 2; ++j) // column number
-        {
-            // traverse row of influencer, column of influencee
-            result[i][j] = (
-                influencer->m_beliefs[i][0] * m_beliefs[0][j] +
-                influencer->m_beliefs[i][1] * m_beliefs[1][j]
-            );
-        }
-    }
-
-    // normalise the beliefs to 0-1
-    float result_sum{
-        result[0][0] + result[0][1] + result[1][0] + result[1][1]
-    };
-    m_beliefs[0][0] = result[0][0] / result_sum;
-    m_beliefs[0][1] = result[0][1] / result_sum;
-    m_beliefs[1][0] = result[1][0] / result_sum;
-    m_beliefs[1][1] = result[1][1] / result_sum;
-}
-
-
 void Entity::add_child(Entity* entity)
 {
     m_children.push_back(entity);
@@ -72,6 +41,18 @@ void Entity::add_partner(Entity* entity)
     entity->m_partner = this;
 }
 
+bool Entity::is_linked_to(Entity* entity) const
+{
+    for (Entity* link : m_links)
+    {
+        if (entity->m_id == link->m_id)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 void Entity::print_links() const
 {
@@ -91,4 +72,35 @@ void Entity::print_beliefs() const
     std::cout << "0, 1: " << m_beliefs[0][1] << '\n';
     std::cout << "1, 0: " << m_beliefs[1][0] << '\n';
     std::cout << "1, 1: " << m_beliefs[1][1] << "\n\n";
+}
+
+
+void Entity::update_beliefs(Entity* influencer)
+{
+    /*
+    Use the sum product algorithm to update the belief of the node given
+    an `influencer` node, which contains the beleifs that will inflience
+    the node.
+    */
+    float result[2][2];
+    for (int i{ 0 }; i < 2; ++i) // row number
+    {
+        for (int j{ 0 }; j < 2; ++j) // column number
+        {
+            // traverse row of influencer, column of influencee
+            result[i][j] = (
+                influencer->m_beliefs[i][0] * m_beliefs[0][j] +
+                influencer->m_beliefs[i][1] * m_beliefs[1][j]
+                );
+        }
+    }
+
+    // normalise the beliefs to 0-1
+    float result_sum{
+        result[0][0] + result[0][1] + result[1][0] + result[1][1]
+    };
+    m_beliefs[0][0] = result[0][0] / result_sum;
+    m_beliefs[0][1] = result[0][1] / result_sum;
+    m_beliefs[1][0] = result[1][0] / result_sum;
+    m_beliefs[1][1] = result[1][1] / result_sum;
 }

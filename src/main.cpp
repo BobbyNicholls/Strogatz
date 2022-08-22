@@ -19,6 +19,7 @@ constexpr float move_speed{ 200.f };
 
 int main()
 {
+
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
     sf::RenderWindow window(sf::VideoMode(game_width, game_height), "Strogatz");
@@ -35,7 +36,7 @@ int main()
     unsigned int frame_counter{ 0 };
     constexpr unsigned int frames_per_period{ 60 };
 
-    Graph graph{ get_graph(time_period_counter) };
+    Graph graph{ get_barabasi_albert_graph(time_period_counter) };
 
     while (window.isOpen())
     {

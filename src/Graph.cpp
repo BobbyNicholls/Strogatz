@@ -34,12 +34,97 @@ Graph get_graph(time_period_t time_period)
             }
             else // todo: make a set of non-anchors then make it less likely to attch to those
             {
-                entity_iloc = add_semi_random_links(
+                entity_iloc = add_preferential_links(
                     graph.entities,
                     graph.entities[i],
                     graph.links,
                     graph.link_counter
                 );
+                if (link_anchors.contains(entity_iloc))
+                {
+                    graph.entities[i]->set_position_relative_to_links();
+                }
+                else
+                {
+                    graph.entities[i]->set_position_randomly();
+                    link_anchors.insert(i);
+                }
+            }
+        }
+    }
+
+    return graph;
+}
+
+
+Graph get_barabasi_albert_graph(
+    time_period_t time_period, 
+    float new_edge_prob, 
+    float rewire_prob
+)
+{
+    /*
+    For each edge:
+     - add new node with preferential attachment (done in get_graph())
+     - with chance `new_edge_prob` choose random node to attach to other node 
+     preferentially
+     - with chance `rewire_prob` randomly choose edge, rewire one randomly chosen end 
+     preferentially
+    */
+    Graph graph{};
+    std::set<unsigned int> link_anchors{ 0 };
+    unsigned int entity_iloc;
+    graph.entities.resize(entities_start_size); // initialise on creation??
+    graph.entities.reserve(entities_reserve_limit);
+    for (int i{ 0 }; i < entities_start_size; ++i)
+    {
+        EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle(i, time_period) };
+        if (!entity_pointer) // handle case where new returned null
+        {
+            // TODO: error handling here
+            std::cerr << "\n\nCould not allocate memory!!!\n\n";
+        }
+        else
+        {
+            graph.entities[i] = entity_pointer;
+            if (i == 0)
+            {
+                graph.entities[i]->set_position_randomly();
+            }
+            else if (i == 1)
+            {
+                link_entities(
+                    graph.entities[0],
+                    graph.entities[1],
+                    graph.links,
+                    graph.link_counter
+                );
+                graph.entities[i]->set_position_relative_to_links();
+            }
+            else // todo: make a set of non-anchors then make it less likely to attch to those
+            {
+                entity_iloc = add_preferential_links(
+                    graph.entities,
+                    graph.entities[i],
+                    graph.links,
+                    graph.link_counter
+                );
+                if (uniform_distribution_float(0, 1) < new_edge_prob)
+                {
+                    int random_iloc{ uniform_distribution_int(0, i-1) };
+                    //choose random node to attach to other node preferentially
+                    std::cout << "Adding new edge randomly with preference.\n";
+                    add_preferential_links(
+                        graph.entities,
+                        graph.entities[random_iloc],
+                        graph.links,
+                        graph.link_counter
+                    );
+                }
+                if (uniform_distribution_float(0, 1) < rewire_prob)
+                {
+                    //randomly choose edge, rewire one randomly chosen end preferentially
+                }
                 if (link_anchors.contains(entity_iloc))
                 {
                     graph.entities[i]->set_position_relative_to_links();
@@ -105,13 +190,14 @@ void propagate_entities(Graph& graph, time_period_t time_period, float spawn_cha
     for (unsigned int i{ 0 }; i < graph.link_counter; ++i)
     {
         float roll{ uniform_distribution_float(0, 1) };
-        if (roll > spawn_chance)
+        if (roll < spawn_chance)
         {
+            std::cout << roll << '\n';
             EntityCircle* from_entity{ graph.entities[graph.links[i][0]] };
             EntityCircle* to_entity{ graph.entities[graph.links[i][1]] };
             if (to_entity->is_paired() && (to_entity->get_partner() == from_entity))
             {
-                std::cout << "Entity is paired, spawning child.\n";
+                std::cout << "Paired entity spawning child.\n";
                 EntityCircle* child_entity{ new (std::nothrow) EntityCircle(
                     static_cast<id_t>(graph.entities.size()), time_period
                 )};
@@ -152,4 +238,5 @@ void propagate_entities(Graph& graph, time_period_t time_period, float spawn_cha
             }
         }
     }
+    std::cout << "Total graph nodes: " << graph.entities.size() << '\n';
 }

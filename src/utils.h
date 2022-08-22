@@ -37,7 +37,7 @@ void link_entities(
 
 
 template <typename Entity_t>
-unsigned int add_semi_random_links(
+unsigned int add_preferential_links(
     const std::vector<Entity_t*>& entities,
     Entity_t* entity,
     id_t links[link_limit][2],
@@ -63,7 +63,9 @@ unsigned int add_semi_random_links(
         entity_iloc = links[link_iloc][0];
     }
 
-    link_entities(entities[entity_iloc], entity, links, counter);
+    Entity_t* link_entity{ entities[entity_iloc] };
+    if (entity->is_linked_to(link_entity)) return entity_iloc;
+    link_entities(link_entity, entity, links, counter);
     return entity_iloc;
 }
 
