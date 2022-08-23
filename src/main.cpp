@@ -17,9 +17,17 @@ extern const int game_height{ 600 };
 extern const int game_width{ 800 };
 constexpr float move_speed{ 200.f };
 
+
+void print_container(const std::vector<int>& c)
+{
+    for (int i : c) {
+        std::cout << i << " ";
+    }
+    std::cout << '\n';
+}
+
 int main()
 {
-
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
     sf::RenderWindow window(sf::VideoMode(game_width, game_height), "Strogatz");

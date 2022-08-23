@@ -24,7 +24,7 @@ struct Graph
 
 
 Graph get_barabasi_albert_graph(
-	time_period_t time_period, float new_edge_prob = 0.1, float rewire_prob = 0.5
+	time_period_t time_period, float new_edge_prob = 0.1f, float rewire_prob = 0.2f
 );
 Graph get_graph(time_period_t time_period);
 void draw_entities(Graph& graph, sf::RenderWindow& window);

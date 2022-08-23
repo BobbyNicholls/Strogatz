@@ -19,12 +19,12 @@ using time_period_t = std::uint_fast16_t;
 id_t generate_id();
 
 
-template <typename e_t>
+template <typename e_t, typename int_t>
 void link_entities(
     e_t* entity_from,
     e_t* entity_to,
     id_t links[link_limit][2],
-    unsigned int& counter
+    int_t& counter
 )
 {
     id_t from_id{ entity_from->get_id() };
@@ -33,40 +33,6 @@ void link_entities(
     entity_to->add_link(entity_from);
     links[counter][0] = from_id;
     links[counter++][1] = to_id;
-}
-
-
-template <typename Entity_t>
-unsigned int add_preferential_links(
-    const std::vector<Entity_t*>& entities,
-    Entity_t* entity,
-    id_t links[link_limit][2],
-    unsigned int& counter
-)
-{
-    /*
-    For now, for `entity` node, just add a link to a node chosen at random weighted by number
-    of existing edges.
-    */
-    unsigned int link_iloc{ 
-        static_cast<unsigned int>(uniform_distribution_int(1, counter*2)) 
-    };
-    unsigned int entity_iloc;
-    if (link_iloc > counter)
-    {
-        link_iloc -= (counter + 1);
-        entity_iloc = links[link_iloc][1];
-    }
-    else
-    {
-        link_iloc -= 1;
-        entity_iloc = links[link_iloc][0];
-    }
-
-    Entity_t* link_entity{ entities[entity_iloc] };
-    if (entity->is_linked_to(link_entity)) return entity_iloc;
-    link_entities(link_entity, entity, links, counter);
-    return entity_iloc;
 }
 
 

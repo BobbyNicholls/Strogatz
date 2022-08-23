@@ -26,6 +26,20 @@ void Entity::add_link(Entity* entity)
 }
 
 
+void Entity::remove_link(Entity* entity, bool first_pass)
+{
+    id_t entity_id{ entity->get_id() };
+
+    for (std::vector<Entity*>::iterator it = m_links.begin(); it != m_links.end(); ++it) {
+        if ((*it)->get_id() == entity_id) {
+            m_links.erase(it);
+            return;
+        }
+    }
+    if(first_pass) entity->remove_link(this, false);
+}
+
+
 void Entity::add_parents(Entity* entity1, Entity* entity2)
 {
     m_parents[0] = entity1;
