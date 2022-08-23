@@ -42,6 +42,18 @@ unsigned int add_preferential_links(
 }
 
 
+void add_random_edge(Graph& graph, int max_entitiy_iloc)
+{
+    int random_entity_iloc{ uniform_distribution_int(0, max_entitiy_iloc) };
+    add_preferential_links(
+        graph.entities,
+        graph.entities[random_entity_iloc],
+        graph.links,
+        graph.link_counter
+    );
+}
+
+
 Graph get_graph(time_period_t time_period)
 {
     Graph graph{};
@@ -139,11 +151,7 @@ void rewire_random_edge(Graph& graph)
 }
 
 
-Graph get_barabasi_albert_graph(
-    time_period_t time_period, 
-    float new_edge_prob, 
-    float rewire_prob
-)
+Graph get_barabasi_albert_graph(time_period_t time_period)
 {
     /*
     For each edge:
@@ -181,17 +189,11 @@ Graph get_barabasi_albert_graph(
             graph.links,
             graph.link_counter
         );
-        if (uniform_distribution_float(0, 1) < new_edge_prob)
+        if (uniform_distribution_float(0, 1) < graph.new_edge_prob)
         {
-            int random_entity_iloc{ uniform_distribution_int(0, i-1) };
-            add_preferential_links(
-                graph.entities,
-                graph.entities[random_entity_iloc],
-                graph.links,
-                graph.link_counter
-            );
+            add_random_edge(graph, i-1);
         }
-        if (uniform_distribution_float(0, 1) < rewire_prob)
+        if (uniform_distribution_float(0, 1) < graph.rewire_prob)
         {
             rewire_random_edge(graph);
         }
@@ -217,7 +219,7 @@ void draw_entities(Graph& graph, sf::RenderWindow& window)
     while (i != graph.entities.size())
     {
         random_move_entity(graph.entities[i]->get_shape());
-        slingshot_move_entity(graph.entities[i]);
+        //slingshot_move_entity(graph.entities[i]);
         window.draw(graph.entities[i++]->get_shape());
     }
 }
@@ -252,13 +254,13 @@ void forward_propagate_beliefs(Graph& graph)
 }
 
 
-void propagate_entities(Graph& graph, time_period_t time_period, float spawn_chance)
+void propagate_entities(Graph& graph, time_period_t time_period)
 {
     std::cout << "Propagating entities...\n\n";
     for (unsigned int i{ 0 }; i < graph.link_counter; ++i)
     {
         float roll{ uniform_distribution_float(0, 1) };
-        if (roll < spawn_chance)
+        if (roll < graph.spawn_chance)
         {
             std::cout << roll << '\n';
             EntityCircle* from_entity{ graph.entities[graph.links[i][0]] };
