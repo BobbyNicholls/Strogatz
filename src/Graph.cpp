@@ -112,6 +112,33 @@ EntityCircle* get_entity_circle(id_t id, time_period_t time_period)
 }
 
 
+void rewire_random_edge(Graph& graph)
+{
+    int random_edge_iloc{ uniform_distribution_int(0, graph.link_counter - 1) };
+    int random_end_iloc{ uniform_distribution_int(0, 1) };
+    // wont always be source! only if random_end_iloc=0
+    unsigned int source_iloc{ graph.links[random_edge_iloc][random_end_iloc] };
+    unsigned int new_target_iloc{ get_preferential_entity_iloc(graph.links, graph.link_counter) };
+    EntityCircle* source{ graph.entities[source_iloc] };
+    EntityCircle* new_target{ graph.entities[new_target_iloc] };
+
+    if ((source_iloc != new_target_iloc) && !new_target->is_linked_to(source))
+    {
+        // 1: remove existing edge
+        id_t old_target_iloc{ graph.links[random_edge_iloc][1 - random_end_iloc] };
+        EntityCircle* old_target{ graph.entities[old_target_iloc] };
+        source->remove_link(old_target);
+        // 2: add new edge
+        link_entities(
+            source,
+            new_target,
+            graph.links,
+            random_edge_iloc
+        );
+    }
+}
+
+
 Graph get_barabasi_albert_graph(
     time_period_t time_period, 
     float new_edge_prob, 
@@ -156,43 +183,17 @@ Graph get_barabasi_albert_graph(
         );
         if (uniform_distribution_float(0, 1) < new_edge_prob)
         {
-            std::cout << "Adding new edge randomly with preference.\n";
-            int random_edge_iloc{ uniform_distribution_int(0, i-1) };
+            int random_entity_iloc{ uniform_distribution_int(0, i-1) };
             add_preferential_links(
                 graph.entities,
-                graph.entities[random_edge_iloc],
+                graph.entities[random_entity_iloc],
                 graph.links,
                 graph.link_counter
             );
         }
         if (uniform_distribution_float(0, 1) < rewire_prob)
         {
-            std::cout << "Rewiring existing edge randomly with preference.\n";
-            int random_edge_iloc{ uniform_distribution_int(0, graph.link_counter-1) };
-            int random_end_iloc{ uniform_distribution_int(0, 1) };
-            // wont always be source! only if random_end_iloc=0
-            unsigned int source_iloc{ graph.links[random_edge_iloc][random_end_iloc] };
-            unsigned int new_target_iloc{ get_preferential_entity_iloc(graph.links, graph.link_counter) };
-            EntityCircle* source{ graph.entities[source_iloc] };
-            EntityCircle* new_target{ graph.entities[new_target_iloc] };
-
-            if ((source_iloc != new_target_iloc) && !new_target->is_linked_to(source))
-            {
-                // 1: remove existing edge
-                std::cout << "Removing existing edge\n";
-                id_t old_target_iloc{ graph.links[random_edge_iloc][1-random_end_iloc] };
-                EntityCircle* old_target{ graph.entities[old_target_iloc] };
-                source->remove_link(old_target);
-                // 2: add new edge
-                std::cout << "Existing edge removed, adding new edge\n";
-                link_entities(
-                    source,
-                    new_target,
-                    graph.links,
-                    random_edge_iloc
-                );
-                std::cout << "New edge added\n";
-            }
+            rewire_random_edge(graph);
         }
         if (link_anchors.contains(entity_iloc))
         {

@@ -6,6 +6,7 @@
 Entity::Entity(id_t id, time_period_t birth_time)
 	:m_id{ id }, m_birth_time{ birth_time }
 {
+    m_links.reserve(5);
     m_beliefs[0][0] = mild_aversion();
     m_beliefs[0][1] = mild_aversion();
     m_beliefs[1][0] = mild_aversion();
