@@ -1,6 +1,7 @@
 // Strogatz.cpp : This file contains the 'main' function.
 
 #include <iostream>
+#include <numeric>
 #include <random>
 #include <set>
 
@@ -16,21 +17,48 @@ extern const int edge_buffer{ 10 };
 extern const int game_height{ 600 };
 extern const int game_width{ 800 };
 constexpr float move_speed{ 200.f };
+constexpr int window_height{ 600 };
+constexpr int window_width{ 800 };
 
 
-void print_container(const std::vector<int>& c)
+bool check_for_double_linkage(Graph& graph)
 {
-    for (int i : c) {
-        std::cout << i << " ";
+    bool return_val { false };
+    id_t link_problems[link_limit][2]{};
+    for (unsigned int i{ 0 }; i < graph.link_counter; ++i) 
+    {
+        id_t a{ graph.links[i][0] };
+        id_t b{ graph.links[i][1] };
+        if (a == b)
+        {
+            link_problems[i][0] = 1;
+            return_val = true;
+        }
+        for (unsigned int j{ i+1 }; j < graph.link_counter; ++j)
+        {
+            id_t a_compare{ graph.links[j][0] };
+            id_t b_compare{ graph.links[j][1] };
+            if ((a == a_compare) && (b == b_compare))
+            {
+                link_problems[i][1] += 1;
+                return_val = true;
+            }
+        }
     }
-    std::cout << '\n';
+    return return_val;
 }
+
 
 int main()
 {
+
+    std::vector<std::array<int, 2>> links(5);
+    //links.resize(5);
+    //std::cout << links[0];
+
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
-    sf::RenderWindow window(sf::VideoMode(game_width, game_height), "Strogatz");
+    sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Strogatz");
     window.setVerticalSyncEnabled(true);
     sf::Text text;
     sf::Font font;
@@ -58,7 +86,7 @@ int main()
                 frame_counter = 0;
                 time_str = time_str.substr(0, 6);
                 text.setString(time_str.append(std::to_string(++time_period_counter)));
-                // we iterate over graphs twice in one frame unnecessarily due to this:
+                // we iterate over links twice in one frame unnecessarily due to this:
                 forward_propagate_beliefs(graph);
                 if (uniform_distribution_float(0,1) < graph.rewire_prob) rewire_random_edge(graph);
                 //add_random_edge(graph, static_cast<int>(graph.entities.size()-1));
@@ -66,6 +94,11 @@ int main()
                 if (time_period_counter % 10 == 0) propagate_entities(
                     graph, time_period_counter
                 );
+
+                if (check_for_double_linkage(graph))
+                {
+                    std::cout << "PROBLEM!";
+                }
 
             }
 

@@ -2,6 +2,10 @@
 #include "EntityCircle.h"
 
 
+extern const int edge_buffer;
+extern const int game_height;
+extern const int game_width;
+
 EntityCircle::EntityCircle(
 	id_t id,
 	time_period_t birth_time,
@@ -37,15 +41,14 @@ void EntityCircle::update_colour()
 			//static_cast<sf::Uint8>((m_beliefs[1][1]/beliefs_sum)*255)
 		)
 	);
-
 }
 
 
 void EntityCircle::set_position_randomly()
 {
 	m_shape.setPosition(
-		uniform_distribution_float(10, 790),
-		uniform_distribution_float(10, 490)
+		uniform_distribution_float(edge_buffer, game_width-edge_buffer),
+		uniform_distribution_float(edge_buffer, game_height-edge_buffer)
 	);
 }
 

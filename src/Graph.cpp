@@ -1,6 +1,13 @@
 #include "Graph.h"
 
 
+float death_sigmoid(int age)
+{
+    if (age > 110) return 1.f;
+    return 1 / (1 + exp(-((age - 85) * 0.3f)));;
+}
+
+
 unsigned int get_preferential_entity_iloc(
     id_t links[link_limit][2],
     unsigned int& counter
@@ -36,6 +43,7 @@ unsigned int add_preferential_links(
     */
     unsigned int entity_iloc{ get_preferential_entity_iloc(links, counter) };
     Entity_t* chosen_entity{ entities[entity_iloc] };
+    if (chosen_entity->get_id() == entity->get_id()) return entity_iloc;
     if (entity->is_linked_to(chosen_entity)) return entity_iloc;
     link_entities(chosen_entity, entity, links, counter);
     return entity_iloc;

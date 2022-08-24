@@ -24,7 +24,8 @@
 - Multiple graphs.
 - Graph migration.
 - Make it so we dont loop through entities and links multiple times unnecessarily.
-- Split rendering and event handling out in to seperate threads.
+- Split rendering and event handling out in to seperate threads: 
+	https://www.sfml-dev.org/tutorials/2.5/graphics-draw.php#drawing-from-threads
 - Data representation of networks.
 - Meaningful visual entity representation.
 - Entity AI.
