@@ -11,7 +11,7 @@
 #include "utils.h"
 
 
-const int entities_start_size{ 40 };
+const int entities_start_size{ 50 };
 const int entities_reserve_limit{ 200 };
 
 
@@ -20,9 +20,9 @@ struct Graph
 	std::vector<EntityCircle*> entities;
 	id_t links[link_limit][2];
 	unsigned int link_counter{ 0 };
-	float rewire_prob{ 0.2f };
-	float new_edge_prob{ 0.1f };
-	float spawn_chance{ 0.6f };
+	float rewire_prob{ 0.15f };
+	float new_edge_prob{ 0.15f };
+	float spawn_chance{ 0.07f };
 };
 
 

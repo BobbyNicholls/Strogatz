@@ -90,6 +90,9 @@ void rewire_random_edge(Graph& graph)
             graph.links,
             random_edge_iloc
         );
+        // TODO: replace these with a smooth move to destination function
+        old_target->set_position_relative_to_links();
+        source->set_position_relative_to_links();
     }
 }
 
@@ -199,20 +202,19 @@ void forward_propagate_beliefs(Graph& graph)
 
 void propagate_entities(Graph& graph, time_period_t time_period)
 {
-    std::cout << "Propagating entities...\n\n";
     for (unsigned int i{ 0 }; i < graph.link_counter; ++i)
     {
         float roll{ uniform_distribution_float(0, 1) };
         if (roll < graph.spawn_chance)
         {
-            std::cout << roll << '\n';
             EntityCircle* from_entity{ graph.entities[graph.links[i][0]] };
             EntityCircle* to_entity{ graph.entities[graph.links[i][1]] };
             if (to_entity->is_paired() && (to_entity->get_partner() == from_entity))
             {
                 std::cout << "Paired entity spawning child.\n";
-                // BUGGED!
-                EntityCircle* child_entity{ get_entity_circle(i, time_period) };
+                EntityCircle* child_entity{ get_entity_circle(
+                    static_cast<id_t>(graph.entities.size()-1), time_period
+                )};
                 graph.entities.push_back(child_entity);
                 from_entity->add_child(child_entity);
                 to_entity->add_child(child_entity);

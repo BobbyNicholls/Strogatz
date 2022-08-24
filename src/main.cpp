@@ -60,7 +60,7 @@ int main()
                 text.setString(time_str.append(std::to_string(++time_period_counter)));
                 // we iterate over graphs twice in one frame unnecessarily due to this:
                 forward_propagate_beliefs(graph);
-                rewire_random_edge(graph);
+                if (uniform_distribution_float(0,1) < graph.rewire_prob) rewire_random_edge(graph);
                 //add_random_edge(graph, static_cast<int>(graph.entities.size()-1));
 
                 if (time_period_counter % 10 == 0) propagate_entities(
