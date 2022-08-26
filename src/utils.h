@@ -10,7 +10,7 @@ extern const int edge_buffer;
 extern const int game_height;
 extern const int game_width;
 
-const int link_limit{ 1000 };
+const int link_limit{ 1000 }; // move this to Graph.h
 
 using id_t = std::uint_fast32_t;
 using time_period_t = std::uint_fast16_t;

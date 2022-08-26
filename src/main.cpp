@@ -52,10 +52,6 @@ bool check_for_double_linkage(Graph& graph)
 int main()
 {
 
-    std::vector<std::array<int, 2>> links(5);
-    //links.resize(5);
-    //std::cout << links[0];
-
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
     sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Strogatz");

@@ -124,6 +124,12 @@ Graph get_barabasi_albert_graph(time_period_t time_period)
     graph.entities[0] = get_entity_circle(0, time_period);
     graph.entities[0]->set_position_randomly();
     graph.entities[1] = get_entity_circle(1, time_period);
+
+
+    graph.links_v.reserve(link_limit);
+    graph.links_v.push_back(new Link{ graph.entities[0], graph.entities[1] });
+
+
     link_entities(
         graph.entities[0],
         graph.entities[1],

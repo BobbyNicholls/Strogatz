@@ -15,10 +15,17 @@ const int entities_start_size{ 50 };
 const int entities_reserve_limit{ 200 };
 
 
+struct Link
+{
+	EntityCircle* from{ nullptr };
+	EntityCircle* to{ nullptr };
+};
+
+
 struct Graph
 {
 	std::vector<EntityCircle*> entities;
-	id_t links[link_limit][2];
+	std::vector<Link*> links;
 	unsigned int link_counter{ 0 };
 	float rewire_prob{ 0.15f };
 	float new_edge_prob{ 0.15f };
