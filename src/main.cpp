@@ -23,29 +23,28 @@ constexpr int window_width{ 800 };
 
 bool check_for_double_linkage(Graph& graph)
 {
-    bool return_val { false };
-    id_t link_problems[link_limit][2]{};
-    for (unsigned int i{ 0 }; i < graph.link_counter; ++i) 
+    //id_t link_problems[link_limit][2]{};
+    for (size_t i{0}; i < graph.links.size(); ++i)
     {
-        id_t a{ graph.links[i][0] };
-        id_t b{ graph.links[i][1] };
+        EntityCircle* a{ graph.links[i]->from };
+        EntityCircle* b{ graph.links[i]->to };
         if (a == b)
         {
-            link_problems[i][0] = 1;
-            return_val = true;
+            std::cout << "self linkage";
+            return true;
         }
-        for (unsigned int j{ i+1 }; j < graph.link_counter; ++j)
+        for (size_t j{ i+1 }; j < graph.links.size(); ++j)
         {
-            id_t a_compare{ graph.links[j][0] };
-            id_t b_compare{ graph.links[j][1] };
+            EntityCircle* a_compare{ graph.links[j]->from };
+            EntityCircle* b_compare{ graph.links[j]->to };
             if ((a == a_compare) && (b == b_compare))
             {
-                link_problems[i][1] += 1;
-                return_val = true;
+                std::cout << "repeat links";
+                return true;
             }
         }
     }
-    return return_val;
+    return false;
 }
 
 

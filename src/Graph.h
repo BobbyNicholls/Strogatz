@@ -13,6 +13,7 @@
 
 const int entities_start_size{ 50 };
 const int entities_reserve_limit{ 200 };
+const int link_limit{ 1000 };
 
 
 struct Link
@@ -26,7 +27,6 @@ struct Graph
 {
 	std::vector<EntityCircle*> entities;
 	std::vector<Link*> links;
-	unsigned int link_counter{ 0 };
 	float rewire_prob{ 0.15f };
 	float new_edge_prob{ 0.15f };
 	float spawn_chance{ 0.07f };
@@ -34,7 +34,6 @@ struct Graph
 
 
 Graph get_barabasi_albert_graph(time_period_t time_period);
-Graph get_graph(time_period_t time_period);
 void add_random_edge(Graph& graph, int max_entitiy_iloc);
 void draw_entities(Graph& graph, sf::RenderWindow& window);
 void draw_links(Graph& graph, sf::RenderWindow& window);

@@ -8,57 +8,58 @@ float death_sigmoid(int age)
 }
 
 
-unsigned int get_preferential_entity_iloc(
-    id_t links[link_limit][2],
-    unsigned int& counter
-)
+EntityCircle* get_preferential_entity(Graph& graph)
 {
-    unsigned int link_iloc{
-        static_cast<unsigned int>(uniform_distribution_int(1, counter * 2))
-    };
-    if (link_iloc > counter)
+    int links_vector_size{ static_cast<int>(graph.links.size()) };
+    int link_iloc{ uniform_distribution_int(1, links_vector_size * 2) };
+    if (link_iloc > links_vector_size)
     {
-        link_iloc -= (counter + 1);
-        return links[link_iloc][1];
+        link_iloc -= (links_vector_size + 1);
+        return graph.links[link_iloc]->to;
     }
     else
     {
         link_iloc -= 1;
-        return links[link_iloc][0];
+        return graph.links[link_iloc]->from;
     }
 }
 
 
 template <typename Entity_t>
-unsigned int add_preferential_links(
-    const std::vector<Entity_t*>& entities,
-    Entity_t* entity,
-    id_t links[link_limit][2],
-    unsigned int& counter
+void link_entities(
+    Graph& graph,
+    Entity_t* entity_from,
+    Entity_t* entity_to
+)
+{
+    entity_from->add_link(entity_to);
+    entity_to->add_link(entity_from);
+    graph.links.push_back(new Link{ entity_from, entity_to });
+}
+
+
+template <typename Entity_t>
+Entity_t* add_preferential_links(
+    Graph& graph,
+    Entity_t* entity
 )
 {
     /*
     For now, for `entity` node, just add a link to a node chosen at random weighted by number
     of existing edges.
     */
-    unsigned int entity_iloc{ get_preferential_entity_iloc(links, counter) };
-    Entity_t* chosen_entity{ entities[entity_iloc] };
-    if (chosen_entity->get_id() == entity->get_id()) return entity_iloc;
-    if (entity->is_linked_to(chosen_entity)) return entity_iloc;
-    link_entities(chosen_entity, entity, links, counter);
-    return entity_iloc;
+    Entity_t* chosen_entity{ get_preferential_entity(graph) };
+    if (chosen_entity == entity) return chosen_entity;
+    if (entity->is_linked_to(chosen_entity)) return chosen_entity;
+    link_entities(graph, chosen_entity, entity);
+    return chosen_entity;
 }
 
 
 void add_random_edge(Graph& graph, int max_entitiy_iloc)
 {
     int random_entity_iloc{ uniform_distribution_int(0, max_entitiy_iloc) };
-    add_preferential_links(
-        graph.entities,
-        graph.entities[random_entity_iloc],
-        graph.links,
-        graph.link_counter
-    );
+    add_preferential_links(graph, graph.entities[random_entity_iloc]);
 }
 
 
@@ -77,30 +78,26 @@ EntityCircle* get_entity_circle(id_t id, time_period_t time_period)
 
 void rewire_random_edge(Graph& graph)
 {
-    int random_edge_iloc{ uniform_distribution_int(0, graph.link_counter - 1) };
+    int random_edge_iloc{ uniform_distribution_int(0, static_cast<int>(graph.links.size()) - 1)};
     int random_end_iloc{ uniform_distribution_int(0, 1) };
-    // wont always be source! only if random_end_iloc=0
-    unsigned int source_iloc{ graph.links[random_edge_iloc][random_end_iloc] };
-    unsigned int new_target_iloc{ get_preferential_entity_iloc(graph.links, graph.link_counter) };
-    EntityCircle* source{ graph.entities[source_iloc] };
-    EntityCircle* new_target{ graph.entities[new_target_iloc] };
 
-    if ((source_iloc != new_target_iloc) && !new_target->is_linked_to(source))
+    EntityCircle* pivot_entity{
+        random_end_iloc ? graph.links[random_edge_iloc]->to : graph.links[random_edge_iloc]->from
+    };
+    EntityCircle* old_target{
+        !random_end_iloc ? graph.links[random_edge_iloc]->to : graph.links[random_edge_iloc]->from
+    };
+    EntityCircle* new_target{ get_preferential_entity(graph) };
+
+    if ((pivot_entity != new_target) && 
+        !(new_target->is_linked_to(pivot_entity)) && 
+        (new_target != old_target))
     {
-        // 1: remove existing edge
-        id_t old_target_iloc{ graph.links[random_edge_iloc][1 - random_end_iloc] };
-        EntityCircle* old_target{ graph.entities[old_target_iloc] };
-        source->remove_link(old_target);
-        // 2: add new edge
-        link_entities(
-            source,
-            new_target,
-            graph.links,
-            random_edge_iloc
-        );
+        pivot_entity->remove_link(old_target);
+        link_entities(graph, pivot_entity, new_target);
         // TODO: replace these with a smooth move to destination function
         old_target->set_position_relative_to_links();
-        source->set_position_relative_to_links();
+        pivot_entity->set_position_relative_to_links();
     }
 }
 
@@ -116,55 +113,40 @@ Graph get_barabasi_albert_graph(time_period_t time_period)
      preferentially
     */
     Graph graph{};
-    std::set<unsigned int> link_anchors{ 0 };
-    unsigned int entity_iloc;
-    graph.entities.resize(entities_start_size); // initialise on creation??
     graph.entities.reserve(entities_reserve_limit);
+    graph.links.reserve(link_limit);
 
-    graph.entities[0] = get_entity_circle(0, time_period);
+    graph.entities.push_back(get_entity_circle(0, time_period));
     graph.entities[0]->set_position_randomly();
-    graph.entities[1] = get_entity_circle(1, time_period);
+    graph.entities.push_back(get_entity_circle(1, time_period));
+    graph.entities[1]->set_position_relative_to_links();
 
+    link_entities(graph, graph.entities[0], graph.entities[1]);
 
-    graph.links_v.reserve(link_limit);
-    graph.links_v.push_back(new Link{ graph.entities[0], graph.entities[1] });
-
-
-    link_entities(
-        graph.entities[0],
-        graph.entities[1],
-        graph.links,
-        graph.link_counter
-    );
-
+    EntityCircle* chosen_entity{ nullptr };
+    std::set<EntityCircle*> link_anchors{ graph.entities[0] };
     for (int i{ 2 }; i < entities_start_size; ++i)
     {
-
-        graph.entities[i] = get_entity_circle(i, time_period);
-
+        EntityCircle* new_entity{ get_entity_circle(i, time_period) };
+        graph.entities.push_back(new_entity);
         // todo: make a set of non-anchors then make it less likely to attch to those?
-        entity_iloc = add_preferential_links(
-            graph.entities,
-            graph.entities[i],
-            graph.links,
-            graph.link_counter
-        );
+        chosen_entity = add_preferential_links(graph, new_entity);
         if (uniform_distribution_float(0, 1) < graph.new_edge_prob)
         {
-            add_random_edge(graph, i-1);
+            add_random_edge(graph, static_cast<int>(graph.entities.size()) - 1);
         }
         if (uniform_distribution_float(0, 1) < graph.rewire_prob)
         {
             rewire_random_edge(graph);
         }
-        if (link_anchors.contains(entity_iloc))
+        if (link_anchors.contains(chosen_entity))
         {
-            graph.entities[i]->set_position_relative_to_links();
+            new_entity->set_position_relative_to_links();
         }
         else
         {
-            graph.entities[i]->set_position_randomly();
-            link_anchors.insert(i);
+            new_entity->set_position_randomly();
+            link_anchors.insert(new_entity);
         }
     }
 
@@ -187,12 +169,12 @@ void draw_entities(Graph& graph, sf::RenderWindow& window)
 
 void draw_links(Graph& graph, sf::RenderWindow& window)
 {
-    for (unsigned int i{ 0 }; i < graph.link_counter; ++i)
+    for (Link* link: graph.links)
     {
-        sf::Vector2f pos0{ graph.entities[graph.links[i][0]]->get_shape().getPosition() };
-        sf::Vector2f pos1{ graph.entities[graph.links[i][1]]->get_shape().getPosition() };
-        float radius0{ graph.entities[graph.links[i][0]]->get_radius() };
-        float radius1{ graph.entities[graph.links[i][0]]->get_radius() };
+        sf::Vector2f pos0{ link->from->get_shape().getPosition() };
+        sf::Vector2f pos1{ link->to->get_shape().getPosition() };
+        float radius0{ link->from->get_radius() };
+        float radius1{ link->to->get_radius() };
         sf::Vertex line[2]{
             sf::Vertex(sf::Vector2f(pos0.x + radius0, pos0.y + radius0)),
             sf::Vertex(sf::Vector2f(pos1.x + radius1, pos1.y + radius1))
@@ -204,47 +186,35 @@ void draw_links(Graph& graph, sf::RenderWindow& window)
 
 void forward_propagate_beliefs(Graph& graph)
 {
-    for (unsigned int i{ 0 }; i < graph.link_counter; ++i)
+    for (Link* link : graph.links)
     {
-        graph.entities[graph.links[i][1]]->update_beliefs(
-            graph.entities[graph.links[i][0]]
-        );
-        graph.entities[graph.links[i][1]]->update_colour();
+        link->to->update_beliefs(link->from);
+        link->to->update_colour();
     }
 }
 
 
 void propagate_entities(Graph& graph, time_period_t time_period)
 {
-    for (unsigned int i{ 0 }; i < graph.link_counter; ++i)
+    for (Link* link : graph.links)
     {
         float roll{ uniform_distribution_float(0, 1) };
         if (roll < graph.spawn_chance)
         {
-            EntityCircle* from_entity{ graph.entities[graph.links[i][0]] };
-            EntityCircle* to_entity{ graph.entities[graph.links[i][1]] };
+            EntityCircle* from_entity{ link->from };
+            EntityCircle* to_entity{ link->to };
             if (to_entity->is_paired() && (to_entity->get_partner() == from_entity))
             {
                 std::cout << "Paired entity spawning child.\n";
                 EntityCircle* child_entity{ get_entity_circle(
-                    static_cast<id_t>(graph.entities.size()-1), time_period
+                    static_cast<id_t>(graph.entities.size()), time_period
                 )};
                 graph.entities.push_back(child_entity);
                 from_entity->add_child(child_entity);
                 to_entity->add_child(child_entity);
                 child_entity->add_parents(from_entity, to_entity);
-                link_entities(
-                    from_entity,
-                    child_entity,
-                    graph.links,
-                    graph.link_counter
-                );
-                link_entities(
-                    to_entity,
-                    child_entity,
-                    graph.links,
-                    graph.link_counter
-                );
+                link_entities(graph, from_entity, child_entity);
+                link_entities(graph, to_entity, child_entity);
                 child_entity->set_position_relative_to_links();
             }
 

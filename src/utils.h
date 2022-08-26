@@ -10,30 +10,12 @@ extern const int edge_buffer;
 extern const int game_height;
 extern const int game_width;
 
-const int link_limit{ 1000 }; // move this to Graph.h
 
 using id_t = std::uint_fast32_t;
 using time_period_t = std::uint_fast16_t;
 
 
 id_t generate_id();
-
-
-template <typename e_t, typename int_t>
-void link_entities(
-    e_t* entity_from,
-    e_t* entity_to,
-    id_t links[link_limit][2],
-    int_t& counter
-)
-{
-    id_t from_id{ entity_from->get_id() };
-    id_t to_id{ entity_to->get_id() };
-    entity_from->add_link(entity_to);
-    entity_to->add_link(entity_from);
-    links[counter][0] = from_id;
-    links[counter++][1] = to_id;
-}
 
 
 template <typename Shape_t>

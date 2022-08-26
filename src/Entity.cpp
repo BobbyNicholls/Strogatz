@@ -29,10 +29,8 @@ void Entity::add_link(Entity* entity)
 
 void Entity::remove_link(Entity* entity, bool first_pass)
 {
-    id_t entity_id{ entity->get_id() };
-
     for (std::vector<Entity*>::iterator it = m_links.begin(); it != m_links.end(); ++it) {
-        if ((*it)->get_id() == entity_id) {
+        if (*it == entity) {
             m_links.erase(it);
             return;
         }
@@ -60,7 +58,7 @@ bool Entity::is_linked_to(Entity* entity) const
 {
     for (Entity* link : m_links)
     {
-        if (entity->m_id == link->m_id)
+        if (entity == link)
         {
             return true;
         }
