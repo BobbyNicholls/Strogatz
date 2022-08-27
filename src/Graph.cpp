@@ -1,4 +1,5 @@
 #include "Graph.h"
+#include "Text.h"
 
 
 float death_sigmoid(int age)
@@ -53,6 +54,7 @@ void add_random_edge(Graph& graph, int max_entitiy_iloc)
 {
     int random_entity_iloc{ uniform_distribution_int(0, max_entitiy_iloc) };
     add_preferential_links(graph, graph.entities[random_entity_iloc]);
+    std::cout << "random edge added, there are now " << graph.links.size() << " edges" << '\n';
 }
 
 
@@ -124,10 +126,10 @@ Graph get_barabasi_albert_graph(time_period_t time_period)
         graph.entities.push_back(new_entity);
         // todo: make a set of non-anchors then make it less likely to attch to those?
         chosen_entity = add_preferential_links(graph, new_entity);
-        if (uniform_distribution_float(0, 1) < graph.new_edge_prob)
-        {
-            add_random_edge(graph, static_cast<int>(graph.entities.size()) - 2);
-        }
+        //if (uniform_distribution_float(0, 1) < graph.new_edge_prob)
+        //{
+        //    add_random_edge(graph, static_cast<int>(graph.entities.size()) - 1);
+        //}
         if (uniform_distribution_float(0, 1) < graph.rewire_prob)
         {
             rewire_random_edge(graph); // BUGGED: causes repeat edges
@@ -146,27 +148,35 @@ Graph get_barabasi_albert_graph(time_period_t time_period)
     return graph;
 }
 
-#include "Text.h"
+
 void draw_entities(Graph& graph, sf::RenderWindow& window)
 {
+    sf::CircleShape shape;
     int i{ 0 };
     window.draw(graph.entities[i++]->get_shape());
-    for (EntityCircle* entity: graph.entities)
+    while (i != graph.entities.size())
     {
-        random_move_entity(entity->get_shape());
+        shape = graph.entities[i]->get_shape();
+        if (isnan(shape.getPosition().x))
+        {
+            std::cout << i << " isnan\n";
+        }
+        random_move_entity(shape);
         //slingshot_move_entity(entity);
-        window.draw(entity->get_shape());
+        window.draw(shape);
+        sf::Vector2f text_pos{ shape.getPosition() };
         sf::Text text;
         sf::Font font;
         get_text(
-            std::to_string(entity->get_id()), 
-            text, 
-            font, 
+            std::to_string(graph.entities[i]->get_id()),
+            text,
+            font,
             20,
-            entity->get_shape().getPosition().x, 
-            entity->get_shape().getPosition().y
+            text_pos.x,
+            text_pos.y
         );
         window.draw(text);
+        ++i;
     }
 ;
 

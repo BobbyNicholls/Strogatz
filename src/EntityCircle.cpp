@@ -61,16 +61,23 @@ void EntityCircle::set_position_relative_to_links(int offset)
 	*/
 	float x_sum{ 0 };
 	float y_sum{ 0 };
-	for (auto* link : m_links)
+	if (m_links.size() > 0)
 	{
-		EntityCircle* link_ec_t{ static_cast<EntityCircle*>(link) };
-		const sf::Vector2f& link_pos{ link_ec_t->get_shape().getPosition() };
-		x_sum += link_pos.x;
-		y_sum += link_pos.y;
-	}
+		for (auto* link : m_links)
+		{
+			EntityCircle* link_ec_t{ static_cast<EntityCircle*>(link) };
+			const sf::Vector2f& link_pos{ link_ec_t->get_shape().getPosition() };
+			x_sum += link_pos.x;
+			y_sum += link_pos.y;
+		}
 
-	m_shape.setPosition(
-		(x_sum / m_links.size()) + uniform_distribution_float(-offset, offset),
-		(y_sum / m_links.size()) + uniform_distribution_float(-offset, offset)
-	);
+		m_shape.setPosition(
+			(x_sum / m_links.size()) + uniform_distribution_float(-offset, offset),
+			(y_sum / m_links.size()) + uniform_distribution_float(-offset, offset)
+		);
+	}
+	else
+	{
+		set_position_randomly();
+	}
 }

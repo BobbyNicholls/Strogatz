@@ -87,7 +87,7 @@ int main()
                 // we iterate over links twice in one frame unnecessarily due to this:
                 forward_propagate_beliefs(graph);
                 if (uniform_distribution_float(0,1) < graph.rewire_prob) rewire_random_edge(graph);
-                add_random_edge(graph, static_cast<int>(graph.entities.size()-2));
+                //add_random_edge(graph, static_cast<int>(graph.entities.size()-1));
 
                 if (time_period_counter % 10 == 0) propagate_entities(
                     graph, time_period_counter
@@ -96,11 +96,6 @@ int main()
                 if (check_for_double_linkage(graph))
                 {
                     std::cout << "PROBLEM!\n";
-                }
-
-                if (time_period_counter == 120)
-                {
-                    std::cout << "stop";
                 }
 
             }
