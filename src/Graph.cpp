@@ -54,7 +54,6 @@ void add_random_edge(Graph& graph, int max_entitiy_iloc)
 {
     int random_entity_iloc{ uniform_distribution_int(0, max_entitiy_iloc) };
     add_preferential_links(graph, graph.entities[random_entity_iloc]);
-    std::cout << "random edge added, there are now " << graph.links.size() << " edges" << '\n';
 }
 
 
@@ -126,10 +125,10 @@ Graph get_barabasi_albert_graph(time_period_t time_period)
         graph.entities.push_back(new_entity);
         // todo: make a set of non-anchors then make it less likely to attch to those?
         chosen_entity = add_preferential_links(graph, new_entity);
-        //if (uniform_distribution_float(0, 1) < graph.new_edge_prob)
-        //{
-        //    add_random_edge(graph, static_cast<int>(graph.entities.size()) - 1);
-        //}
+        if (uniform_distribution_float(0, 1) < graph.new_edge_prob)
+        {
+            add_random_edge(graph, static_cast<int>(graph.entities.size()) - 1);
+        }
         if (uniform_distribution_float(0, 1) < graph.rewire_prob)
         {
             rewire_random_edge(graph); // BUGGED: causes repeat edges
@@ -157,25 +156,9 @@ void draw_entities(Graph& graph, sf::RenderWindow& window)
     while (i != graph.entities.size())
     {
         shape = graph.entities[i]->get_shape();
-        if (isnan(shape.getPosition().x))
-        {
-            std::cout << i << " isnan\n";
-        }
         random_move_entity(shape);
         //slingshot_move_entity(entity);
         window.draw(shape);
-        sf::Vector2f text_pos{ shape.getPosition() };
-        sf::Text text;
-        sf::Font font;
-        get_text(
-            std::to_string(graph.entities[i]->get_id()),
-            text,
-            font,
-            20,
-            text_pos.x,
-            text_pos.y
-        );
-        window.draw(text);
         ++i;
     }
 ;

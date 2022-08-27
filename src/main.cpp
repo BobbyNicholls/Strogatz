@@ -68,7 +68,7 @@ int main()
     constexpr float time_step{ 1.0f / 60.0f };
     time_period_t time_period_counter{ 0 };
     unsigned int frame_counter{ 0 };
-    constexpr unsigned int frames_per_period{ 6 };
+    constexpr unsigned int frames_per_period{ 60 };
 
     Graph graph{ get_barabasi_albert_graph(time_period_counter) };
 
@@ -86,17 +86,13 @@ int main()
                 text.setString(time_str.append(std::to_string(++time_period_counter)));
                 // we iterate over links twice in one frame unnecessarily due to this:
                 forward_propagate_beliefs(graph);
-                if (uniform_distribution_float(0,1) < graph.rewire_prob) rewire_random_edge(graph);
-                //add_random_edge(graph, static_cast<int>(graph.entities.size()-1));
+                if (uniform_distribution_float(0, 1) < graph.rewire_prob) rewire_random_edge(graph);
+                if (uniform_distribution_float(0, 1) < graph.new_edge_prob)
+                    add_random_edge(graph, static_cast<int>(graph.entities.size() - 1));
 
                 if (time_period_counter % 10 == 0) propagate_entities(
                     graph, time_period_counter
                 );
-
-                if (check_for_double_linkage(graph))
-                {
-                    std::cout << "PROBLEM!\n";
-                }
 
             }
 
@@ -107,7 +103,7 @@ int main()
             // window.display(), so has no immediate impact)
             window.clear(sf::Color::Black);
             keyboard_move_entity(graph.entities[0]->get_shape(), move_speed, time_counter);
-            draw_links(graph, window);
+            //draw_links(graph, window);
             draw_entities(graph, window);
             // The pollEvent function returns true if an event was pending, or 
             // false if there was none.
