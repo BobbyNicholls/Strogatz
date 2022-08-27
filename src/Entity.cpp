@@ -3,8 +3,8 @@
 #include "Entity.h"
 
 
-Entity::Entity(id_t id, time_period_t birth_time)
-	:m_id{ id }, m_birth_time{ birth_time }
+Entity::Entity(time_period_t birth_time)
+	:m_id{ generate_id() }, m_birth_time{ birth_time }
 {
     m_links.reserve(5);
     m_beliefs[0][0] = mild_aversion();

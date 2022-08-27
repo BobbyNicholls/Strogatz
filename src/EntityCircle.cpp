@@ -7,13 +7,12 @@ extern const int game_height;
 extern const int game_width;
 
 EntityCircle::EntityCircle(
-	id_t id,
 	time_period_t birth_time,
 	float radius,
 	float outline_thickness, 
 	sf::Color outline_colour
 )
-	: Entity{ id, birth_time },
+	: Entity{ birth_time },
 	m_radius{ radius },
 	m_outline_thickness{ outline_thickness }, 
 	m_outline_colour{ outline_colour }
@@ -82,8 +81,4 @@ void EntityCircle::set_position_relative_to_links(int offset)
 	}
 
 	sf::Vector2f pos{ m_shape.getPosition() };
-	if (pos.x < 0)
-	{
-		std::cout << "Problem, pos1x is: " << pos.x << '\n';
-	}
 }

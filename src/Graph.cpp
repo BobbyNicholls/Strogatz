@@ -1,5 +1,4 @@
 #include "Graph.h"
-#include "Text.h"
 
 
 float death_sigmoid(int age)
@@ -15,11 +14,11 @@ void kill_entities(Graph& graph, time_period_t time_period)
     for (int i{ 1 }; i<graph.entities.size(); ++i)
     {
         if (graph.entities[i] && (uniform_distribution_float(0, 1) <
-            death_sigmoid(static_cast<int>(time_period/10) - graph.entities[i]->get_birth_time())))
+            death_sigmoid(static_cast<int>((time_period - graph.entities[i]->get_birth_time()) / 10))))
         {
             dead_entity = graph.entities[i];
-            std::cout << "Entity " << dead_entity->get_id() << " has been killed\n";
-            // delete entries in `links` list
+            std::cout << "Entity " << dead_entity->get_id() << " has died.\n";
+            // delete entries in `links` list containing `dead_entity`
             graph.links.erase(std::remove_if(
                 graph.links.begin(), graph.links.end(),
                 [dead_entity](Link* link) {
@@ -35,7 +34,7 @@ void kill_entities(Graph& graph, time_period_t time_period)
             delete dead_entity;
         }
     }
-    std::cout << "entity death loop finished..\n";
+    tidy_up_entities(graph);
 }
 
 
@@ -46,7 +45,6 @@ void tidy_up_entities(Graph& graph)
         [](EntityCircle* entity) {
             return (!entity);
         }), graph.entities.end());
-    std::cout << "Tidied up entities";
 }
 
 
@@ -98,12 +96,13 @@ void add_random_edge(Graph& graph, int max_entitiy_iloc)
     {
         add_preferential_links(graph, graph.entities[random_entity_iloc]);
     }
+    graph.entities[random_entity_iloc]->set_position_relative_to_links();
 }
 
 
-EntityCircle* get_entity_circle(id_t id, time_period_t time_period)
+EntityCircle* get_entity_circle(time_period_t time_period)
 {
-    EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle(id, time_period) };
+    EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle(time_period) };
     if (!entity_pointer) // handle case where new returned null
     {
         // TODO: error handling here
@@ -155,8 +154,8 @@ Graph get_barabasi_albert_graph(time_period_t time_period)
     graph.entities.reserve(entities_reserve_limit);
     graph.links.reserve(link_limit);
 
-    graph.entities.push_back(get_entity_circle(0, time_period));
-    graph.entities.push_back(get_entity_circle(1, time_period));
+    graph.entities.push_back(get_entity_circle(time_period));
+    graph.entities.push_back(get_entity_circle(time_period));
     link_entities(graph, graph.entities[0], graph.entities[1]);
     graph.entities[0]->set_position_randomly();
     graph.entities[1]->set_position_relative_to_links();
@@ -165,7 +164,7 @@ Graph get_barabasi_albert_graph(time_period_t time_period)
     std::set<EntityCircle*> link_anchors{ graph.entities[0] };
     for (int i{ 2 }; i < entities_start_size; ++i)
     {
-        EntityCircle* new_entity{ get_entity_circle(i, time_period) };
+        EntityCircle* new_entity{ get_entity_circle(time_period) };
         graph.entities.push_back(new_entity);
         // todo: make a set of non-anchors then make it less likely to attch to those?
         chosen_entity = add_preferential_links(graph, new_entity);
@@ -175,7 +174,7 @@ Graph get_barabasi_albert_graph(time_period_t time_period)
         }
         if (uniform_distribution_float(0, 1) < graph.rewire_prob)
         {
-            rewire_random_edge(graph); // BUGGED: causes repeat edges
+            rewire_random_edge(graph);
         }
         if (link_anchors.contains(chosen_entity))
         {
@@ -221,14 +220,6 @@ void draw_links(Graph& graph, sf::RenderWindow& window)
         sf::Vector2f pos1{ link->to->get_shape().getPosition() };
         float radius0{ link->from->get_radius() };
         float radius1{ link->to->get_radius() };
-        if (pos0.x < 0)
-        {
-            std::cout << "Problem, pos0x is: " << pos0.x << '\n';
-        }
-        if (pos1.x < 0)
-        {
-            std::cout << "Problem, pos1x is: " << pos0.x << '\n';
-        }
         sf::Vertex line[2]{
             sf::Vertex(sf::Vector2f(pos0.x + radius0, pos0.y + radius0)),
             sf::Vertex(sf::Vector2f(pos1.x + radius1, pos1.y + radius1))
@@ -258,17 +249,16 @@ void propagate_entities(Graph& graph, time_period_t time_period)
             EntityCircle* to_entity{ link->to };
             if (to_entity->is_paired() && (to_entity->get_partner() == from_entity))
             {
-                std::cout << "Paired entity spawning child.\n";
-                EntityCircle* child_entity{ get_entity_circle(
-                    static_cast<id_t>(graph.entities.size()), time_period
-                )};
+                EntityCircle* child_entity{ get_entity_circle(time_period)};
+                std::cout << "Paired entities spawned a child: " << 
+                    child_entity->get_id() << '\n';
                 graph.entities.push_back(child_entity);
                 from_entity->add_child(child_entity);
                 to_entity->add_child(child_entity);
                 child_entity->add_parents(from_entity, to_entity);
                 link_entities(graph, from_entity, child_entity);
                 link_entities(graph, to_entity, child_entity);
-                child_entity->set_position_relative_to_links();
+                child_entity->set_position_randomly();
             }
 
             else if (
@@ -276,7 +266,7 @@ void propagate_entities(Graph& graph, time_period_t time_period)
                 (from_entity->get_sex() != to_entity->get_sex())
                 )
             {
-                std::cout << "Unpaired Entity found match, pairing entities.\n";
+                std::cout << "Unpaired Entities matched\n";
                 to_entity->add_partner(from_entity);
             }
         }

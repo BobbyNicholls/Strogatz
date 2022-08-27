@@ -42,7 +42,7 @@ protected:
 	float m_beliefs[2][2];
 
 public:
-	Entity(id_t id, time_period_t birth_time);
+	Entity(time_period_t birth_time);
 
 	time_period_t get_birth_time() const { return m_birth_time; }
 	id_t get_id() const { return m_id; }
