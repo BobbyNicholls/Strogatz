@@ -20,6 +20,7 @@
 # To do:
 - Entity propagation and death.
 - Clique formation and graph evolution with belief checking.
+- Make graph a class.
 - Refactor and functionalise main.
 - Multiple graphs.
 - Graph migration.

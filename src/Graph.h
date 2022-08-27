@@ -11,8 +11,8 @@
 #include "utils.h"
 
 
-const int entities_start_size{ 400 };
-const int entities_reserve_limit{ 1000 };
+const int entities_start_size{ 40 };
+const int entities_reserve_limit{ 400 };
 const int link_limit{ 3000 };
 
 

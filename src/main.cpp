@@ -51,6 +51,29 @@ bool check_for_double_linkage(Graph& graph)
 }
 
 
+bool check_for_entity_position_bug(Graph& graph)
+{
+    for (EntityCircle* entity: graph.entities)
+    {
+        if (entity)
+        {
+            sf::Vector2f pos{ entity->get_shape().getPosition()};
+            if (pos.x < 0)
+            {
+                std::cout << "Problem, pos x is: " << pos.x << '\n';
+                return true;
+            }
+            else if (pos.y < 0)
+            {
+                std::cout << "Problem, pos y is: " << pos.y << '\n';
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
 int main()
 {
 
@@ -91,7 +114,11 @@ int main()
                 if (uniform_distribution_float(0, 1) < graph.new_edge_prob)
                     add_random_edge(graph, static_cast<int>(graph.entities.size() - 1));
                 if (time_period_counter % 10 == 0) propagate_entities(graph, time_period_counter);
-
+                if (time_period_counter >= 3000)
+                {
+                    std::cout << "stop";
+                }
+                check_for_entity_position_bug(graph);
             }
 
             ++frame_counter;

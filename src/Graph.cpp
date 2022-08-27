@@ -14,9 +14,8 @@ void kill_entities(Graph& graph, time_period_t time_period)
     EntityCircle* dead_entity;
     for (int i{ 1 }; i<graph.entities.size(); ++i)
     {
-        if (graph.entities[i] && uniform_distribution_float(0, 1) <
-            death_sigmoid(static_cast<int>(time_period/10) - 
-                graph.entities[i]->get_birth_time()))
+        if (graph.entities[i] && (uniform_distribution_float(0, 1) <
+            death_sigmoid(static_cast<int>(time_period/10) - graph.entities[i]->get_birth_time())))
         {
             dead_entity = graph.entities[i];
             std::cout << "Entity " << dead_entity->get_id() << " has been killed\n";
@@ -26,10 +25,9 @@ void kill_entities(Graph& graph, time_period_t time_period)
                 [dead_entity](Link* link) {
                 return (link->from==dead_entity || link->to == dead_entity);
             }), graph.links.end());
-            // delete the dead entity's pointer from everyone else's partner/children/parents/links lists
-            for (Entity* linked_entity : dead_entity->get_links())
+            for (Entity* linked_entity : dead_entity->get_links()) //is this editing the thing it is iterating over??
             {
-                linked_entity->remove_link(dead_entity);
+                linked_entity->remove_link(dead_entity, false);
             }
             // put nullptr where the current ptr is in "graph.entities" / remove element
             graph.entities[i] = nullptr;
@@ -38,6 +36,17 @@ void kill_entities(Graph& graph, time_period_t time_period)
         }
     }
     std::cout << "entity death loop finished..\n";
+}
+
+
+void tidy_up_entities(Graph& graph)
+{
+    graph.entities.erase(std::remove_if(
+        graph.entities.begin(), graph.entities.end(),
+        [](EntityCircle* entity) {
+            return (!entity);
+        }), graph.entities.end());
+    std::cout << "Tidied up entities";
 }
 
 
@@ -212,6 +221,14 @@ void draw_links(Graph& graph, sf::RenderWindow& window)
         sf::Vector2f pos1{ link->to->get_shape().getPosition() };
         float radius0{ link->from->get_radius() };
         float radius1{ link->to->get_radius() };
+        if (pos0.x < 0)
+        {
+            std::cout << "Problem, pos0x is: " << pos0.x << '\n';
+        }
+        if (pos1.x < 0)
+        {
+            std::cout << "Problem, pos1x is: " << pos0.x << '\n';
+        }
         sf::Vertex line[2]{
             sf::Vertex(sf::Vector2f(pos0.x + radius0, pos0.y + radius0)),
             sf::Vertex(sf::Vector2f(pos1.x + radius1, pos1.y + radius1))

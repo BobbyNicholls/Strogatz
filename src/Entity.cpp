@@ -27,21 +27,21 @@ void Entity::add_link(Entity* entity)
 }
 
 
-void Entity::remove_link(Entity* entity, bool first_pass)
+void Entity::remove_link(Entity* entity_to_remove, bool double_removal)
 {
     if (m_links.size() > 0)
     {
         for (std::vector<Entity*>::iterator it = m_links.begin(); it != m_links.end(); ++it)
         {
-            if (*it == entity) 
+            if (*it == entity_to_remove) 
             {
                 m_links.erase(it);
                 break;
             }
         }
     }
-    if (m_partner == entity) m_partner = nullptr;
-    if(first_pass) entity->remove_link(this, false);
+    if (m_partner == entity_to_remove) m_partner = nullptr;
+    if(double_removal) entity_to_remove->remove_link(this, false);
 }
 
 
