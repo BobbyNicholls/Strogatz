@@ -12,10 +12,11 @@ float death_sigmoid(int age)
 void kill_entities(Graph& graph, time_period_t time_period)
 {
     EntityCircle* dead_entity;
-    for (int i{ 0 }; i<graph.entities.size(); ++i)
+    for (int i{ 1 }; i<graph.entities.size(); ++i)
     {
         if (graph.entities[i] && uniform_distribution_float(0, 1) <
-            death_sigmoid(time_period - graph.entities[i]->get_birth_time()))
+            death_sigmoid(static_cast<int>(time_period/10) - 
+                graph.entities[i]->get_birth_time()))
         {
             dead_entity = graph.entities[i];
             std::cout << "Entity " << dead_entity->get_id() << " has been killed\n";
@@ -84,7 +85,10 @@ Entity_t* add_preferential_links(Graph& graph, Entity_t* entity)
 void add_random_edge(Graph& graph, int max_entitiy_iloc)
 {
     int random_entity_iloc{ uniform_distribution_int(0, max_entitiy_iloc) };
-    add_preferential_links(graph, graph.entities[random_entity_iloc]);
+    if (graph.entities[random_entity_iloc])
+    {
+        add_preferential_links(graph, graph.entities[random_entity_iloc]);
+    }
 }
 
 

@@ -85,7 +85,7 @@ int main()
                 time_str = time_str.substr(0, 6);
                 text.setString(time_str.append(std::to_string(++time_period_counter)));
                 // we iterate over links and entities twice in one frame unnecessarily due to this:
-                if (time_period_counter % 4 == 0) kill_entities(graph, time_period_counter);
+                if (time_period_counter % 10 == 0) kill_entities(graph, time_period_counter);
                 forward_propagate_beliefs(graph);
                 if (uniform_distribution_float(0, 1) < graph.rewire_prob) rewire_random_edge(graph);
                 if (uniform_distribution_float(0, 1) < graph.new_edge_prob)
@@ -101,7 +101,7 @@ int main()
             // window.display(), so has no immediate impact)
             window.clear(sf::Color::Black);
             keyboard_move_entity(graph.entities[0]->get_shape(), move_speed, time_counter);
-            //draw_links(graph, window);
+            draw_links(graph, window);
             draw_entities(graph, window);
             // The pollEvent function returns true if an event was pending, or 
             // false if there was none.
