@@ -23,15 +23,17 @@ constexpr int window_width{ 800 };
 
 bool check_for_double_linkage(Graph& graph)
 {
-    //id_t link_problems[link_limit][2]{};
+    size_t link_problems[link_limit][2]{};
+    bool return_value{ false };
     for (size_t i{0}; i < graph.links.size(); ++i)
     {
         EntityCircle* a{ graph.links[i]->from };
         EntityCircle* b{ graph.links[i]->to };
         if (a == b)
         {
-            std::cout << "self linkage";
-            return true;
+            std::cout << "self linkage: ";
+            return_value = true;
+            link_problems[i][0] = 1;
         }
         for (size_t j{ i+1 }; j < graph.links.size(); ++j)
         {
@@ -39,12 +41,13 @@ bool check_for_double_linkage(Graph& graph)
             EntityCircle* b_compare{ graph.links[j]->to };
             if ((a == a_compare) && (b == b_compare))
             {
-                std::cout << "repeat links";
-                return true;
+                std::cout << "i: " << i << ", j: " << j << ", repeat links: ";
+                return_value = true;
+                link_problems[i][1] = 1;
             }
         }
     }
-    return false;
+    return return_value;
 }
 
 
@@ -65,7 +68,7 @@ int main()
     constexpr float time_step{ 1.0f / 60.0f };
     time_period_t time_period_counter{ 0 };
     unsigned int frame_counter{ 0 };
-    constexpr unsigned int frames_per_period{ 60 };
+    constexpr unsigned int frames_per_period{ 6 };
 
     Graph graph{ get_barabasi_albert_graph(time_period_counter) };
 
@@ -84,7 +87,7 @@ int main()
                 // we iterate over links twice in one frame unnecessarily due to this:
                 forward_propagate_beliefs(graph);
                 if (uniform_distribution_float(0,1) < graph.rewire_prob) rewire_random_edge(graph);
-                //add_random_edge(graph, static_cast<int>(graph.entities.size()-1));
+                add_random_edge(graph, static_cast<int>(graph.entities.size()-2));
 
                 if (time_period_counter % 10 == 0) propagate_entities(
                     graph, time_period_counter
@@ -92,7 +95,12 @@ int main()
 
                 if (check_for_double_linkage(graph))
                 {
-                    std::cout << "PROBLEM!";
+                    std::cout << "PROBLEM!\n";
+                }
+
+                if (time_period_counter == 120)
+                {
+                    std::cout << "stop";
                 }
 
             }

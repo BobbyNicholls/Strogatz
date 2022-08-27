@@ -30,9 +30,9 @@ void Entity::add_link(Entity* entity)
 void Entity::remove_link(Entity* entity, bool first_pass)
 {
     for (std::vector<Entity*>::iterator it = m_links.begin(); it != m_links.end(); ++it) {
-        if (*it == entity) {
-            m_links.erase(it);
-            return;
+        if (*it == entity) { 
+            m_links.erase(it); 
+            break;
         }
     }
     if(first_pass) entity->remove_link(this, false);

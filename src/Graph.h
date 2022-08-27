@@ -12,7 +12,7 @@
 
 
 const int entities_start_size{ 50 };
-const int entities_reserve_limit{ 200 };
+const int entities_reserve_limit{ 500 };
 const int link_limit{ 1000 };
 
 
@@ -27,7 +27,7 @@ struct Graph
 {
 	std::vector<EntityCircle*> entities;
 	std::vector<Link*> links;
-	float rewire_prob{ 0.15f };
+	float rewire_prob{ 0.8f };
 	float new_edge_prob{ 0.15f };
 	float spawn_chance{ 0.07f };
 };

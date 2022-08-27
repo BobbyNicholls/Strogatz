@@ -26,11 +26,7 @@ EntityCircle* get_preferential_entity(Graph& graph)
 
 
 template <typename Entity_t>
-void link_entities(
-    Graph& graph,
-    Entity_t* entity_from,
-    Entity_t* entity_to
-)
+void link_entities(Graph& graph, Entity_t* entity_from, Entity_t* entity_to)
 {
     entity_from->add_link(entity_to);
     entity_to->add_link(entity_from);
@@ -39,10 +35,7 @@ void link_entities(
 
 
 template <typename Entity_t>
-Entity_t* add_preferential_links(
-    Graph& graph,
-    Entity_t* entity
-)
+Entity_t* add_preferential_links(Graph& graph, Entity_t* entity)
 {
     /*
     For now, for `entity` node, just add a link to a node chosen at random weighted by number
@@ -72,13 +65,13 @@ EntityCircle* get_entity_circle(id_t id, time_period_t time_period)
         std::cerr << "\n\nCould not allocate memory!!!\n\n";
         throw - 1;
     }
-    else return entity_pointer;
+    return entity_pointer;
 }
 
 
 void rewire_random_edge(Graph& graph)
 {
-    int random_edge_iloc{ uniform_distribution_int(0, static_cast<int>(graph.links.size()) - 1)};
+    int random_edge_iloc{ uniform_distribution_int(0, static_cast<int>(graph.links.size()) - 2)};
     int random_end_iloc{ uniform_distribution_int(0, 1) };
 
     EntityCircle* pivot_entity{
@@ -94,6 +87,7 @@ void rewire_random_edge(Graph& graph)
         (new_target != old_target))
     {
         pivot_entity->remove_link(old_target);
+        graph.links.erase(graph.links.begin() + random_edge_iloc);
         link_entities(graph, pivot_entity, new_target);
         // TODO: replace these with a smooth move to destination function
         old_target->set_position_relative_to_links();
@@ -117,11 +111,10 @@ Graph get_barabasi_albert_graph(time_period_t time_period)
     graph.links.reserve(link_limit);
 
     graph.entities.push_back(get_entity_circle(0, time_period));
-    graph.entities[0]->set_position_randomly();
     graph.entities.push_back(get_entity_circle(1, time_period));
-    graph.entities[1]->set_position_relative_to_links();
-
     link_entities(graph, graph.entities[0], graph.entities[1]);
+    graph.entities[0]->set_position_randomly();
+    graph.entities[1]->set_position_relative_to_links();
 
     EntityCircle* chosen_entity{ nullptr };
     std::set<EntityCircle*> link_anchors{ graph.entities[0] };
@@ -133,11 +126,11 @@ Graph get_barabasi_albert_graph(time_period_t time_period)
         chosen_entity = add_preferential_links(graph, new_entity);
         if (uniform_distribution_float(0, 1) < graph.new_edge_prob)
         {
-            add_random_edge(graph, static_cast<int>(graph.entities.size()) - 1);
+            add_random_edge(graph, static_cast<int>(graph.entities.size()) - 2);
         }
         if (uniform_distribution_float(0, 1) < graph.rewire_prob)
         {
-            rewire_random_edge(graph);
+            rewire_random_edge(graph); // BUGGED: causes repeat edges
         }
         if (link_anchors.contains(chosen_entity))
         {
@@ -153,17 +146,30 @@ Graph get_barabasi_albert_graph(time_period_t time_period)
     return graph;
 }
 
-
+#include "Text.h"
 void draw_entities(Graph& graph, sf::RenderWindow& window)
 {
     int i{ 0 };
     window.draw(graph.entities[i++]->get_shape());
-    while (i != graph.entities.size())
+    for (EntityCircle* entity: graph.entities)
     {
-        random_move_entity(graph.entities[i]->get_shape());
-        //slingshot_move_entity(graph.entities[i]);
-        window.draw(graph.entities[i++]->get_shape());
+        random_move_entity(entity->get_shape());
+        //slingshot_move_entity(entity);
+        window.draw(entity->get_shape());
+        sf::Text text;
+        sf::Font font;
+        get_text(
+            std::to_string(entity->get_id()), 
+            text, 
+            font, 
+            20,
+            entity->get_shape().getPosition().x, 
+            entity->get_shape().getPosition().y
+        );
+        window.draw(text);
     }
+;
+
 }
 
 
