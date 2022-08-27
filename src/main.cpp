@@ -68,7 +68,7 @@ int main()
     constexpr float time_step{ 1.0f / 60.0f };
     time_period_t time_period_counter{ 0 };
     unsigned int frame_counter{ 0 };
-    constexpr unsigned int frames_per_period{ 60 };
+    constexpr unsigned int frames_per_period{ 6 };
 
     Graph graph{ get_barabasi_albert_graph(time_period_counter) };
 
@@ -84,15 +84,13 @@ int main()
                 frame_counter = 0;
                 time_str = time_str.substr(0, 6);
                 text.setString(time_str.append(std::to_string(++time_period_counter)));
-                // we iterate over links twice in one frame unnecessarily due to this:
+                // we iterate over links and entities twice in one frame unnecessarily due to this:
+                if (time_period_counter % 4 == 0) kill_entities(graph, time_period_counter);
                 forward_propagate_beliefs(graph);
                 if (uniform_distribution_float(0, 1) < graph.rewire_prob) rewire_random_edge(graph);
                 if (uniform_distribution_float(0, 1) < graph.new_edge_prob)
                     add_random_edge(graph, static_cast<int>(graph.entities.size() - 1));
-
-                if (time_period_counter % 10 == 0) propagate_entities(
-                    graph, time_period_counter
-                );
+                if (time_period_counter % 10 == 0) propagate_entities(graph, time_period_counter);
 
             }
 

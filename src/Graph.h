@@ -41,6 +41,7 @@ void forward_propagate_beliefs(Graph& graph);
 // spawn chance is set to 50% for hypter accelerated development but for a reasonable spawn
 // rate over 1000 periods set to 3-6% (should review):
 void propagate_entities(Graph& graph, time_period_t time_period);
+void kill_entities(Graph& graph, time_period_t time_period);
 void rewire_random_edge(Graph& graph);
 
 #endif

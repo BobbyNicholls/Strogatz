@@ -9,6 +9,37 @@ float death_sigmoid(int age)
 }
 
 
+void kill_entities(Graph& graph, time_period_t time_period)
+{
+    EntityCircle* dead_entity;
+    for (int i{ 0 }; i<graph.entities.size(); ++i)
+    {
+        if (graph.entities[i] && uniform_distribution_float(0, 1) <
+            death_sigmoid(time_period - graph.entities[i]->get_birth_time()))
+        {
+            dead_entity = graph.entities[i];
+            std::cout << "Entity " << dead_entity->get_id() << " has been killed\n";
+            // delete entries in `links` list
+            graph.links.erase(std::remove_if(
+                graph.links.begin(), graph.links.end(),
+                [dead_entity](Link* link) {
+                return (link->from==dead_entity || link->to == dead_entity);
+            }), graph.links.end());
+            // delete the dead entity's pointer from everyone else's partner/children/parents/links lists
+            for (Entity* linked_entity : dead_entity->get_links())
+            {
+                linked_entity->remove_link(dead_entity);
+            }
+            // put nullptr where the current ptr is in "graph.entities" / remove element
+            graph.entities[i] = nullptr;
+            // delete the entity, deallocate memory
+            delete dead_entity;
+        }
+    }
+    std::cout << "entity death loop finished..\n";
+}
+
+
 EntityCircle* get_preferential_entity(Graph& graph)
 {
     int links_vector_size{ static_cast<int>(graph.links.size()) };
@@ -155,10 +186,13 @@ void draw_entities(Graph& graph, sf::RenderWindow& window)
     window.draw(graph.entities[i++]->get_shape());
     while (i != graph.entities.size())
     {
-        shape = graph.entities[i]->get_shape();
-        random_move_entity(shape);
-        //slingshot_move_entity(entity);
-        window.draw(shape);
+        if (graph.entities[i])
+        {
+            shape = graph.entities[i]->get_shape();
+            random_move_entity(shape);
+            //slingshot_move_entity(entity);
+            window.draw(shape);
+        }
         ++i;
     }
 ;
@@ -197,8 +231,7 @@ void propagate_entities(Graph& graph, time_period_t time_period)
 {
     for (Link* link : graph.links)
     {
-        float roll{ uniform_distribution_float(0, 1) };
-        if (roll < graph.spawn_chance)
+        if (uniform_distribution_float(0, 1) < graph.spawn_chance)
         {
             EntityCircle* from_entity{ link->from };
             EntityCircle* to_entity{ link->to };

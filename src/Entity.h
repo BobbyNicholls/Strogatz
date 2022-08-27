@@ -33,8 +33,8 @@ private:
 	id_t m_id;
 
 	Entity* m_partner{ nullptr };
-	std::vector<Entity*> m_children;
-	Entity* m_parents[2];
+	std::vector<Entity*> m_children; // this does nothing and can contain dangling pointers
+	Entity* m_parents[2]; // this does nothing and can contain dangling pointers
 	// uint generation{} // is this worth having?
 
 protected:

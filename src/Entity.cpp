@@ -17,7 +17,7 @@ Entity::Entity(id_t id, time_period_t birth_time)
 
 void Entity::add_child(Entity* entity)
 {
-    m_children.push_back(entity);
+    m_children.push_back(entity); // m_children does nothing and can contain danling ptr, this is a wasteful operation
 }
 
 
@@ -29,19 +29,25 @@ void Entity::add_link(Entity* entity)
 
 void Entity::remove_link(Entity* entity, bool first_pass)
 {
-    for (std::vector<Entity*>::iterator it = m_links.begin(); it != m_links.end(); ++it) {
-        if (*it == entity) { 
-            m_links.erase(it); 
-            break;
+    if (m_links.size() > 0)
+    {
+        for (std::vector<Entity*>::iterator it = m_links.begin(); it != m_links.end(); ++it)
+        {
+            if (*it == entity) 
+            {
+                m_links.erase(it);
+                break;
+            }
         }
     }
+    if (m_partner == entity) m_partner = nullptr;
     if(first_pass) entity->remove_link(this, false);
 }
 
 
 void Entity::add_parents(Entity* entity1, Entity* entity2)
 {
-    m_parents[0] = entity1;
+    m_parents[0] = entity1;  // m_parents does nothing and can contain danling ptr, this is a wasteful operation
     m_parents[1] = entity2;
 }
 
