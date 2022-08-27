@@ -42,6 +42,7 @@ void forward_propagate_beliefs(Graph& graph);
 // rate over 1000 periods set to 3-6% (should review):
 void propagate_entities(Graph& graph, time_period_t time_period);
 void kill_entities(Graph& graph, time_period_t time_period);
+void tidy_up_entities(Graph& graph);
 void rewire_random_edge(Graph& graph);
 
 #endif

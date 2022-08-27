@@ -118,7 +118,6 @@ int main()
                 {
                     std::cout << "stop";
                 }
-                check_for_entity_position_bug(graph);
             }
 
             ++frame_counter;

@@ -15,6 +15,8 @@ using id_t = std::uint_fast32_t;
 using time_period_t = std::uint_fast16_t;
 
 
+bool check_for_double_linkage(Graph& graph);
+bool check_for_entity_position_bug(Graph& graph);
 id_t generate_id();
 
 
