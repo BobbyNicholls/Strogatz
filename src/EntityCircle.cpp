@@ -79,6 +79,4 @@ void EntityCircle::set_position_relative_to_links(int offset)
 	{
 		set_position_randomly();
 	}
-
-	sf::Vector2f pos{ m_shape.getPosition() };
 }

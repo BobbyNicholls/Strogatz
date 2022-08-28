@@ -94,7 +94,7 @@ void Entity::print_beliefs() const
 }
 
 
-void Entity::update_beliefs(Entity* influencer)
+void Entity::update_beliefs(Entity* influencer) // influencer should be const?
 {
     /*
     Use the sum product algorithm to update the belief of the node given

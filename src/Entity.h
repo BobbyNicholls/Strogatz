@@ -46,7 +46,7 @@ public:
 
 	time_period_t get_birth_time() const { return m_birth_time; }
 	id_t get_id() const { return m_id; }
-	std::vector<Entity*>& get_links() { return m_links; }
+	std::vector<Entity*>& get_links() { return m_links; } // this func should be const?
 	Entity* get_partner() const { return m_partner; };
 	uint8_t get_sex() const { return m_sex; }
 	bool is_paired() const { return m_paired; };
