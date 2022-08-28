@@ -18,7 +18,7 @@ void tidy_up_entities(Graph& graph)
 }
 
 
-void kill_entities(Graph& graph, time_period_t time_period)
+void kill_entities(Graph& graph, const time_period_t time_period)
 {
     EntityCircle* dead_entity;
 
