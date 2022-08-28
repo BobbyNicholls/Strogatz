@@ -24,7 +24,7 @@ void kill_entities(Graph& graph, time_period_t time_period)
                 [dead_entity](Link* link) {
                 return (link->from==dead_entity || link->to == dead_entity);
             }), graph.links.end());
-            for (Entity* linked_entity : dead_entity->get_links()) //is this editing the thing it is iterating over??
+            for (Entity* linked_entity : dead_entity->get_links())
             {
                 linked_entity->remove_link(dead_entity, false);
             }
