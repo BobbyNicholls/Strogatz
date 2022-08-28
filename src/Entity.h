@@ -23,24 +23,18 @@ It contains information regarding things every entity must have:
 
 #include<vector>
 
-enum Genders
-{
-	male,
-	female,
-	other,
-
-    max_genders,
-};
-
 
 class Entity
 {
 private:
-	std::uint_fast8_t m_age; // is this slower than int?
-	uint8_t m_gender; // make this bool?
+	time_period_t m_birth_time{ 0 }; // is this slower than int?
+	bool m_sex;
+	bool m_paired { false };
 	id_t m_id;
-	std::vector<Entity*> m_children;
-	Entity* m_parents[2];
+
+	Entity* m_partner{ nullptr };
+	std::vector<Entity*> m_children; // this does nothing and can contain dangling pointers
+	Entity* m_parents[2]; // this does nothing and can contain dangling pointers
 	// uint generation{} // is this worth having?
 
 protected:
@@ -48,11 +42,21 @@ protected:
 	float m_beliefs[2][2];
 
 public:
-	Entity(id_t id);
-	std::uint_fast8_t get_age() const { return m_age; }
-	uint8_t get_gender() const { return m_gender; }
+	Entity(time_period_t birth_time);
+
+	time_period_t get_birth_time() const { return m_birth_time; }
 	id_t get_id() const { return m_id; }
+	std::vector<Entity*>& get_links() { return m_links; } // this func should be const?
+	Entity* get_partner() const { return m_partner; };
+	uint8_t get_sex() const { return m_sex; }
+	bool is_paired() const { return m_paired; };
+
+	void add_child(Entity* entity);
 	void add_link(Entity* entity);
+	void remove_link(Entity* entity, bool remove_from_both=true);
+	void add_parents(Entity* entity1, Entity* entity2);
+	void add_partner(Entity* entity);
+	bool is_linked_to(Entity* entity) const;
 	void print_beliefs() const;
 	void print_links() const;
 	void update_beliefs(Entity* influencer);

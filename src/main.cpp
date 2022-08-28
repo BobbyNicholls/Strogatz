@@ -1,6 +1,7 @@
 // Strogatz.cpp : This file contains the 'main' function.
 
 #include <iostream>
+#include <numeric>
 #include <random>
 #include <set>
 
@@ -16,13 +17,16 @@ extern const int edge_buffer{ 10 };
 extern const int game_height{ 600 };
 extern const int game_width{ 800 };
 constexpr float move_speed{ 200.f };
+constexpr int window_height{ 600 };
+constexpr int window_width{ 800 };
+
 
 int main()
 {
+
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
-    Graph graph{ get_graph() };
-    sf::RenderWindow window(sf::VideoMode(game_width, game_height), "Strogatz");
+    sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Strogatz");
     window.setVerticalSyncEnabled(true);
     sf::Text text;
     sf::Font font;
@@ -32,9 +36,11 @@ int main()
     sf::Clock clock;
     float time_counter{ 0 };
     constexpr float time_step{ 1.0f / 60.0f };
-    unsigned int time_period_counter{ 0 };
+    time_period_t time_period_counter{ 0 };
     unsigned int frame_counter{ 0 };
-    constexpr unsigned int frames_per_period{ 600 };
+    constexpr unsigned int frames_per_period{ 6 };
+
+    Graph graph{ get_barabasi_albert_graph(time_period_counter) };
 
     while (window.isOpen())
     {
@@ -48,7 +54,13 @@ int main()
                 frame_counter = 0;
                 time_str = time_str.substr(0, 6);
                 text.setString(time_str.append(std::to_string(++time_period_counter)));
+                // we iterate over links and entities twice in one frame unnecessarily due to this:
+                if (time_period_counter % 10 == 0) kill_entities(graph, time_period_counter);
                 forward_propagate_beliefs(graph);
+                if (uniform_distribution_float(0, 1) < graph.rewire_prob) rewire_random_edge(graph);
+                if (uniform_distribution_float(0, 1) < graph.new_edge_prob)
+                    add_random_edge(graph, static_cast<int>(graph.entities.size() - 1));
+                if (time_period_counter % 10 == 0) propagate_entities(graph, time_period_counter);
             }
 
             ++frame_counter;
