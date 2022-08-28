@@ -53,7 +53,7 @@ public:
 
 	void add_child(Entity* entity);
 	void add_link(Entity* entity);
-	void remove_link(Entity* entity, bool double_removal=true);
+	void remove_link(Entity* entity, bool remove_from_both=true);
 	void add_parents(Entity* entity1, Entity* entity2);
 	void add_partner(Entity* entity);
 	bool is_linked_to(Entity* entity) const;

@@ -27,7 +27,7 @@ void Entity::add_link(Entity* entity)
 }
 
 
-void Entity::remove_link(Entity* entity_to_remove, bool double_removal)
+void Entity::remove_link(Entity* entity_to_remove, bool remove_from_both)
 {
     if (m_links.size() > 0)
     {
@@ -41,7 +41,7 @@ void Entity::remove_link(Entity* entity_to_remove, bool double_removal)
         }
     }
     if (m_partner == entity_to_remove) m_partner = nullptr;
-    if(double_removal) entity_to_remove->remove_link(this, false);
+    if(remove_from_both) entity_to_remove->remove_link(this, false);
 }
 
 
