@@ -17,7 +17,7 @@ Entity::Entity(time_period_t birth_time)
 
 void Entity::add_child(Entity* entity)
 {
-    m_children.push_back(entity); // m_children does nothing and can contain danling ptr, this is a wasteful operation
+    m_children.push_back(entity); // m_children does nothing and can contain a dangling ptr, this is a wasteful operation
 }
 
 
