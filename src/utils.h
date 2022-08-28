@@ -91,13 +91,13 @@ void random_move_entity(
 template <typename e_t>
 void slingshot_move_entity(
     e_t* entity,
-    float attraction_percent = 0.001f
+    const float attraction_percent = 0.001f
 )
 {
     float x_sum{};
     float y_sum{};
-    sf::Vector2f pos{ entity->get_shape().getPosition() };
-    auto links{ entity->get_links() };
+    const sf::Vector2f& pos{ entity->get_shape().getPosition() };
+    const auto& links{ entity->get_links() };
 
     for (const auto& link : links)
     {
