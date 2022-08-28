@@ -1,10 +1,20 @@
 #include "Graph.h"
 
 
-float death_sigmoid(const int age, const int fifty_pct_age=85, const int hundred_pct_age = 110)
+float death_sigmoid(const int age, const int fifty_pct_age = 85, const int hundred_pct_age = 110)
 {
     if (age > hundred_pct_age) return 1.f;
     return 1 / (1 + exp(-((age - fifty_pct_age) * 0.3f)));;
+}
+
+
+void tidy_up_entities(Graph& graph)
+{
+    graph.entities.erase(std::remove_if(
+        graph.entities.begin(), graph.entities.end(),
+        [](EntityCircle* entity) {
+            return (!entity);
+        }), graph.entities.end());
 }
 
 
@@ -28,23 +38,13 @@ void kill_entities(Graph& graph, time_period_t time_period)
             {
                 linked_entity->remove_link(dead_entity, false);
             }
-            // put nullptr where the current ptr is in "graph.entities" / remove element
+            // put nullptr where the current ptr is in "graph.entities"
             graph.entities[i] = nullptr;
             // delete the entity, deallocate memory
             delete dead_entity;
         }
     }
     tidy_up_entities(graph);
-}
-
-
-void tidy_up_entities(Graph& graph)
-{
-    graph.entities.erase(std::remove_if(
-        graph.entities.begin(), graph.entities.end(),
-        [](EntityCircle* entity) {
-            return (!entity);
-        }), graph.entities.end());
 }
 
 

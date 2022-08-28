@@ -40,7 +40,6 @@ void draw_links(Graph& graph, sf::RenderWindow& window);
 void forward_propagate_beliefs(Graph& graph);
 void propagate_entities(Graph& graph, time_period_t time_period);
 void kill_entities(Graph& graph, time_period_t time_period);
-void tidy_up_entities(Graph& graph);
 void rewire_random_edge(Graph& graph);
 
 #endif
