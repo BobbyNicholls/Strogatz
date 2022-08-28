@@ -94,7 +94,7 @@ Entity_t* add_preferential_links(Graph& graph, Entity_t* entity)
 
 void add_random_edge(Graph& graph, int max_entitiy_iloc)
 {
-    int random_entity_iloc{ uniform_distribution_int(0, max_entitiy_iloc) };
+    const int random_entity_iloc{ uniform_distribution_int(0, max_entitiy_iloc) };
 
     if (graph.entities[random_entity_iloc])
     {
