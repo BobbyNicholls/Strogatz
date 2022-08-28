@@ -1,10 +1,10 @@
 #include "Graph.h"
 
 
-float death_sigmoid(int age)
+float death_sigmoid(const int age, const int fifty_pct_age=85, const int hundred_pct_age = 110)
 {
-    if (age > 110) return 1.f;
-    return 1 / (1 + exp(-((age - 85) * 0.3f)));;
+    if (age > hundred_pct_age) return 1.f;
+    return 1 / (1 + exp(-((age - fifty_pct_age) * 0.3f)));;
 }
 
 
