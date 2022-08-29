@@ -21,7 +21,7 @@ class Graph
 {
 private:
 	std::vector<EntityCircle*> m_entities;
-	std::vector<Link*> m_links;
+	std::vector<Link*> m_links; // this is leaking memory a lot
 	int m_entities_start_size;
 	float m_rewire_prob;
 	float m_new_edge_prob;

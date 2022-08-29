@@ -93,3 +93,23 @@ EntityCircle* get_entity_circle(const time_period_t time_period)
 	}
 	return entity_pointer;
 }
+
+
+void EntityCircle::move_to_destination(const float destination_x, const float destination_y)
+{
+	
+	const float speed{ 3 }; // make this settable
+	
+	std::cout << get_id() << ": Moving to point (" << destination_x << ", " << destination_y << ")\n";
+	const sf::Vector2f& pos{ m_shape.getPosition() };
+	std::cout << get_id() << ": Moving from point (" << pos.x << ", " << pos.y << ")\n";
+	float x_diff{ destination_x - pos.x };
+	float y_diff{ destination_y - pos.y };
+	int steps{ static_cast<int>(sqrt((x_diff * x_diff) + (y_diff * y_diff)) / speed) };
+	m_pathing.steps = steps;
+	m_pathing.x_move = x_diff / steps;
+	m_pathing.y_move = y_diff / steps;
+	std::cout << get_id() << ": Movements of (" << m_pathing.x_move << ", " << m_pathing.y_move << ") in "
+		<< m_pathing.steps << " steps.\n";
+	std::cout << '\n';
+}

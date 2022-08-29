@@ -84,6 +84,7 @@ void Graph::rewire_random_edge()
         (new_target != old_target))
     {
         pivot_entity->remove_link(old_target);
+        delete m_links[random_link_iloc];
         m_links.erase(m_links.begin() + random_link_iloc);
         link_entities(pivot_entity, new_target);
         // TODO: replace these with a smooth move to destination function
@@ -277,7 +278,7 @@ void Graph::kill_entities(const time_period_t time_period)
             dead_entity = m_entities[i];
             std::cout << "Entity " << dead_entity->get_id() << " has died.\n";
             // delete entries in `links` list containing `dead_entity`
-            m_links.erase(std::remove_if(
+            m_links.erase(std::remove_if(// THIS IS LEAKING MEMORY
                 m_links.begin(), m_links.end(),
                 [dead_entity](Link* link) {
                     return (link->from == dead_entity || link->to == dead_entity);

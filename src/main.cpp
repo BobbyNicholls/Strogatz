@@ -129,6 +129,7 @@ int main()
             // This is a good idea.
             window.draw(text);
             window.draw(player_entity->get_shape());
+            player_entity->move_to_destination(420.f, 290.f);
             window.display();
             time_counter = 0;
         }

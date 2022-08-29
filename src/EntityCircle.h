@@ -9,17 +9,24 @@ The features in addition to what is included in Entity are:
 
 #include "Entity.h"
 
+struct Pathing
+{
+    float x_move;
+    float y_move;
+    int steps;
+};
+
+
 class EntityCircle : public Entity
 {
 private:
     float m_radius;
-    // By default, the outline is extruded outwards from the shape (e.g. if you have a circle 
-    // with a radius of 10 and an outline thickness of 5, the total radius of the circle will
-    // be 15). You can make it extrude towards the center of the shape instead, by setting a 
-    // negative thickness.
     float m_outline_thickness;
     sf::Color m_outline_colour;
     sf::CircleShape m_shape;
+    // this is going to create an absurd number of repetitions
+    std::vector<sf::Vector2f> m_move_commands;
+    Pathing m_pathing;
 
 public:
     EntityCircle(
@@ -34,6 +41,7 @@ public:
     void update_colour();
     void set_position_randomly();
     void set_position_relative_to_links(int offset = 15);
+    void move_to_destination(const float destination_x, const float destination_y);
 };
 
 EntityCircle* get_entity_circle(const time_period_t time_period);
