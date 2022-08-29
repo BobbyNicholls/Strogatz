@@ -40,7 +40,7 @@ int main()
     unsigned int frame_counter{ 0 };
     constexpr unsigned int frames_per_period{ 6 };
 
-    Graph graph{ get_barabasi_albert_graph(time_period_counter) };
+    Graph graph{ time_period_counter };
 
     while (window.isOpen())
     {
