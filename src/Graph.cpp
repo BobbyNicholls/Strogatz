@@ -1,3 +1,5 @@
+#include <SFML/Graphics.hpp>
+
 #include "Graph.h"
 
 
@@ -153,17 +155,25 @@ Graph::Graph(
 }
 
 
-void Graph::draw_entities(sf::RenderWindow& window)
+void Graph::draw_entities(sf::RenderWindow& window, const float move_distance)
 {
+    float x_move_distance{ 0.f };
+    float y_move_distance{ 0.f };
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) x_move_distance += move_distance;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) x_move_distance -= move_distance;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) y_move_distance += move_distance;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) y_move_distance -= move_distance;
+
     sf::CircleShape shape;
     for (EntityCircle* entity: m_entities)
     {
         if (entity)
         {
-            shape = entity->get_shape();
-            random_move_entity(shape);
+            //random_move_entity(shape);
+            entity->get_shape().move(x_move_distance, y_move_distance);
             //slingshot_move_entity(entity);
-            window.draw(shape);
+            window.draw(entity->get_shape());
         }
     }
 }

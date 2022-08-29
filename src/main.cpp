@@ -14,8 +14,8 @@
 #include "utils.h"
 
 extern const int edge_buffer{ 10 };
-extern const int game_height{ 600 };
-extern const int game_width{ 800 };
+extern const int game_height{ 1200 };
+extern const int game_width{ 1600 };
 constexpr float move_speed{ 200.f };
 constexpr int window_height{ 600 };
 constexpr int window_width{ 800 };
@@ -38,10 +38,11 @@ int main()
     constexpr float time_step{ 1.0f / 60.0f };
     time_period_t time_period_counter{ 0 };
     unsigned int frame_counter{ 0 };
-    constexpr unsigned int frames_per_period{ 6 };
+    constexpr unsigned int frames_per_period{ 60 };
 
     Graph graph{ time_period_counter };
     EntityCircle* player_entity{ get_entity_circle(time_period_counter) };
+    player_entity->get_shape().setPosition(400, 300);
 
     while (window.isOpen())
     {
@@ -73,9 +74,8 @@ int main()
             // Clear the window with black color (doesnt activate until 
             // window.display(), so has no immediate impact)
             window.clear(sf::Color::Black);
-            keyboard_move_entity(player_entity->get_shape(), move_speed, time_counter);
-            graph.draw_links(window);
-            graph.draw_entities(window);
+            //graph.draw_links(window);
+            graph.draw_entities(window, move_speed * time_counter);
             while (window.pollEvent(event))
             {
                 switch (event.type)
