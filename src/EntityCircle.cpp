@@ -21,7 +21,6 @@ EntityCircle::EntityCircle(
 	update_colour();
 	m_shape.setOutlineThickness(m_outline_thickness);
 	m_shape.setOutlineColor(m_outline_colour);
-
 }
 
 
@@ -79,4 +78,18 @@ void EntityCircle::set_position_relative_to_links(int offset)
 	{
 		set_position_randomly();
 	}
+}
+
+
+EntityCircle* get_entity_circle(const time_period_t time_period)
+{
+	EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle(time_period) };
+
+	if (!entity_pointer) // handle case where new returned null
+	{
+		// TODO: error handling here
+		std::cerr << "\n\nCould not allocate memory!!!\n\n";
+		throw - 1;
+	}
+	return entity_pointer;
 }

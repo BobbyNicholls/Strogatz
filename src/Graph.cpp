@@ -1,21 +1,6 @@
 #include "Graph.h"
 
 
-// move to EntityCircle.cpp??
-EntityCircle* get_entity_circle(const time_period_t time_period)
-{
-    EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle(time_period) };
-
-    if (!entity_pointer) // handle case where new returned null
-    {
-        // TODO: error handling here
-        std::cerr << "\n\nCould not allocate memory!!!\n\n";
-        throw - 1;
-    }
-    return entity_pointer;
-}
-
-
 void Graph::link_entities(EntityCircle* entity_from, EntityCircle* entity_to)
 {
     entity_from->add_link(entity_to);
@@ -111,7 +96,9 @@ Graph::Graph(
     const float rewire_prob,
     const float new_edge_prob,
     const float spawn_chance,
-    const int entities_start_size
+    const int entities_start_size,
+    const int entities_reserve_limit,
+    const int link_limit
 )
     : m_rewire_prob{ rewire_prob },
     m_new_edge_prob{ new_edge_prob },
@@ -169,18 +156,15 @@ Graph::Graph(
 void Graph::draw_entities(sf::RenderWindow& window)
 {
     sf::CircleShape shape;
-    int i{ 0 };
-    window.draw(m_entities[i++]->get_shape());
-    while (i != m_entities.size())
+    for (EntityCircle* entity: m_entities)
     {
-        if (m_entities[i])
+        if (entity)
         {
-            shape = m_entities[i]->get_shape();
+            shape = entity->get_shape();
             random_move_entity(shape);
-            slingshot_move_entity(m_entities[i]);
+            //slingshot_move_entity(entity);
             window.draw(shape);
         }
-        ++i;
     }
 }
 
@@ -275,7 +259,7 @@ void Graph::kill_entities(const time_period_t time_period)
     */
     EntityCircle* dead_entity;
 
-    for (int i{ 1 }; i < m_entities.size(); ++i)
+    for (int i{ 0 }; i < m_entities.size(); ++i)
     {
         if (m_entities[i] && (uniform_distribution_float(0, 1) <
             death_sigmoid(static_cast<int>((time_period - m_entities[i]->get_birth_time()) / 10))))

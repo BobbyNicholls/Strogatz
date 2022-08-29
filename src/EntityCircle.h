@@ -36,4 +36,6 @@ public:
     void set_position_relative_to_links(int offset = 15);
 };
 
+EntityCircle* get_entity_circle(const time_period_t time_period);
+
 #endif

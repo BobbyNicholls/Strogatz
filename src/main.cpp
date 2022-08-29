@@ -41,6 +41,7 @@ int main()
     constexpr unsigned int frames_per_period{ 6 };
 
     Graph graph{ time_period_counter };
+    EntityCircle* player_entity{ get_entity_circle(time_period_counter) };
 
     while (window.isOpen())
     {
@@ -55,12 +56,15 @@ int main()
                 time_str = time_str.substr(0, 6);
                 text.setString(time_str.append(std::to_string(++time_period_counter)));
                 // we iterate over links and entities twice in one frame unnecessarily due to this:
-                if (time_period_counter % 10 == 0) kill_entities(graph, time_period_counter);
-                forward_propagate_beliefs(graph);
-                if (uniform_distribution_float(0, 1) < graph.rewire_prob) rewire_random_edge(graph);
-                if (uniform_distribution_float(0, 1) < graph.new_edge_prob)
-                    add_random_edge(graph, static_cast<int>(graph.entities.size() - 1));
-                if (time_period_counter % 10 == 0) propagate_entities(graph, time_period_counter);
+                if (time_period_counter % 10 == 0) 
+                    graph.kill_entities(time_period_counter);
+                graph.forward_propagate_beliefs();
+                if (uniform_distribution_float(0, 1) < graph.get_rewire_prob()) 
+                    graph.rewire_random_edge();
+                if (uniform_distribution_float(0, 1) < graph.get_new_edge_prob())
+                    graph.add_random_edge(graph.get_nr_of_entities() - 1);
+                if (time_period_counter % 10 == 0) 
+                    graph.propagate_entities(time_period_counter);
             }
 
             ++frame_counter;
@@ -69,9 +73,9 @@ int main()
             // Clear the window with black color (doesnt activate until 
             // window.display(), so has no immediate impact)
             window.clear(sf::Color::Black);
-            keyboard_move_entity(graph.entities[0]->get_shape(), move_speed, time_counter);
-            draw_links(graph, window);
-            draw_entities(graph, window);
+            keyboard_move_entity(player_entity->get_shape(), move_speed, time_counter);
+            graph.draw_links(window);
+            graph.draw_entities(window);
             while (window.pollEvent(event))
             {
                 switch (event.type)
@@ -124,6 +128,7 @@ int main()
             // thread (which is advised) and rendering in another thread.
             // This is a good idea.
             window.draw(text);
+            window.draw(player_entity->get_shape());
             window.display();
             time_counter = 0;
         }
