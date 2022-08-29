@@ -10,6 +10,7 @@ float death_sigmoid(const int age, const int fifty_pct_age = 85, const int hundr
 
 void tidy_up_entities(Graph& graph)
 {
+    // Removes null pointers from graph.entities
     graph.entities.erase(std::remove_if(
         graph.entities.begin(), graph.entities.end(),
         [](EntityCircle* entity) {
@@ -20,6 +21,11 @@ void tidy_up_entities(Graph& graph)
 
 void kill_entities(Graph& graph, const time_period_t time_period)
 {
+    /*
+    Runs through all entities and calculates chance of death by way of a sigmoid function where the x
+    value is the age in `time_period`s divided by 10. Rolls a dice and if the roll passes the entity is
+    removed from the graph.
+    */
     EntityCircle* dead_entity;
 
     for (int i{ 1 }; i<graph.entities.size(); ++i)
@@ -51,6 +57,11 @@ void kill_entities(Graph& graph, const time_period_t time_period)
 
 EntityCircle* get_preferential_entity(Graph& graph)
 {
+    /*
+    Selects an entity "preferentially" from the list of currently existing entities, preferentially means
+    that the likelihood of selecting a given entity is proportional to its degree centrality (number of
+    connected edges).
+    */
     const int links_vector_size{ static_cast<int>(graph.links.size()) };
     int link_iloc{ uniform_distribution_int(1, links_vector_size * 2) };
 
@@ -67,8 +78,7 @@ EntityCircle* get_preferential_entity(Graph& graph)
 }
 
 
-template <typename Entity_t>
-void link_entities(Graph& graph, Entity_t* entity_from, Entity_t* entity_to)
+Graph::link_entities(Entity_t* entity_from, Entity_t* entity_to)
 {
     entity_from->add_link(entity_to);
     entity_to->add_link(entity_from);
@@ -120,7 +130,12 @@ EntityCircle* get_entity_circle(const time_period_t time_period)
 
 void rewire_random_edge(Graph& graph)
 {
-    const int random_edge_iloc{ uniform_distribution_int(0, static_cast<int>(graph.links.size()) - 2)};
+    /*
+    This takes a compeltely random link, takes a random end of that link, detaches it from the `old target`
+    but keeps the other end attached to the `pivot_node`, then re-attaches it preferentially to a 
+    `new_target`.
+    */
+    const int random_edge_iloc{ uniform_distribution_int(0, static_cast<int>(graph.links.size()) - 2) };
     const int random_end_iloc{ uniform_distribution_int(0, 1) };
 
     EntityCircle* pivot_entity{
@@ -145,9 +160,18 @@ void rewire_random_edge(Graph& graph)
 }
 
 
-Graph get_barabasi_albert_graph(time_period_t time_period)
+Graph::Graph(
+    const time_period_t start_time,
+    float rewire_prob,
+    float new_edge_prob,
+    float spawn_chance
+)
+    : m_rewire_prob{ rewire_prob },
+    m_new_edge_prob{ new_edge_prob },
+    m_spawn_chance{ spawn_chance }
 {
     /*
+    Creates a Barabasi-Albert graph with slight modification for performance.
     For each edge:
      - add new node with preferential attachment
      - with chance `new_edge_prob` choose random node to attach to other node 
@@ -156,12 +180,12 @@ Graph get_barabasi_albert_graph(time_period_t time_period)
      preferentially
     */
     // todo: make a set of non-anchors then make it less likely to attch to those?
-    Graph graph{};
-    graph.entities.reserve(entities_reserve_limit);
-    graph.links.reserve(link_limit);
 
-    graph.entities.push_back(get_entity_circle(time_period));
-    graph.entities.push_back(get_entity_circle(time_period));
+    m_entities.reserve(entities_reserve_limit);
+    m_links.reserve(link_limit);
+
+    m_entities.push_back(get_entity_circle(start_time));
+    m_entities.push_back(get_entity_circle(start_time));
     link_entities(graph, graph.entities[0], graph.entities[1]);
     graph.entities[0]->set_position_randomly();
     graph.entities[1]->set_position_relative_to_links();
@@ -170,7 +194,7 @@ Graph get_barabasi_albert_graph(time_period_t time_period)
     std::set<EntityCircle*> link_anchors{ graph.entities[0] };
     for (int i{ 2 }; i < entities_start_size; ++i)
     {
-        EntityCircle* new_entity{ get_entity_circle(time_period) };
+        EntityCircle* new_entity{ get_entity_circle(start_time) };
         graph.entities.push_back(new_entity);
         chosen_entity = add_preferential_links(graph, new_entity);
         if (uniform_distribution_float(0, 1) < graph.new_edge_prob)

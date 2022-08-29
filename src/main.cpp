@@ -72,8 +72,6 @@ int main()
             keyboard_move_entity(graph.entities[0]->get_shape(), move_speed, time_counter);
             draw_links(graph, window);
             draw_entities(graph, window);
-            // The pollEvent function returns true if an event was pending, or 
-            // false if there was none.
             while (window.pollEvent(event))
             {
                 switch (event.type)
@@ -122,13 +120,9 @@ int main()
 
             // to draw to a texture instead of a window: 
             // https://www.sfml-dev.org/tutorials/2.5/graphics-draw.php#off-screen-drawing
-            // for multi-threaded drawing: 
-            // https://www.sfml-dev.org/tutorials/2.5/graphics-draw.php#drawing-from-threads
             // this is so you can do event handling in the main loop's
             // thread (which is advised) and rendering in another thread.
             // This is a good idea.
-
-            // should only be doing this once every frame:
             window.draw(text);
             window.display();
             time_counter = 0;

@@ -23,13 +23,23 @@ struct Link
 };
 
 
-struct Graph
+class Graph
 {
-	std::vector<EntityCircle*> entities;
-	std::vector<Link*> links;
-	float rewire_prob{ 0.1f };
-	float new_edge_prob{ 0.25f };
-	float spawn_chance{ 0.12f };
+private:
+	std::vector<EntityCircle*> m_entities;
+	std::vector<Link*> m_links;
+
+public:
+	Graph(
+		const time_period_t start_time,
+		const float rewire_prob = 0.1f,
+		const float new_edge_prob = 0.25f,
+		const float spawn_chance = 0.12f
+	);
+
+	float m_rewire_prob;
+	float m_new_edge_prob;
+	float m_spawn_chance;
 };
 
 
