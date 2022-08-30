@@ -51,30 +51,4 @@ void random_move_entity(
     }
 }
 
-
-template <typename e_t>
-void slingshot_move_entity(
-    e_t* entity,
-    const float attraction_percent = 0.001f
-)
-{
-    float x_sum{};
-    float y_sum{};
-    const sf::Vector2f& pos{ entity->get_shape().getPosition() };
-    const auto& links{ entity->get_links() };
-
-    for (const auto& link : links)
-    {
-        e_t* link_e_t{ static_cast<e_t*>(link) };
-        const sf::Vector2f& link_pos{ link_e_t->get_shape().getPosition() };
-        x_sum += link_pos.x;
-        y_sum += link_pos.y;
-    }
-    entity->get_shape().move(
-        ((x_sum / links.size()) - pos.x) * attraction_percent,
-        ((y_sum / links.size()) - pos.y) * attraction_percent
-    );
-}
-
-
 #endif

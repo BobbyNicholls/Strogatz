@@ -11,9 +11,9 @@ The features in addition to what is included in Entity are:
 
 struct Pathing
 {
-    float x_move;
-    float y_move;
-    int steps;
+    float x_move{};
+    float y_move{};
+    int steps{};
 };
 
 
@@ -26,7 +26,7 @@ private:
     sf::CircleShape m_shape;
     // this is going to create an absurd number of repetitions
     std::vector<sf::Vector2f> m_move_commands;
-    Pathing m_pathing;
+    Pathing m_pathing{};
 
 public:
     EntityCircle(
@@ -38,10 +38,14 @@ public:
     float get_radius() const { return m_radius; }
     std::vector<Entity*>& get_links() { return m_links; }
     sf::CircleShape& get_shape() { return m_shape; };
+    bool is_pathing() { return static_cast<bool>(m_pathing.steps); };
+
     void update_colour();
-    void set_position_randomly();
+    EntityCircle* set_position_randomly();
+    EntityCircle* move_to_links(int offset = 10);
     void set_position_relative_to_links(int offset = 15);
     void move_to_destination(const float destination_x, const float destination_y);
+    void move_along_path();
 };
 
 EntityCircle* get_entity_circle(const time_period_t time_period);

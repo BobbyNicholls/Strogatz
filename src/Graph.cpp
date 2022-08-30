@@ -57,7 +57,7 @@ void Graph::add_random_edge(const int max_entitiy_iloc)
     {
         add_preferential_links(m_entities[random_entity_iloc]);
     }
-    m_entities[random_entity_iloc]->set_position_relative_to_links();
+    m_entities[random_entity_iloc]->move_to_links();
 }
 
 
@@ -87,9 +87,8 @@ void Graph::rewire_random_edge()
         delete m_links[random_link_iloc];
         m_links.erase(m_links.begin() + random_link_iloc);
         link_entities(pivot_entity, new_target);
-        // TODO: replace these with a smooth move to destination function
-        old_target->set_position_relative_to_links();
-        pivot_entity->set_position_relative_to_links();
+        old_target->move_to_links();
+        pivot_entity->move_to_links();
     }
 }
 
@@ -126,7 +125,7 @@ Graph::Graph(
     m_entities.push_back(get_entity_circle(start_time));
     link_entities(m_entities[0], m_entities[1]);
     m_entities[0]->set_position_randomly();
-    m_entities[1]->set_position_relative_to_links();
+    m_entities[1]->set_position_randomly()->move_to_links();
 
     EntityCircle* chosen_entity{ nullptr };
     std::set<EntityCircle*> link_anchors{ m_entities[0] };
@@ -173,7 +172,8 @@ void Graph::draw_entities(sf::RenderWindow& window, const float move_distance)
         {
             //random_move_entity(shape);
             entity->get_shape().move(x_move_distance, y_move_distance);
-            //slingshot_move_entity(entity);
+            if (entity->is_pathing()) entity->move_along_path();
+            //else entity->move_to_links();
             window.draw(entity->get_shape());
         }
     }

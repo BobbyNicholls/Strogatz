@@ -30,8 +30,8 @@ private:
 public:
 	Graph(
 		const time_period_t start_time,
-		const float rewire_prob = 0.1f,
-		const float new_edge_prob = 0.25f,
+		const float rewire_prob = 0.25f,
+		const float new_edge_prob = 0.45f,
 		const float spawn_chance = 0.12f,
 		const int entities_start_size = 40,
 		const int entities_reserve_limit = 400,
