@@ -152,6 +152,7 @@ Graph::Graph(
             link_anchors.insert(new_entity);
         }
     }
+    seed_cliques_and_leaders();
 }
 
 
@@ -294,4 +295,50 @@ void Graph::kill_entities(const time_period_t time_period)
         }
     }
     tidy_up_entities();
+}
+
+
+void form_clique_from_seed(EntityCircle* seed)
+{
+    std::cout << seed->get_id() << " is a seed...\n";
+}
+
+
+void Graph::make_leader(EntityCircle* leader)
+{
+    std::cout << "Entity " << leader->get_id() << " is a leader with " <<
+        leader->get_links().size() << " links.\n";
+}
+
+
+void Graph::seed_cliques_and_leaders(const int leaders, const int cliques)
+{
+    /*
+    Leaders are assigned based on highest degree centrality.
+    The graph is seeded with random belief values, the leaders need to be assigned distinct 
+    belief systems which are specific to them, and dependent on race/faction (NOT IMPLMENETED
+    YET).
+    Clique formation starts with a random seed, a node to form a clique around, the closest N
+    nodes in terms of both belief compatibility and graph closeness are then attached to the
+    node and each other.
+    */
+    std::cout << "Forming " << cliques << " cliques and " << leaders << " leaders.\n";
+    std::vector<int> int_vec(m_entities.size());
+    for (int i{ 0 }; i < m_entities.size(); ++i)
+    {
+        int_vec[i] = i;
+    }
+    shuffle_vector(int_vec);
+    int_vec.resize(cliques);
+    std::cout << "Seeds acquired.\n";
+    // loop through enities, find leaders, and connect cliques
+    std::sort(
+        m_entities.begin(), m_entities.end(), 
+        [](EntityCircle* e1, EntityCircle* e2) { 
+            return e1->get_links().size() > e2->get_links().size(); 
+        }
+    );
+    for (int i{ 0 }; i < leaders; ++i) make_leader(m_entities[i]);
+    for (int i : int_vec) form_clique_from_seed(m_entities[i]);
+    std::cout << "forming cliques and leaders done.\n";
 }

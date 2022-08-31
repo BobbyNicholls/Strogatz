@@ -1,10 +1,10 @@
+#include <algorithm> // std::shuffle
 #include <cstdlib>
 #include <random>
 
 #include "Distributions.h"
 
 std::mt19937 mt{ std::random_device{}() };
-
 
 float mild_aversion(float degrees_of_freedom)
 {
@@ -16,6 +16,12 @@ float mild_aversion(float degrees_of_freedom)
 float mild_affinity()
 {
 	return std::max(0.00001f, 10 - mild_aversion());;
+}
+
+
+void shuffle_vector(std::vector<int>& vector)
+{
+	std::shuffle(vector.begin(), vector.end(), mt);
 }
 
 

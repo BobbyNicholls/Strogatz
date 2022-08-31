@@ -30,8 +30,8 @@ private:
 public:
 	Graph(
 		const time_period_t start_time,
-		const float rewire_prob = 0.25f,
-		const float new_edge_prob = 0.45f,
+		const float rewire_prob = 0.02f,
+		const float new_edge_prob = 0.01f,
 		const float spawn_chance = 0.12f,
 		const int entities_start_size = 40,
 		const int entities_reserve_limit = 400,
@@ -55,6 +55,8 @@ public:
 	float death_sigmoid(const int age, const int fifty_pct_age = 85, const int hundred_pct_age = 110);
 	void tidy_up_entities();
 	void kill_entities(const time_period_t time_period);
+	void seed_cliques_and_leaders(const int leaders = 4, const int cliques = 8);
+	void make_leader(EntityCircle* seed);
 };
 
 #endif

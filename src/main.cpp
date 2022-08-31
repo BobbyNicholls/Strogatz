@@ -17,8 +17,8 @@ extern const int edge_buffer{ 10 };
 extern const int game_height{ 1200 };
 extern const int game_width{ 1600 };
 constexpr float move_speed{ 200.f };
-constexpr int window_height{ 600 };
-constexpr int window_width{ 800 };
+constexpr int window_height{ 900 };
+constexpr int window_width{ 1200 };
 
 
 int main()
@@ -42,7 +42,7 @@ int main()
 
     Graph graph{ time_period_counter };
     EntityCircle* player_entity{ get_entity_circle(time_period_counter) };
-    player_entity->get_shape().setPosition(400, 300);
+    player_entity->get_shape().setPosition(window_width/2, window_height/2);
 
     while (window.isOpen())
     {
@@ -60,13 +60,14 @@ int main()
                 if (time_period_counter % 10 == 0) 
                     graph.kill_entities(time_period_counter);
                 graph.forward_propagate_beliefs();
-                if (uniform_distribution_float(0, 1) < graph.get_rewire_prob()) 
-                    graph.rewire_random_edge();
-                if (uniform_distribution_float(0, 1) < graph.get_new_edge_prob())
-                    graph.add_random_edge(graph.get_nr_of_entities() - 1);
                 if (time_period_counter % 10 == 0) 
                     graph.propagate_entities(time_period_counter);
             }
+
+            if (uniform_distribution_float(0, 1) < graph.get_rewire_prob())
+                graph.rewire_random_edge();
+            if (uniform_distribution_float(0, 1) < graph.get_new_edge_prob())
+                graph.add_random_edge(graph.get_nr_of_entities() - 1);
 
             ++frame_counter;
             sf::Event event;
@@ -74,7 +75,7 @@ int main()
             // Clear the window with black color (doesnt activate until 
             // window.display(), so has no immediate impact)
             window.clear(sf::Color::Black);
-            //graph.draw_links(window);
+            graph.draw_links(window);
             graph.draw_entities(window, move_speed * time_counter);
             while (window.pollEvent(event))
             {

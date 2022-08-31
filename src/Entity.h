@@ -30,6 +30,7 @@ private:
 	time_period_t m_birth_time{ 0 }; // is this slower than int?
 	bool m_sex;
 	bool m_paired { false };
+	bool m_leader { false };
 	id_t m_id;
 
 	Entity* m_partner{ nullptr };

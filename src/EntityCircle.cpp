@@ -6,6 +6,21 @@ extern const int edge_buffer;
 extern const int game_height;
 extern const int game_width;
 
+
+EntityCircle* get_entity_circle(const time_period_t time_period)
+{
+	EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle(time_period) };
+
+	if (!entity_pointer) // handle case where new returned null
+	{
+		// TODO: error handling here
+		std::cerr << "\n\nCould not allocate memory!!!\n\n";
+		throw - 1;
+	}
+	return entity_pointer;
+}
+
+
 EntityCircle::EntityCircle(
 	time_period_t birth_time,
 	float radius,
@@ -107,20 +122,6 @@ void EntityCircle::set_position_relative_to_links(int offset)
 	{
 		set_position_randomly();
 	}
-}
-
-
-EntityCircle* get_entity_circle(const time_period_t time_period)
-{
-	EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle(time_period) };
-
-	if (!entity_pointer) // handle case where new returned null
-	{
-		// TODO: error handling here
-		std::cerr << "\n\nCould not allocate memory!!!\n\n";
-		throw - 1;
-	}
-	return entity_pointer;
 }
 
 
