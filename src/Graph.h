@@ -16,6 +16,12 @@ struct Link
 };
 
 
+struct EntityVector
+{
+	std::vector<int> entity_vector;
+};
+
+
 //eventually make this a template class?: learncpp.com/cpp-tutorial/template-classes/
 class Graph
 {
@@ -28,6 +34,7 @@ private:
 	float m_spawn_chance;
 	int m_clique_min_size;
 	int m_clique_max_size;
+	std::vector<EntityVector> m_entity_vectors;
 
 public:
 	Graph(

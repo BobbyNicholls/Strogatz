@@ -124,6 +124,7 @@ Graph::Graph(
 
     m_entities.reserve(entities_reserve_limit);
     m_links.reserve(link_limit);
+    m_entity_vectors.reserve(100);
 
     m_entities.push_back(get_entity_circle(start_time));
     m_entities.push_back(get_entity_circle(start_time));
@@ -328,14 +329,24 @@ void Graph::vectorise_nodes(bool vectorise_all_nodes)
     Now compare the belief vectors.
     */
     if (vectorise_all_nodes) std::cout << "Vectorising all nodes..\n";
+    
+    std::map<int, int> map_to_fill;
+    int m_entities_size{ static_cast<int>(m_entities.size()) };
     std::vector<int> entity_ids;
-    entity_ids.reserve(m_entities.size());
+    entity_ids.reserve(m_entities_size);
     for (EntityCircle* entity : m_entities) entity_ids.push_back(entity->get_id());
     for (EntityCircle* entity : m_entities)
     {
-        std::map<int, int> map_to_fill;
+        EntityVector entity_vector;
+        entity_vector.entity_vector.reserve(m_entities_size);
         for (int id : entity_ids) map_to_fill[id] = 0;
         entity->do_random_walks(map_to_fill);
+        for (std::map<int, int>::iterator it{ map_to_fill.begin() }; it != map_to_fill.end(); ++it)
+        {
+            entity_vector.entity_vector.push_back(it->second);
+        }
+        m_entity_vectors.push_back(entity_vector);
+        
         std::cout << '\n';
     }
     std::cout << '\n';
