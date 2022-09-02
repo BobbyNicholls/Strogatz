@@ -304,11 +304,29 @@ void Graph::kill_entities(const time_period_t time_period)
 }
 
 
-void Graph::form_clique_from_seed(EntityCircle* seed)
+void Graph::form_clique_from_seed(int seed)
 {
-    std::cout << seed->get_id() << " is a seed...\n";
     int clique_size{ uniform_distribution_int(m_clique_min_size, m_clique_max_size) };
-    std::cout << clique_size << '\n';
+    std::cout << "Forming clique of size: " << clique_size << '\n';
+    int abs_error;
+    int m_entities_size{ static_cast<int>(m_entities.size()) };
+    std::vector<int> abs_errors(m_entities_size);
+    EntityVector& seed_vector = m_entity_vectors[seed];
+    for (int i{ 0 }; i < m_entities_size; ++i)
+    {
+        abs_error = 0;
+        if (i != seed)
+        {
+            for (int j{ 0 }; j < m_entities_size; ++j)
+            {
+                abs_error += abs(
+                    seed_vector.entity_vector[j] - m_entity_vectors[i].entity_vector[j]
+                );
+                std::cout << "absolute error: " << abs_error << '\n';
+            }
+        }
+        abs_errors[i] = abs_error;
+    }
 }
 
 
@@ -346,10 +364,7 @@ void Graph::vectorise_nodes(bool vectorise_all_nodes)
             entity_vector.entity_vector.push_back(it->second);
         }
         m_entity_vectors.push_back(entity_vector);
-        
-        std::cout << '\n';
     }
-    std::cout << '\n';
 }
 
 
@@ -372,6 +387,8 @@ void Graph::seed_cliques_and_leaders(const int leaders, const int cliques)
     }
     shuffle_vector(clique_seed_ilocs);
     clique_seed_ilocs.resize(cliques);
+    vectorise_nodes();
+    for (int i : clique_seed_ilocs) form_clique_from_seed(i);
     std::cout << "Seeds acquired.\n";
     // loop through enities, find leaders, and connect cliques
     std::sort(
@@ -381,6 +398,5 @@ void Graph::seed_cliques_and_leaders(const int leaders, const int cliques)
         }
     );
     for (int i{ 0 }; i < leaders; ++i) make_leader(m_entities[i]);
-    for (int i : clique_seed_ilocs) form_clique_from_seed(m_entities[i]);
     std::cout << "Forming cliques and leaders done.\n";
 }

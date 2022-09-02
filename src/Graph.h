@@ -68,7 +68,7 @@ public:
 	void kill_entities(const time_period_t time_period);
 	void seed_cliques_and_leaders(const int leaders = 4, const int cliques = 8);
 	void make_leader(EntityCircle* seed);
-	void form_clique_from_seed(EntityCircle* seed);
+	void form_clique_from_seed(int seed);
 	void vectorise_nodes(bool vectorise_all_nodes = true);
 };
 

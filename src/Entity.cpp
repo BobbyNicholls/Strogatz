@@ -144,5 +144,4 @@ void Entity::do_random_walks(std::map<int, int>& map_to_fill, int steps, int wal
         }
         current_entity = this;
     }
-    std::cout << "Walks done.\n";
 }
