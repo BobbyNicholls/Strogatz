@@ -61,6 +61,7 @@ public:
 	void print_beliefs() const;
 	void print_links() const;
 	void update_beliefs(Entity* influencer);
+	void do_random_walks(std::map<int, int>& map_to_fill, int steps=10, int walks=50);
 };
 
 

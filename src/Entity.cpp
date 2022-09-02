@@ -1,4 +1,5 @@
 #include <iostream>
+#include<set>
 
 #include "Entity.h"
 
@@ -122,4 +123,26 @@ void Entity::update_beliefs(Entity* influencer) // influencer should be const?
     m_beliefs[0][1] = result[0][1] / result_sum;
     m_beliefs[1][0] = result[1][0] / result_sum;
     m_beliefs[1][1] = result[1][1] / result_sum;
+}
+
+
+void Entity::do_random_walks(std::map<int, int>& map_to_fill, int steps, int walks)
+{
+    std::set<int> visited_ids;
+    int current_id;
+    Entity* current_entity{ this };
+    for (int i{ 0 }; i < walks; ++i)
+    {
+        for (int j{ 0 }; j < steps; ++j)
+        {
+            current_entity = current_entity->m_links[
+                uniform_distribution_int(0, static_cast<int>(current_entity->m_links.size())-1)
+            ];
+            current_id = current_entity->get_id();
+            map_to_fill[current_id] += 1;
+            visited_ids.insert(current_id);
+        }
+        current_entity = this;
+    }
+    std::cout << "Walks done.\n";
 }

@@ -26,6 +26,8 @@ private:
 	float m_rewire_prob;
 	float m_new_edge_prob;
 	float m_spawn_chance;
+	int m_clique_min_size;
+	int m_clique_max_size;
 
 public:
 	Graph(
@@ -35,7 +37,9 @@ public:
 		const float spawn_chance = 0.12f,
 		const int entities_start_size = 40,
 		const int entities_reserve_limit = 400,
-		const int link_limit = 3000
+		const int link_limit = 3000,
+		const int clique_min_size = 3,
+		const int clique_max_size = 8
 	);
 
 	float get_rewire_prob() const { return m_rewire_prob; }
@@ -57,6 +61,8 @@ public:
 	void kill_entities(const time_period_t time_period);
 	void seed_cliques_and_leaders(const int leaders = 4, const int cliques = 8);
 	void make_leader(EntityCircle* seed);
+	void form_clique_from_seed(EntityCircle* seed);
+	void vectorise_nodes(bool vectorise_all_nodes = true);
 };
 
 #endif

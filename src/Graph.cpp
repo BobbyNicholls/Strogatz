@@ -100,12 +100,16 @@ Graph::Graph(
     const float spawn_chance,
     const int entities_start_size,
     const int entities_reserve_limit,
-    const int link_limit
+    const int link_limit,
+    const int clique_min_size,
+    const int clique_max_size
 )
     : m_rewire_prob{ rewire_prob },
     m_new_edge_prob{ new_edge_prob },
     m_spawn_chance{ spawn_chance },
-    m_entities_start_size { entities_start_size }
+    m_entities_start_size { entities_start_size },
+    m_clique_min_size { clique_min_size },
+    m_clique_max_size{ clique_max_size }
 {
     /*
     Creates a Barabasi-Albert graph with slight modification for performance.
@@ -152,6 +156,7 @@ Graph::Graph(
             link_anchors.insert(new_entity);
         }
     }
+    vectorise_nodes();
     seed_cliques_and_leaders();
 }
 
@@ -298,9 +303,11 @@ void Graph::kill_entities(const time_period_t time_period)
 }
 
 
-void form_clique_from_seed(EntityCircle* seed)
+void Graph::form_clique_from_seed(EntityCircle* seed)
 {
     std::cout << seed->get_id() << " is a seed...\n";
+    int clique_size{ uniform_distribution_int(m_clique_min_size, m_clique_max_size) };
+    std::cout << clique_size << '\n';
 }
 
 
@@ -308,6 +315,30 @@ void Graph::make_leader(EntityCircle* leader)
 {
     std::cout << "Entity " << leader->get_id() << " is a leader with " <<
         leader->get_links().size() << " links.\n";
+}
+
+
+void Graph::vectorise_nodes(bool vectorise_all_nodes)
+{
+    /*
+    Create a map with the keys being the ids of all nodes in the graph and the values being all 0s.
+    For each entity do a number of random walks, count the IDs of nodes visited in the map.
+    Now each node/entity in the Graph is represented by a map, with a value vector that can be compared.
+    Do the inner product / cosine similarity / MAD to compare these vectors for similarity.
+    Now compare the belief vectors.
+    */
+    if (vectorise_all_nodes) std::cout << "Vectorising all nodes..\n";
+    std::vector<int> entity_ids;
+    entity_ids.reserve(m_entities.size());
+    for (EntityCircle* entity : m_entities) entity_ids.push_back(entity->get_id());
+    for (EntityCircle* entity : m_entities)
+    {
+        std::map<int, int> map_to_fill;
+        for (int id : entity_ids) map_to_fill[id] = 0;
+        entity->do_random_walks(map_to_fill);
+        std::cout << '\n';
+    }
+    std::cout << '\n';
 }
 
 
@@ -323,13 +354,13 @@ void Graph::seed_cliques_and_leaders(const int leaders, const int cliques)
     node and each other.
     */
     std::cout << "Forming " << cliques << " cliques and " << leaders << " leaders.\n";
-    std::vector<int> int_vec(m_entities.size());
+    std::vector<int> clique_seed_ilocs(m_entities.size());
     for (int i{ 0 }; i < m_entities.size(); ++i)
     {
-        int_vec[i] = i;
+        clique_seed_ilocs[i] = i;
     }
-    shuffle_vector(int_vec);
-    int_vec.resize(cliques);
+    shuffle_vector(clique_seed_ilocs);
+    clique_seed_ilocs.resize(cliques);
     std::cout << "Seeds acquired.\n";
     // loop through enities, find leaders, and connect cliques
     std::sort(
@@ -339,6 +370,6 @@ void Graph::seed_cliques_and_leaders(const int leaders, const int cliques)
         }
     );
     for (int i{ 0 }; i < leaders; ++i) make_leader(m_entities[i]);
-    for (int i : int_vec) form_clique_from_seed(m_entities[i]);
-    std::cout << "forming cliques and leaders done.\n";
+    for (int i : clique_seed_ilocs) form_clique_from_seed(m_entities[i]);
+    std::cout << "Forming cliques and leaders done.\n";
 }
