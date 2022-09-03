@@ -52,12 +52,13 @@ EntityCircle* Graph::add_preferential_links(EntityCircle* entity)
 void Graph::add_random_edge(const int max_entitiy_iloc)
 {
     const int random_entity_iloc{ uniform_distribution_int(0, max_entitiy_iloc) };
+    EntityCircle* linked_entity;
 
     if (m_entities[random_entity_iloc])
     {
-        add_preferential_links(m_entities[random_entity_iloc]);
+        linked_entity = add_preferential_links(m_entities[random_entity_iloc]);
+        m_entities[random_entity_iloc]->move_to_entity(linked_entity);
     }
-    m_entities[random_entity_iloc]->move_to_links();
 }
 
 
@@ -88,7 +89,7 @@ void Graph::rewire_random_edge()
         m_links.erase(m_links.begin() + random_link_iloc);
         link_entities(pivot_entity, new_target);
         old_target->move_to_links();
-        pivot_entity->move_to_links();
+        pivot_entity->move_to_entity(new_target);
     }
 }
 
@@ -157,7 +158,6 @@ Graph::Graph(
             link_anchors.insert(new_entity);
         }
     }
-    vectorise_nodes();
     seed_cliques_and_leaders();
 }
 
@@ -180,7 +180,6 @@ void Graph::draw_entities(sf::RenderWindow& window, const float move_distance)
             //random_move_entity(shape);
             entity->get_shape().move(x_move_distance, y_move_distance);
             if (entity->is_pathing()) entity->move_along_path();
-            //else entity->move_to_links();
             window.draw(entity->get_shape());
         }
     }
@@ -307,14 +306,17 @@ void Graph::kill_entities(const time_period_t time_period)
 void Graph::form_clique_from_seed(int seed)
 {
     int clique_size{ uniform_distribution_int(m_clique_min_size, m_clique_max_size) };
-    std::cout << "Forming clique of size: " << clique_size << '\n';
-    int abs_error;
+    std::vector<EntityCircle*> clique(clique_size);
+    float abs_error;
+    float abs_belief_error;
+    float max_abs_error{ 0.f };
     int m_entities_size{ static_cast<int>(m_entities.size()) };
-    std::vector<int> abs_errors(m_entities_size);
+    std::vector<std::tuple<float, float, int>> abs_errors(m_entities_size);
     EntityVector& seed_vector = m_entity_vectors[seed];
+
     for (int i{ 0 }; i < m_entities_size; ++i)
     {
-        abs_error = 0;
+        abs_error = 0.f;
         if (i != seed)
         {
             for (int j{ 0 }; j < m_entities_size; ++j)
@@ -322,11 +324,32 @@ void Graph::form_clique_from_seed(int seed)
                 abs_error += abs(
                     seed_vector.entity_vector[j] - m_entity_vectors[i].entity_vector[j]
                 );
-                std::cout << "absolute error: " << abs_error << '\n';
             }
         }
-        abs_errors[i] = abs_error;
+        if (abs_error > max_abs_error) max_abs_error = abs_error;
+        abs_belief_error = m_entities[seed]->get_abs_belief_diff(m_entities[i]);
+        abs_errors[i] = std::tuple<float, float, int>{ abs_belief_error, abs_error, i };
     }
+    for (std::tuple<float, float, int>& abs_err : abs_errors)
+    {
+        std::get<1>(abs_err) = (std::get<1>(abs_err)/max_abs_error) + std::get<0>(abs_err);
+    }
+    std::sort(
+        abs_errors.begin(), abs_errors.end(),
+        [](std::tuple<float, float, int>& t1, std::tuple<float, float, int>& t2) {
+            return std::get<1>(t1) < std::get<1>(t2);
+        }
+    );
+    clique[0] = m_entities[seed];
+    for (int i{ 1 }; i < clique_size; ++i) clique[i] = m_entities[std::get<2>(abs_errors[i])];
+    for (int i{ 0 }; i < clique_size; ++i)
+    {
+        for (int j{ i+1 }; j < clique_size; ++j)
+        {
+            if (!clique[i]->is_linked_to(clique[j])) link_entities(clique[i], clique[j]);
+        }
+    }
+    for (int i{ 1 }; i < clique_size; ++i) clique[i]->move_to_entity(clique[0]);
 }
 
 
@@ -348,6 +371,7 @@ void Graph::vectorise_nodes(bool vectorise_all_nodes)
     */
     if (vectorise_all_nodes) std::cout << "Vectorising all nodes..\n";
     
+    m_entity_vectors.resize(0);
     std::map<int, int> map_to_fill;
     int m_entities_size{ static_cast<int>(m_entities.size()) };
     std::vector<int> entity_ids;
@@ -365,6 +389,7 @@ void Graph::vectorise_nodes(bool vectorise_all_nodes)
         }
         m_entity_vectors.push_back(entity_vector);
     }
+    std::cout << '\n';
 }
 
 

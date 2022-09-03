@@ -62,6 +62,8 @@ int main()
                 graph.forward_propagate_beliefs();
                 if (time_period_counter % 10 == 0) 
                     graph.propagate_entities(time_period_counter);
+                if (time_period_counter % 20 == 0)
+                    graph.seed_cliques_and_leaders();
             }
 
             if (uniform_distribution_float(0, 1) < graph.get_rewire_prob())

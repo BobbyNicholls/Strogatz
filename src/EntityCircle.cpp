@@ -67,7 +67,7 @@ EntityCircle* EntityCircle::set_position_randomly()
 }
 
 
-EntityCircle* EntityCircle::move_to_links(int offset)
+EntityCircle* EntityCircle::move_to_links(const int offset)
 {
 	/*
 	Makes the position of the node the average position of all nodes connected to
@@ -95,7 +95,7 @@ EntityCircle* EntityCircle::move_to_links(int offset)
 }
 
 
-void EntityCircle::set_position_relative_to_links(int offset)
+void EntityCircle::set_position_relative_to_links(const int offset)
 {
 	/*
 	Makes the position of the node the average position of all nodes connected to
@@ -149,6 +149,16 @@ void EntityCircle::move_to_destination(const float destination_x, const float de
 	{
 		std::cout << "Entity " << get_id() << " is already at destination.\n";
 	}
+}
+
+
+void EntityCircle::move_to_entity(const EntityCircle* entity, const int offset)
+{
+	const sf::Vector2f& pos{ entity->m_shape.getPosition() };
+	move_to_destination(
+		pos.x + uniform_distribution_float(0, offset),
+		pos.y + uniform_distribution_float(0, offset)
+	);
 }
 
 

@@ -42,11 +42,11 @@ public:
 		const float rewire_prob = 0.02f,
 		const float new_edge_prob = 0.01f,
 		const float spawn_chance = 0.12f,
-		const int entities_start_size = 40,
+		const int entities_start_size = 60,
 		const int entities_reserve_limit = 400,
 		const int link_limit = 3000,
-		const int clique_min_size = 3,
-		const int clique_max_size = 8
+		const int clique_min_size = 4,
+		const int clique_max_size = 10
 	);
 
 	float get_rewire_prob() const { return m_rewire_prob; }
