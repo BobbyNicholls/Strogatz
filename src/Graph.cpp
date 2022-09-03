@@ -177,7 +177,7 @@ void Graph::draw_entities(sf::RenderWindow& window, const float move_distance)
     {
         if (entity)
         {
-            //random_move_entity(shape);
+            random_move_entity(shape);
             entity->get_shape().move(x_move_distance, y_move_distance);
             if (entity->is_pathing()) entity->move_along_path();
             window.draw(entity->get_shape());

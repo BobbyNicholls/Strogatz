@@ -57,13 +57,10 @@ int main()
                 time_str = time_str.substr(0, 6);
                 text.setString(time_str.append(std::to_string(++time_period_counter)));
                 // we iterate over links and entities twice in one frame unnecessarily due to this:
-                if (time_period_counter % 10 == 0) 
-                    graph.kill_entities(time_period_counter);
-                graph.forward_propagate_beliefs();
-                if (time_period_counter % 10 == 0) 
-                    graph.propagate_entities(time_period_counter);
-                if (time_period_counter % 20 == 0)
-                    graph.seed_cliques_and_leaders();
+                if (time_period_counter % 2 == 0) graph.kill_entities(time_period_counter);
+                if (time_period_counter % 20 == 0) graph.forward_propagate_beliefs();
+                if (time_period_counter % 10 == 0) graph.propagate_entities(time_period_counter);
+                if (time_period_counter % 15 == 0) graph.seed_cliques_and_leaders();
             }
 
             if (uniform_distribution_float(0, 1) < graph.get_rewire_prob())
@@ -77,7 +74,7 @@ int main()
             // Clear the window with black color (doesnt activate until 
             // window.display(), so has no immediate impact)
             window.clear(sf::Color::Black);
-            graph.draw_links(window);
+            //graph.draw_links(window);
             graph.draw_entities(window, move_speed * time_counter);
             while (window.pollEvent(event))
             {

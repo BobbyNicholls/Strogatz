@@ -128,7 +128,7 @@ void EntityCircle::set_position_relative_to_links(const int offset)
 void EntityCircle::move_to_destination(const float destination_x, const float destination_y)
 {
 	
-	const float speed{ 3 }; // make this settable
+	const float speed{ 1.5f }; // make this settable
 	
 	std::cout << get_id() << ": Moving to point (" << destination_x << ", " << destination_y << ")\n";
 	const sf::Vector2f& pos{ m_shape.getPosition() };

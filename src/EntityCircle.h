@@ -42,10 +42,10 @@ public:
 
     void update_colour();
     EntityCircle* set_position_randomly();
-    EntityCircle* move_to_links(const int offset = 10);
-    void set_position_relative_to_links(const int offset = 15);
+    EntityCircle* move_to_links(const int offset = 100);
+    void set_position_relative_to_links(const int offset = 100);
     void move_to_destination(const float destination_x, const float destination_y);
-    void move_to_entity(const EntityCircle* entity, const int offset = 10);
+    void move_to_entity(const EntityCircle* entity, const int offset = 100);
     void move_along_path();
 };
 
