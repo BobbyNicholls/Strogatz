@@ -154,7 +154,6 @@ void Entity::do_random_walks(std::map<int, int>& map_to_fill, int steps, int wal
         {
             for (int j{ 0 }; j < steps; ++j)
             {
-                // accessing deallocated memory??
                 current_entity = current_entity->m_links[
                     uniform_distribution_int(0, static_cast<int>(current_entity->m_links.size()) - 1)
                 ];
