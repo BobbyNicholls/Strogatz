@@ -73,7 +73,6 @@ EntityCircle* EntityCircle::move_to_links(const int offset)
 	Makes the position of the node the average position of all nodes connected to
 	this node plus some randomised offset.
 	*/
-	std::cout << get_id() << " is moving to links\n";
 	if (!is_pathing() && (m_links.size() > 0))
 	{
 		float x_sum{ 0 };
@@ -125,14 +124,13 @@ void EntityCircle::set_position_relative_to_links(const int offset)
 }
 
 
-void EntityCircle::move_to_destination(const float destination_x, const float destination_y)
+void EntityCircle::move_to_destination(
+	const float destination_x, 
+	const float destination_y, 
+	const float speed
+)
 {
-	
-	const float speed{ 1.5f }; // make this settable
-	
-	std::cout << get_id() << ": Moving to point (" << destination_x << ", " << destination_y << ")\n";
 	const sf::Vector2f& pos{ m_shape.getPosition() };
-	std::cout << get_id() << ": Moving from point (" << pos.x << ", " << pos.y << ")\n";
 	float x_diff{ destination_x - pos.x };
 	float y_diff{ destination_y - pos.y };
 	int steps{ static_cast<int>(sqrt((x_diff * x_diff) + (y_diff * y_diff)) / speed) };
@@ -141,13 +139,6 @@ void EntityCircle::move_to_destination(const float destination_x, const float de
 		m_pathing.steps = steps;
 		m_pathing.x_move = x_diff / steps;
 		m_pathing.y_move = y_diff / steps;
-		std::cout << get_id() << ": Movements of (" << m_pathing.x_move << ", " << m_pathing.y_move << ") in "
-			<< m_pathing.steps << " steps.\n";
-		std::cout << '\n';
-	}
-	else
-	{
-		std::cout << "Entity " << get_id() << " is already at destination.\n";
 	}
 }
 

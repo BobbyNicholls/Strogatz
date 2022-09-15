@@ -389,7 +389,6 @@ void Graph::vectorise_nodes(bool vectorise_all_nodes)
         }
         m_entity_vectors.push_back(entity_vector);
     }
-    std::cout << '\n';
 }
 
 

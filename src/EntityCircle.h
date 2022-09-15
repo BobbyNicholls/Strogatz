@@ -24,8 +24,6 @@ private:
     float m_outline_thickness;
     sf::Color m_outline_colour;
     sf::CircleShape m_shape;
-    // this is going to create an absurd number of repetitions
-    std::vector<sf::Vector2f> m_move_commands;
     Pathing m_pathing{};
 
 public:
@@ -44,7 +42,7 @@ public:
     EntityCircle* set_position_randomly();
     EntityCircle* move_to_links(const int offset = 100);
     void set_position_relative_to_links(const int offset = 100);
-    void move_to_destination(const float destination_x, const float destination_y);
+    void move_to_destination(const float destination_x, const float destination_y, const float speed = 1.5f);
     void move_to_entity(const EntityCircle* entity, const int offset = 100);
     void move_along_path();
 };
