@@ -303,7 +303,7 @@ void Graph::kill_entities(const time_period_t time_period)
 }
 
 
-void Graph::form_clique_from_seed(int seed)
+void Graph::form_clique_from_seed(const int seed)
 {
     int clique_size{ uniform_distribution_int(m_clique_min_size, m_clique_max_size) };
     std::vector<EntityCircle*> clique(clique_size);
@@ -360,7 +360,7 @@ void Graph::make_leader(EntityCircle* leader)
 }
 
 
-void Graph::vectorise_nodes(bool vectorise_all_nodes)
+void Graph::vectorise_nodes(const bool vectorise_all_nodes)
 {
     /*
     Create a map with the keys being the ids of all nodes in the graph and the values being all 0s.
