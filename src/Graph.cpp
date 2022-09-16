@@ -110,7 +110,8 @@ Graph::Graph(
     m_spawn_chance{ spawn_chance },
     m_entities_start_size { entities_start_size },
     m_clique_min_size { clique_min_size },
-    m_clique_max_size{ clique_max_size }
+    m_clique_max_size{ clique_max_size },
+    m_link_limit{ link_limit }
 {
     /*
     Creates a Barabasi-Albert graph with slight modification for performance.
@@ -124,7 +125,7 @@ Graph::Graph(
     // todo: make a set of non-anchors then make it less likely to attch to those?
 
     m_entities.reserve(entities_reserve_limit);
-    m_links.reserve(link_limit);
+    m_links.reserve(m_link_limit);
     m_entity_vectors.reserve(100);
 
     m_entities.push_back(get_entity_circle(start_time));
@@ -423,4 +424,11 @@ void Graph::seed_cliques_and_leaders(const int leaders, const int cliques)
     );
     for (int i{ 0 }; i < leaders; ++i) make_leader(m_entities[i]);
     std::cout << "Forming cliques and leaders done.\n";
+}
+
+
+void Graph::reserve_more_links(const float increment_fraction)
+{
+    m_link_limit = static_cast<int>(m_link_limit * increment_fraction);
+    m_links.reserve(m_link_limit);
 }

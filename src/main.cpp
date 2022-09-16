@@ -59,8 +59,12 @@ int main()
                 // we iterate over links and entities twice in one frame unnecessarily due to this:
                 if (time_period_counter % 2 == 0) graph.kill_entities(time_period_counter);
                 if (time_period_counter % 20 == 0) graph.forward_propagate_beliefs();
-                if (time_period_counter % 10 == 0) graph.propagate_entities(time_period_counter);
                 if (time_period_counter % 15 == 0) graph.seed_cliques_and_leaders();
+                if (time_period_counter % 10 == 0)
+                {
+                    if (graph.is_near_link_limit()) graph.reserve_more_links();
+                    graph.propagate_entities(time_period_counter);
+                }
             }
 
             if (uniform_distribution_float(0, 1) < graph.get_rewire_prob())

@@ -34,6 +34,7 @@ private:
 	float m_spawn_chance;
 	int m_clique_min_size;
 	int m_clique_max_size;
+	int m_link_limit;
 	std::vector<EntityVector> m_entity_vectors;
 
 public:
@@ -53,6 +54,7 @@ public:
 	float get_new_edge_prob() const { return m_new_edge_prob; }
 	float get_spawn_chance() const { return m_spawn_chance; }
 	int get_nr_of_entities() const { return static_cast<int>(m_entities.size()); }
+	bool is_near_link_limit() const { return m_links.size() > static_cast<int>(0.9*m_link_limit); }
 
 	void link_entities(EntityCircle* entity_from, EntityCircle* entity_to);
 	EntityCircle* get_preferential_entity();
@@ -70,6 +72,7 @@ public:
 	void make_leader(EntityCircle* seed);
 	void form_clique_from_seed(const int seed);
 	void vectorise_nodes(const bool vectorise_all_nodes = true);
+	void reserve_more_links(const float increment_fraction=1.5);
 };
 
 #endif
