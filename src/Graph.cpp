@@ -18,6 +18,9 @@ EntityCircle* Graph::get_preferential_entity()
     that the likelihood of selecting a given entity is proportional to its degree centrality (number of
     connected edges).
     */
+
+    // TODO: enable belief preference (at cost of performance?? use compiler flag)
+
     const int links_vector_size{ static_cast<int>(m_links.size()) };
     int link_iloc{ uniform_distribution_int(1, links_vector_size * 2) };
 
