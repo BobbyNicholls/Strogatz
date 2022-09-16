@@ -18,9 +18,8 @@
 - main.cpp
 
 # To do:
-- Clique formation and graph evolution with belief checking.
-- Make graph a class.
 - Refactor and functionalise main.
+- Add tiled maps.
 - Multiple graphs.
 - Graph migration.
 - Make it so we dont loop through entities and links multiple times unnecessarily.
