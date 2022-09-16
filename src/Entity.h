@@ -62,7 +62,7 @@ public:
 	void print_links() const;
 	void update_beliefs(Entity* influencer);
 	void normalise_beliefs();
-	void do_random_walks(std::map<int, int>& map_to_fill, int steps=10, int walks=50);
+	void do_random_walks(std::map<int, int>& map_to_fill, const int steps=10, const int walks=50);
 	float get_abs_belief_diff(Entity* entity);
 };
 

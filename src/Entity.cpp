@@ -143,7 +143,7 @@ void Entity::update_beliefs(Entity* influencer) // influencer should be const?
 }
 
 
-void Entity::do_random_walks(std::map<int, int>& map_to_fill, int steps, int walks)
+void Entity::do_random_walks(std::map<int, int>& map_to_fill, const int steps, const int walks)
 {
     std::set<int> visited_ids;
     int current_id;
