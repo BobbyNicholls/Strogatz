@@ -414,7 +414,6 @@ void Graph::seed_cliques_and_leaders(const int leaders, const int cliques)
     clique_seed_ilocs.resize(cliques);
     vectorise_nodes();
     for (int i : clique_seed_ilocs) form_clique_from_seed(i);
-    std::cout << "Seeds acquired.\n";
     // loop through enities, find leaders, and connect cliques
     std::sort(
         m_entities.begin(), m_entities.end(), 
@@ -423,7 +422,6 @@ void Graph::seed_cliques_and_leaders(const int leaders, const int cliques)
         }
     );
     for (int i{ 0 }; i < leaders; ++i) make_leader(m_entities[i]);
-    std::cout << "Forming cliques and leaders done.\n";
 }
 
 
