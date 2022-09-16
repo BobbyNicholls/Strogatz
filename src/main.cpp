@@ -14,11 +14,11 @@
 #include "utils.h"
 
 extern const int edge_buffer{ 10 };
-extern const int game_height{ 600 };
-extern const int game_width{ 800 };
+extern const int game_height{ 1200 };
+extern const int game_width{ 1600 };
 constexpr float move_speed{ 200.f };
-constexpr int window_height{ 600 };
-constexpr int window_width{ 800 };
+constexpr int window_height{ 900 };
+constexpr int window_width{ 1200 };
 
 
 int main()
@@ -38,9 +38,11 @@ int main()
     constexpr float time_step{ 1.0f / 60.0f };
     time_period_t time_period_counter{ 0 };
     unsigned int frame_counter{ 0 };
-    constexpr unsigned int frames_per_period{ 6 };
+    constexpr unsigned int frames_per_period{ 60 };
 
-    Graph graph{ get_barabasi_albert_graph(time_period_counter) };
+    Graph graph{ time_period_counter };
+    EntityCircle* player_entity{ get_entity_circle(time_period_counter) };
+    player_entity->get_shape().setPosition(window_width/2, window_height/2);
 
     while (window.isOpen())
     {
@@ -55,13 +57,20 @@ int main()
                 time_str = time_str.substr(0, 6);
                 text.setString(time_str.append(std::to_string(++time_period_counter)));
                 // we iterate over links and entities twice in one frame unnecessarily due to this:
-                if (time_period_counter % 10 == 0) kill_entities(graph, time_period_counter);
-                forward_propagate_beliefs(graph);
-                if (uniform_distribution_float(0, 1) < graph.rewire_prob) rewire_random_edge(graph);
-                if (uniform_distribution_float(0, 1) < graph.new_edge_prob)
-                    add_random_edge(graph, static_cast<int>(graph.entities.size() - 1));
-                if (time_period_counter % 10 == 0) propagate_entities(graph, time_period_counter);
+                if (time_period_counter % 2 == 0) graph.kill_entities(time_period_counter);
+                if (time_period_counter % 20 == 0) graph.forward_propagate_beliefs();
+                if (time_period_counter % 15 == 0) graph.seed_cliques_and_leaders();
+                if (time_period_counter % 10 == 0)
+                {
+                    if (graph.is_near_link_limit()) graph.reserve_more_links();
+                    graph.propagate_entities(time_period_counter);
+                }
             }
+
+            if (uniform_distribution_float(0, 1) < graph.get_rewire_prob())
+                graph.rewire_random_edge();
+            if (uniform_distribution_float(0, 1) < graph.get_new_edge_prob())
+                graph.add_random_edge(graph.get_nr_of_entities() - 1);
 
             ++frame_counter;
             sf::Event event;
@@ -69,11 +78,8 @@ int main()
             // Clear the window with black color (doesnt activate until 
             // window.display(), so has no immediate impact)
             window.clear(sf::Color::Black);
-            keyboard_move_entity(graph.entities[0]->get_shape(), move_speed, time_counter);
-            draw_links(graph, window);
-            draw_entities(graph, window);
-            // The pollEvent function returns true if an event was pending, or 
-            // false if there was none.
+            //graph.draw_links(window);
+            graph.draw_entities(window, move_speed * time_counter);
             while (window.pollEvent(event))
             {
                 switch (event.type)
@@ -122,19 +128,14 @@ int main()
 
             // to draw to a texture instead of a window: 
             // https://www.sfml-dev.org/tutorials/2.5/graphics-draw.php#off-screen-drawing
-            // for multi-threaded drawing: 
-            // https://www.sfml-dev.org/tutorials/2.5/graphics-draw.php#drawing-from-threads
             // this is so you can do event handling in the main loop's
             // thread (which is advised) and rendering in another thread.
             // This is a good idea.
-
-            // should only be doing this once every frame:
             window.draw(text);
+            window.draw(player_entity->get_shape());
             window.display();
             time_counter = 0;
         }
     }
-    
     return 0;
-
 }

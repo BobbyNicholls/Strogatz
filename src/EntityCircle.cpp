@@ -6,6 +6,21 @@ extern const int edge_buffer;
 extern const int game_height;
 extern const int game_width;
 
+
+EntityCircle* get_entity_circle(const time_period_t time_period)
+{
+	EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle(time_period) };
+
+	if (!entity_pointer) // handle case where new returned null
+	{
+		// TODO: error handling here
+		std::cerr << "\n\nCould not allocate memory!!!\n\n";
+		throw - 1;
+	}
+	return entity_pointer;
+}
+
+
 EntityCircle::EntityCircle(
 	time_period_t birth_time,
 	float radius,
@@ -21,7 +36,6 @@ EntityCircle::EntityCircle(
 	update_colour();
 	m_shape.setOutlineThickness(m_outline_thickness);
 	m_shape.setOutlineColor(m_outline_colour);
-
 }
 
 
@@ -43,16 +57,44 @@ void EntityCircle::update_colour()
 }
 
 
-void EntityCircle::set_position_randomly()
+EntityCircle* EntityCircle::set_position_randomly()
 {
 	m_shape.setPosition(
 		uniform_distribution_float(edge_buffer, game_width-edge_buffer),
 		uniform_distribution_float(edge_buffer, game_height-edge_buffer)
 	);
+	return this;
 }
 
 
-void EntityCircle::set_position_relative_to_links(int offset)
+EntityCircle* EntityCircle::move_to_links(const int offset)
+{
+	/*
+	Makes the position of the node the average position of all nodes connected to
+	this node plus some randomised offset.
+	*/
+	if (!is_pathing() && (m_links.size() > 0))
+	{
+		float x_sum{ 0 };
+		float y_sum{ 0 };
+		for (auto* link : m_links)
+		{
+			EntityCircle* link_ec_t{ static_cast<EntityCircle*>(link) };
+			const sf::Vector2f& link_pos{ link_ec_t->get_shape().getPosition() };
+			x_sum += link_pos.x;
+			y_sum += link_pos.y;
+		}
+		move_to_destination(
+			(x_sum / m_links.size()) + uniform_distribution_float(0, offset), 
+			(y_sum / m_links.size()) + uniform_distribution_float(0, offset)
+		);
+	}
+	else std::cout << "Actually no, " << get_id() << " is already pathing or has no links.\n";
+	return this;
+}
+
+
+void EntityCircle::set_position_relative_to_links(const int offset)
 {
 	/*
 	Makes the position of the node the average position of all nodes connected to
@@ -79,4 +121,40 @@ void EntityCircle::set_position_relative_to_links(int offset)
 	{
 		set_position_randomly();
 	}
+}
+
+
+void EntityCircle::move_to_destination(
+	const float destination_x, 
+	const float destination_y, 
+	const float speed
+)
+{
+	const sf::Vector2f& pos{ m_shape.getPosition() };
+	float x_diff{ destination_x - pos.x };
+	float y_diff{ destination_y - pos.y };
+	int steps{ static_cast<int>(sqrt((x_diff * x_diff) + (y_diff * y_diff)) / speed) };
+	if (steps)
+	{
+		m_pathing.steps = steps;
+		m_pathing.x_move = x_diff / steps;
+		m_pathing.y_move = y_diff / steps;
+	}
+}
+
+
+void EntityCircle::move_to_entity(const EntityCircle* entity, const int offset)
+{
+	const sf::Vector2f& pos{ entity->m_shape.getPosition() };
+	move_to_destination(
+		pos.x + uniform_distribution_float(0, offset),
+		pos.y + uniform_distribution_float(0, offset)
+	);
+}
+
+
+void EntityCircle::move_along_path()
+{
+	m_shape.move(m_pathing.x_move, m_pathing.y_move);
+	--m_pathing.steps;
 }

@@ -6,12 +6,9 @@
 
 #include "Distributions.h"
 
-//struct Graph;
-
 extern const int edge_buffer;
 extern const int game_height;
 extern const int game_width;
-
 
 using id_t = std::uint_fast32_t;
 using time_period_t = std::uint_fast16_t;
@@ -20,39 +17,6 @@ using time_period_t = std::uint_fast16_t;
 //bool check_for_double_linkage(Graph& graph);
 //bool check_for_entity_position_bug(Graph& graph);
 id_t generate_id();
-
-
-template <typename Shape_t>
-void keyboard_move_entity(
-    Shape_t& shape,
-    const float move_speed,
-    const float time_counter
-)
-{
-    sf::Vector2f pos{ shape.getPosition() };
-    float move_distance{ move_speed * time_counter };
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-    {
-        shape.move((pos.x < edge_buffer) ? 
-            move_distance : -move_distance, 0.f);
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-    {
-        shape.move((pos.x > (game_width - edge_buffer)) ? 
-            -move_distance : move_distance, 0.f);
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-    {
-        shape.move(0.f, (pos.y < edge_buffer) ? 
-            move_distance : -move_distance);
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-    {
-        shape.move(0.f, (pos.y > (game_height - edge_buffer)) ? 
-            -move_distance : move_distance);
-    }
-}
 
 
 template <typename Shape_t>
@@ -86,31 +50,5 @@ void random_move_entity(
         shape.move(x_move, y_move);
     }
 }
-
-
-template <typename e_t>
-void slingshot_move_entity(
-    e_t* entity,
-    const float attraction_percent = 0.001f
-)
-{
-    float x_sum{};
-    float y_sum{};
-    const sf::Vector2f& pos{ entity->get_shape().getPosition() };
-    const auto& links{ entity->get_links() };
-
-    for (const auto& link : links)
-    {
-        e_t* link_e_t{ static_cast<e_t*>(link) };
-        const sf::Vector2f& link_pos{ link_e_t->get_shape().getPosition() };
-        x_sum += link_pos.x;
-        y_sum += link_pos.y;
-    }
-    entity->get_shape().move(
-        ((x_sum / links.size()) - pos.x) * attraction_percent,
-        ((y_sum / links.size()) - pos.y) * attraction_percent
-    );
-}
-
 
 #endif

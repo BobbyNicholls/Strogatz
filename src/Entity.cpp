@@ -1,4 +1,5 @@
 #include <iostream>
+#include<set>
 
 #include "Entity.h"
 
@@ -11,7 +12,24 @@ Entity::Entity(time_period_t birth_time)
     m_beliefs[0][1] = mild_aversion();
     m_beliefs[1][0] = mild_aversion();
     m_beliefs[1][1] = mild_aversion();
+    normalise_beliefs();
+
     m_sex = uniform_distribution_int(0, 1);
+}
+
+
+void Entity::normalise_beliefs()
+{
+    /*
+    Normalises beliefs to between 0 and 1.
+    */
+    float belief_sum{
+        m_beliefs[0][0] + m_beliefs[0][1] + m_beliefs[1][0] + m_beliefs[1][1]
+    };
+    m_beliefs[0][0] /= belief_sum;
+    m_beliefs[0][1] /= belief_sum;
+    m_beliefs[1][0] /= belief_sum;
+    m_beliefs[1][1] /= belief_sum;
 }
 
 
@@ -114,7 +132,7 @@ void Entity::update_beliefs(Entity* influencer) // influencer should be const?
         }
     }
 
-    // normalise the beliefs to 0-1
+    // normalise the beliefs to 0-1 (could use func but think his is faster??)
     float result_sum{
         result[0][0] + result[0][1] + result[1][0] + result[1][1]
     };
@@ -122,4 +140,39 @@ void Entity::update_beliefs(Entity* influencer) // influencer should be const?
     m_beliefs[0][1] = result[0][1] / result_sum;
     m_beliefs[1][0] = result[1][0] / result_sum;
     m_beliefs[1][1] = result[1][1] / result_sum;
+}
+
+
+void Entity::do_random_walks(std::map<int, int>& map_to_fill, const int steps, const int walks)
+{
+    std::set<int> visited_ids;
+    int current_id;
+    Entity* current_entity{ this };
+    if (m_links.size() > 0)
+    {
+        for (int i{ 0 }; i < walks; ++i)
+        {
+            for (int j{ 0 }; j < steps; ++j)
+            {
+                current_entity = current_entity->m_links[
+                    uniform_distribution_int(0, static_cast<int>(current_entity->m_links.size()) - 1)
+                ];
+                current_id = current_entity->get_id();
+                map_to_fill[current_id] += 1;
+                visited_ids.insert(current_id);
+            }
+            current_entity = this;
+        }
+    }
+}
+
+
+float Entity::get_abs_belief_diff(Entity* entity)
+{
+    float abs_belief_diff{};
+    abs_belief_diff += abs(m_beliefs[0][0] - entity->m_beliefs[0][0]);
+    abs_belief_diff += abs(m_beliefs[0][1] - entity->m_beliefs[0][1]);
+    abs_belief_diff += abs(m_beliefs[1][0] - entity->m_beliefs[1][0]);
+    abs_belief_diff += abs(m_beliefs[1][1] - entity->m_beliefs[1][1]);
+    return abs_belief_diff;
 }

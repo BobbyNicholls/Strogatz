@@ -30,6 +30,7 @@ private:
 	time_period_t m_birth_time{ 0 }; // is this slower than int?
 	bool m_sex;
 	bool m_paired { false };
+	bool m_leader { false };
 	id_t m_id;
 
 	Entity* m_partner{ nullptr };
@@ -60,6 +61,9 @@ public:
 	void print_beliefs() const;
 	void print_links() const;
 	void update_beliefs(Entity* influencer);
+	void normalise_beliefs();
+	void do_random_walks(std::map<int, int>& map_to_fill, const int steps=10, const int walks=50);
+	float get_abs_belief_diff(Entity* entity);
 };
 
 
