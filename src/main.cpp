@@ -44,6 +44,7 @@ int main()
     time_period_t time_period_counter{ 0 };
     unsigned int frame_counter{ 0 };
     constexpr unsigned int frames_per_period{ 60 };
+    bool draw_links{ false };
 
     Graph graph{ time_period_counter };
     Map map{ map_texture };
@@ -86,7 +87,7 @@ int main()
             window.clear(sf::Color::Black);
             sf::Vector2f movement{ get_movement(move_speed * time_counter) };
             map.draw(window, movement.x, movement.y);
-            //graph.draw_links(window);
+            if (draw_links) graph.draw_links(window);
             graph.draw_entities(window, movement.x, movement.y);
             while (window.pollEvent(event))
             {
@@ -107,9 +108,9 @@ int main()
 
                 case sf::Event::KeyPressed:
                 {
-                    if (event.key.code == sf::Keyboard::Escape)
+                    if (event.key.code == sf::Keyboard::Space)
                     {
-                        std::cout << "the escape key was pressed" << '\n';
+                        draw_links = !draw_links;
                     }
                     break;
                 }
@@ -117,13 +118,7 @@ int main()
                 {
                     if (event.mouseButton.button == sf::Mouse::Right)
                     {
-                        std::cout << "the right button was pressed" << '\n';
-                        std::cout << "mouse x: "
-                            << event.mouseButton.x
-                            << std::endl; // get the position of the cursor
-                        std::cout << "mouse y: "
-                            << event.mouseButton.y
-                            << std::endl;
+                        draw_links = !draw_links;
                     }
                     break;
                 }
