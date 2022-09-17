@@ -28,6 +28,10 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Strogatz");
     window.setVerticalSyncEnabled(true);
+
+    sf::Texture map_texture;
+    load_texture(map_texture);
+
     sf::Text text;
     sf::Font font;
     std::string time_str{ "Time: " };
@@ -78,6 +82,7 @@ int main()
             // Clear the window with black color (doesnt activate until 
             // window.display(), so has no immediate impact)
             window.clear(sf::Color::Black);
+            window.draw(sprite);
             //graph.draw_links(window);
             graph.draw_entities(window, move_speed * time_counter);
             while (window.pollEvent(event))

@@ -7,6 +7,15 @@ id_t generate_id()
 }
 
 
+void load_texture(sf::Texture& texture)
+{
+    if (!texture.loadFromFile("textures/texture.png"))
+    {
+        std::cout << "Failed to load texture.\n";
+    }
+}
+
+
 //bool check_for_double_linkage(Graph& graph)
 //{
 //    size_t link_problems[link_limit][2]{};
