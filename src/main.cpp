@@ -10,6 +10,7 @@
 
 #include "EntityCircle.h"
 #include "Graph.h"
+#include "Map.h"
 #include "Text.h"
 #include "utils.h"
 
@@ -45,6 +46,7 @@ int main()
     constexpr unsigned int frames_per_period{ 60 };
 
     Graph graph{ time_period_counter };
+    Map map{ map_texture };
     EntityCircle* player_entity{ get_entity_circle(time_period_counter) };
     player_entity->get_shape().setPosition(window_width/2, window_height/2);
 
@@ -82,9 +84,10 @@ int main()
             // Clear the window with black color (doesnt activate until 
             // window.display(), so has no immediate impact)
             window.clear(sf::Color::Black);
-            window.draw(sprite);
+            sf::Vector2f movement{ get_movement(move_speed * time_counter) };
+            map.draw(window, movement.x, movement.y);
             //graph.draw_links(window);
-            graph.draw_entities(window, move_speed * time_counter);
+            graph.draw_entities(window, movement.x, movement.y);
             while (window.pollEvent(event))
             {
                 switch (event.type)

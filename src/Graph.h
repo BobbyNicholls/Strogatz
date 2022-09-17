@@ -61,7 +61,9 @@ public:
 	EntityCircle* add_preferential_links(EntityCircle* entity);
 	void add_random_edge(const int max_entitiy_iloc);
 	void rewire_random_edge();
-	void draw_entities(sf::RenderWindow& window, const float move_distance);
+	void draw_entities(
+		sf::RenderWindow& window, const float x_move_distance, const float y_move_distance
+	);
 	void draw_links(sf::RenderWindow& window);
 	void forward_propagate_beliefs();
 	void propagate_entities(const time_period_t time_period);

@@ -166,16 +166,10 @@ Graph::Graph(
 }
 
 
-void Graph::draw_entities(sf::RenderWindow& window, const float move_distance)
+void Graph::draw_entities(
+    sf::RenderWindow& window, const float x_move_distance, const float y_move_distance
+)
 {
-    float x_move_distance{ 0.f };
-    float y_move_distance{ 0.f };
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) x_move_distance += move_distance;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) x_move_distance -= move_distance;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) y_move_distance += move_distance;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) y_move_distance -= move_distance;
-
     sf::CircleShape shape;
     for (EntityCircle* entity: m_entities)
     {

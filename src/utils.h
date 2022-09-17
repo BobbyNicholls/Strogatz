@@ -18,6 +18,7 @@ using time_period_t = std::uint_fast16_t;
 //bool check_for_entity_position_bug(Graph& graph);
 id_t generate_id();
 void load_texture(sf::Texture& texture);
+sf::Vector2f get_movement(const float move_distance);
 
 
 template <typename Shape_t>
