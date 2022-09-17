@@ -20,6 +20,10 @@
 # To do:
 - Refactor and functionalise main.
 - Add tiled maps.
+  - Put anchor points on the map where entities return to and congregate.
+  - Have tiles blend in to each other more naturally.
+  - Generate the map according to the anchors.
+  - Housing, places of work, etc.
 - Multiple graphs.
 - Graph migration.
 - Make it so we dont loop through entities and links multiple times unnecessarily.
