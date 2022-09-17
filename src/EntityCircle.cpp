@@ -89,7 +89,6 @@ EntityCircle* EntityCircle::move_to_links(const int offset)
 			(y_sum / m_links.size()) + uniform_distribution_float(0, offset)
 		);
 	}
-	else std::cout << "Actually no, " << get_id() << " is already pathing or has no links.\n";
 	return this;
 }
 

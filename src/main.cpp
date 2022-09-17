@@ -43,7 +43,7 @@ int main()
     constexpr float time_step{ 1.0f / 60.0f };
     time_period_t time_period_counter{ 0 };
     unsigned int frame_counter{ 0 };
-    constexpr unsigned int frames_per_period{ 60 };
+    constexpr unsigned int frames_per_period{ 600 };
     bool draw_links{ false };
 
     Graph graph{ time_period_counter };
