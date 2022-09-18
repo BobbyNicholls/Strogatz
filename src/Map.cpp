@@ -89,8 +89,9 @@ void Map::blend_textures(const int left_texture_col, const int right_texture_col
 {
 	int row_ref{ uniform_distribution_int(0, 3) };
 	const int panel_size{ 4 };
-	const float panel_size_f{ 4.f };
 	const int panels_per_row{ (TEXTURE_WIDTH / panel_size) };
+	const int neatness_scaler{ 3 };
+	float probability_denominator{ (static_cast<float>(panels_per_row) - neatness_scaler) };
 	m_blended_texture.create(TEXTURE_WIDTH, TEXTURE_WIDTH);
 	m_blended_texture.clear(sf::Color::Green);
 	for (int row{ 0 }; row < panels_per_row; ++row)
@@ -99,7 +100,7 @@ void Map::blend_textures(const int left_texture_col, const int right_texture_col
 		{
 			sf::Sprite sprite;
 			sprite.setTexture(m_map_texture);
-			if (uniform_distribution_float(0, 1) < (col / 8.f))
+			if (uniform_distribution_float(0, 1) < (col / probability_denominator))
 			{
 				sprite.setTextureRect(sf::IntRect(
 					TEXTURE_WIDTH * right_texture_col + col * panel_size,
@@ -117,7 +118,9 @@ void Map::blend_textures(const int left_texture_col, const int right_texture_col
 					panel_size
 				));
 			}
-			sprite.setPosition(col * panel_size_f, row * panel_size_f);
+			sprite.setPosition(
+				col * static_cast<float>(panel_size), row * static_cast<float>(panel_size)
+			);
 			m_blended_texture.draw(sprite);
 		}
 	}
