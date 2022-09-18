@@ -1,8 +1,20 @@
 #include "Distributions.h"
 #include "Map.h"
 
-const int MAP_GRID_WIDTH{ 200 };
-const int MAP_GRID_HEIGHT{ 140 };
+constexpr int MAP_GRID_WIDTH{ 200 };
+constexpr int MAP_GRID_HEIGHT{ 140 };
+constexpr int TEXTURE_WIDTH{ 64 };
+constexpr float TEXTURE_WIDTH_f{ 64.f };
+
+
+enum Texture
+{
+	grass,
+	sand,
+	stone,
+	mud,
+};
+
 
 Map::Map(sf::Texture& map_texture)
 	: m_map_texture{ map_texture }
@@ -15,7 +27,7 @@ void Map::fill_map()
 {
 	int row{ 0 };
 	int col{ 0 };
-	m_render_texture.create(MAP_GRID_WIDTH * 64, MAP_GRID_HEIGHT * 64);
+	m_render_texture.create(MAP_GRID_WIDTH * TEXTURE_WIDTH, MAP_GRID_HEIGHT * TEXTURE_WIDTH);
 	m_render_texture.clear(sf::Color::Green);
 
 	for (int i{ 0 }; i < MAP_GRID_WIDTH * MAP_GRID_HEIGHT; ++i)
@@ -29,29 +41,40 @@ void Map::fill_map()
 		sprite.setTexture(m_map_texture);
 		if ( ((col > (MAP_GRID_WIDTH * 0.5f + 3)) && (col <  (MAP_GRID_WIDTH * 0.5f + 9))) ||
 			 ((row > (MAP_GRID_HEIGHT * 0.5f + 3)) && (row < (MAP_GRID_HEIGHT * 0.5f + 9))) )
-			sprite.setTextureRect(sf::IntRect(64 * 5, 64 * uniform_distribution_int(0, 3), 64, 64));
+			sprite.setTextureRect(sf::IntRect(
+				TEXTURE_WIDTH * Texture::stone, 
+				TEXTURE_WIDTH * uniform_distribution_int(0, 3), 
+				TEXTURE_WIDTH, 
+				TEXTURE_WIDTH
+			));
 		else if (col == (MAP_GRID_WIDTH * 0.5f + 3))
 		{
-			blend_textures(5, 4);
+			blend_textures(Texture::grass, Texture::stone);
 			sprite = m_blended_sprite;
 		}
 		else if (col == (MAP_GRID_WIDTH * 0.5f + 9))
 		{
-			blend_textures(4, 5);
+			blend_textures(Texture::stone, Texture::grass);
 			sprite = m_blended_sprite;
 		}
 		else
 		{
-			sprite.setTextureRect(sf::IntRect(64 * 4, 64 * uniform_distribution_int(4, 7), 64, 64));
-			sprite.setColor(sf::Color(0, 150, 0));
+			sprite.setTextureRect(sf::IntRect(
+				TEXTURE_WIDTH * Texture::grass, 
+				TEXTURE_WIDTH * uniform_distribution_int(0, 3), 
+				TEXTURE_WIDTH, 
+				TEXTURE_WIDTH
+			));
 		}
-		sprite.setPosition(col * 64.f, row * 64.f);
+		sprite.setPosition(col * TEXTURE_WIDTH_f, row * TEXTURE_WIDTH_f);
 		m_render_texture.draw(sprite);
 		++col;
 	}
 	m_render_texture.display();
 	m_sprite.setTexture(m_render_texture.getTexture());
-	m_sprite.setPosition(-MAP_GRID_WIDTH * 64.f * 0.5f, -MAP_GRID_HEIGHT * 64.f * 0.5f);
+	m_sprite.setPosition(
+		-MAP_GRID_WIDTH * TEXTURE_WIDTH_f * 0.5f, -MAP_GRID_HEIGHT * TEXTURE_WIDTH_f * 0.5f
+	);
 }
 
 
@@ -62,31 +85,39 @@ void Map::draw(sf::RenderWindow& window, const float x_move_distance, const floa
 }
 
 
-void Map::blend_textures(const int left_col, const int right_col)
+void Map::blend_textures(const int left_texture_col, const int right_texture_col)
 {
-	m_blended_texture.create(64, 64);
+	int row_ref{ uniform_distribution_int(0, 3) };
+	const int panel_size{ 4 };
+	const float panel_size_f{ 4.f };
+	const int panels_per_row{ (TEXTURE_WIDTH / panel_size) };
+	m_blended_texture.create(TEXTURE_WIDTH, TEXTURE_WIDTH);
 	m_blended_texture.clear(sf::Color::Green);
-	for (int row{ 0 }; row < 16; ++row)
+	for (int row{ 0 }; row < panels_per_row; ++row)
 	{
-		for (int col{ 0 }; col < 16; ++col)
+		for (int col{ 0 }; col < panels_per_row; ++col)
 		{
 			sf::Sprite sprite;
 			sprite.setTexture(m_map_texture);
 			if (uniform_distribution_float(0, 1) < (col / 8.f))
 			{
-				sprite.setTextureRect(
-					sf::IntRect(64 * left_col + col * 4, 64 * uniform_distribution_int(0, 3) + row * 4, 4, 4)
-				);
-				if (left_col == 4) sprite.setColor(sf::Color(0, 150, 0));
+				sprite.setTextureRect(sf::IntRect(
+					TEXTURE_WIDTH * right_texture_col + col * panel_size,
+					TEXTURE_WIDTH * row_ref + row * panel_size,
+					panel_size,
+					panel_size
+				));
 			}
 			else
 			{
-				sprite.setTextureRect(
-					sf::IntRect(64 * right_col + col * 4, 64 * uniform_distribution_int(0, 3) + row * 4, 4, 4)
-				);
-				if (right_col == 4) sprite.setColor(sf::Color(0, 150, 0));
+				sprite.setTextureRect(sf::IntRect(
+					TEXTURE_WIDTH * left_texture_col + col * panel_size,
+					TEXTURE_WIDTH * row_ref + row * panel_size,
+					panel_size,
+					panel_size
+				));
 			}
-			sprite.setPosition(col * 4.f, row * 4.f);
+			sprite.setPosition(col * panel_size_f, row * panel_size_f);
 			m_blended_texture.draw(sprite);
 		}
 	}
