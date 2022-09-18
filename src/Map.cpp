@@ -87,11 +87,12 @@ void Map::draw(sf::RenderWindow& window, const float x_move_distance, const floa
 
 void Map::blend_textures(const int left_texture_col, const int right_texture_col)
 {
-	int row_ref{ uniform_distribution_int(0, 3) };
 	const int panel_size{ 4 };
 	const int panels_per_row{ (TEXTURE_WIDTH / panel_size) };
 	const int neatness_scaler{ 3 };
+	int row_ref{ uniform_distribution_int(0, 3) };
 	float probability_denominator{ (static_cast<float>(panels_per_row) - neatness_scaler) };
+
 	m_blended_texture.create(TEXTURE_WIDTH, TEXTURE_WIDTH);
 	m_blended_texture.clear(sf::Color::Green);
 	for (int row{ 0 }; row < panels_per_row; ++row)
