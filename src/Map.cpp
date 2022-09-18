@@ -39,22 +39,22 @@ void Map::fill_map()
 		}
 		sf::Sprite sprite;
 		sprite.setTexture(m_map_texture);
-		if ( ((col > (MAP_GRID_WIDTH * 0.5f + 3)) && (col <  (MAP_GRID_WIDTH * 0.5f + 9))) ||
-			 ((row > (MAP_GRID_HEIGHT * 0.5f + 3)) && (row < (MAP_GRID_HEIGHT * 0.5f + 9))) )
+		if ( ((col > (MAP_GRID_WIDTH * 0.5f + 3)) && (col <  (MAP_GRID_WIDTH * 0.5f + 4))) ||
+			 ((row > (MAP_GRID_HEIGHT * 0.5f + 3)) && (row < (MAP_GRID_HEIGHT * 0.5f + 4))) )
 			sprite.setTextureRect(sf::IntRect(
-				TEXTURE_WIDTH * Texture::stone, 
+				TEXTURE_WIDTH * Texture::mud, 
 				TEXTURE_WIDTH * uniform_distribution_int(0, 3), 
 				TEXTURE_WIDTH, 
 				TEXTURE_WIDTH
 			));
 		else if (col == (MAP_GRID_WIDTH * 0.5f + 3))
 		{
-			blend_textures(Texture::grass, Texture::stone);
+			blend_textures(Texture::grass, Texture::mud);
 			sprite = m_blended_sprite;
 		}
-		else if (col == (MAP_GRID_WIDTH * 0.5f + 9))
+		else if (col == (MAP_GRID_WIDTH * 0.5f + 4))
 		{
-			blend_textures(Texture::stone, Texture::grass);
+			blend_textures(Texture::mud, Texture::grass);
 			sprite = m_blended_sprite;
 		}
 		else
@@ -89,7 +89,7 @@ void Map::blend_textures(const int left_texture_col, const int right_texture_col
 {
 	const int panel_size{ 4 };
 	const int panels_per_row{ (TEXTURE_WIDTH / panel_size) };
-	const int neatness_scaler{ 3 };
+	const int neatness_scaler{ 8 };
 	int row_ref{ uniform_distribution_int(0, 3) };
 	float probability_denominator{ (static_cast<float>(panels_per_row) - neatness_scaler) };
 
@@ -127,4 +127,35 @@ void Map::blend_textures(const int left_texture_col, const int right_texture_col
 	}
 	m_blended_texture.display();
 	m_blended_sprite.setTexture(m_blended_texture.getTexture());
+}
+
+
+void Map::build_road(
+	const int origin_x, const int origin_y, const int destination_x, const int destination_y
+)
+{
+	const int x_diff{ destination_x - origin_x };
+	const int y_diff{ destination_y - origin_y};
+	// travel the y-axis first
+	int increment{ (y_diff > 0) ? 1 : -1 };
+	int i{ increment };
+	while (i != y_diff)
+	{
+		sf::Sprite left_sprite;
+		sf::Sprite right_sprite;
+		left_sprite.setTexture(m_map_texture); // do we need these 2 lines???
+		right_sprite.setTexture(m_map_texture);
+		blend_textures(Texture::grass, Texture::mud);
+		left_sprite = m_blended_sprite;
+		blend_textures(Texture::mud, Texture::grass);
+		right_sprite = m_blended_sprite;
+		left_sprite.setPosition(origin_x - 1, origin_y + i);
+		right_sprite.setPosition(origin_x, origin_y + i);
+		m_render_texture.draw(left_sprite);
+		m_render_texture.draw(right_sprite);
+		
+		i += increment;
+	}
+	int increment = (x_diff > 0) ? 1 : -1;
+	int i{ increment };
 }
