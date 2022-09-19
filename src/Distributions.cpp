@@ -38,14 +38,6 @@ float strong_affinity()
 }
 
 
-float uniform_distribution_float(int min, int max)
-{
-	// static used for efficiency, so we only calculate this value once
-	static constexpr double fraction{ 1.0 / (RAND_MAX + 1.0) };
-	return min + static_cast<float>((max - min) * (std::rand() * fraction));
-}
-
-
 int uniform_distribution_int(int min, int max)
 {
 	static constexpr double fraction{ 1.0 / (RAND_MAX + 1.0) };

@@ -73,7 +73,7 @@ void Map::blend_textures(
 {
 	const int panel_size{ 4 };
 	const int panels_per_row{ (TEXTURE_WIDTH / panel_size) };
-	const float neatness_scaler{ 0.f };
+	const float neatness_scaler{ 0.3f };
 	int row_ref{ uniform_distribution_int(0, 3) };
 	float probability_denominator{ static_cast<float>(panels_per_row) };
 	int row{ 0 };
@@ -118,14 +118,12 @@ void Map::blend_textures(
 }
 
 
-void Map::blend_textures_diagonally(
-	const int left_texture_col, const int right_texture_col, const bool inside_corner
-)
+void Map::blend_textures_diagonally(const int left_texture_col, const int right_texture_col)
 {
 	const int panel_size{ 4 };
 	const int panels_per_row{ (TEXTURE_WIDTH / panel_size) };
-	const int neatness_scaler{ 4 };
-	const int slice_scaler{ inside_corner ? 11 : 9 };
+	const int neatness_scaler{ 8 };
+	const int slice_scaler{ 12 };
 	int row_ref{ uniform_distribution_int(0, 3) };
 	float probability_denominator{ (static_cast<float>(panels_per_row) - neatness_scaler) };
 	m_blended_texture.create(TEXTURE_WIDTH, TEXTURE_WIDTH);
@@ -136,7 +134,7 @@ void Map::blend_textures_diagonally(
 		{
 			sf::Sprite sprite;
 			sprite.setTexture(m_map_texture);
-			if (uniform_distribution_float(0, 1) > (((row-col)+ slice_scaler) / probability_denominator))
+			if (uniform_distribution_float(0, 1) > (((row-col) + slice_scaler) / probability_denominator))
 			{
 				sprite.setTextureRect(sf::IntRect(
 					TEXTURE_WIDTH * right_texture_col + col * panel_size,
@@ -198,7 +196,7 @@ void Map::build_road(
 			(static_cast<float>(origin_y) + i) * TEXTURE_WIDTH
 		);
 		m_render_texture.draw(m_blended_sprite);
-		blend_textures_diagonally(Texture::grass, Texture::stone, false);
+		blend_textures_diagonally(Texture::grass, Texture::stone);
 		m_blended_sprite.setPosition(
 			(static_cast<float>(origin_x) - 1) * TEXTURE_WIDTH,
 			(static_cast<float>(origin_y) + i + 1) * TEXTURE_WIDTH
@@ -215,7 +213,7 @@ void Map::build_road(
 			(static_cast<float>(destination_y)) * TEXTURE_WIDTH
 		);
 		m_render_texture.draw(m_blended_sprite);
-		blend_textures_diagonally(Texture::stone, Texture::grass, true);
+		blend_textures_diagonally(Texture::stone, Texture::grass);
 		m_blended_sprite.setPosition(
 			(static_cast<float>(origin_x)) * TEXTURE_WIDTH,
 			(static_cast<float>(destination_y) - 1) * TEXTURE_WIDTH
