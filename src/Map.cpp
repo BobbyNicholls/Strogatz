@@ -73,9 +73,9 @@ void Map::blend_textures(
 {
 	const int panel_size{ 4 };
 	const int panels_per_row{ (TEXTURE_WIDTH / panel_size) };
-	const int neatness_scaler{ 8 };
+	const float neatness_scaler{ 0.f };
 	int row_ref{ uniform_distribution_int(0, 3) };
-	float probability_denominator{ (static_cast<float>(panels_per_row) - neatness_scaler) };
+	float probability_denominator{ static_cast<float>(panels_per_row) };
 	int row{ 0 };
 	int col{ 0 };
 	const int* col_or_row_ptr{ blend_vertically ? &col : &row };
@@ -87,7 +87,8 @@ void Map::blend_textures(
 		{
 			sf::Sprite sprite;
 			sprite.setTexture(m_map_texture);
-			if (uniform_distribution_float(0, 1) < ((*col_or_row_ptr) / probability_denominator))
+			if (uniform_distribution_float(0 + neatness_scaler, 1 - neatness_scaler) < 
+				(*col_or_row_ptr / probability_denominator))
 			{
 				sprite.setTextureRect(sf::IntRect(
 					TEXTURE_WIDTH * right_texture_col + col * panel_size,
@@ -111,6 +112,53 @@ void Map::blend_textures(
 			m_blended_texture.draw(sprite);
 		}
 		col = 0;
+	}
+	m_blended_texture.display();
+	m_blended_sprite.setTexture(m_blended_texture.getTexture());
+}
+
+
+void Map::blend_textures_diagonally(
+	const int left_texture_col, const int right_texture_col, const bool inside_corner
+)
+{
+	const int panel_size{ 4 };
+	const int panels_per_row{ (TEXTURE_WIDTH / panel_size) };
+	const int neatness_scaler{ 4 };
+	const int slice_scaler{ inside_corner ? 11 : 9 };
+	int row_ref{ uniform_distribution_int(0, 3) };
+	float probability_denominator{ (static_cast<float>(panels_per_row) - neatness_scaler) };
+	m_blended_texture.create(TEXTURE_WIDTH, TEXTURE_WIDTH);
+	m_blended_texture.clear(sf::Color::Green);
+	for (int row{ 0 }; row < panels_per_row; ++row)
+	{
+		for (int col{ 0 }; col < panels_per_row; ++col)
+		{
+			sf::Sprite sprite;
+			sprite.setTexture(m_map_texture);
+			if (uniform_distribution_float(0, 1) > (((row-col)+ slice_scaler) / probability_denominator))
+			{
+				sprite.setTextureRect(sf::IntRect(
+					TEXTURE_WIDTH * right_texture_col + col * panel_size,
+					TEXTURE_WIDTH * row_ref + row * panel_size,
+					panel_size,
+					panel_size
+				));
+			}
+			else
+			{
+				sprite.setTextureRect(sf::IntRect(
+					TEXTURE_WIDTH * left_texture_col + col * panel_size,
+					TEXTURE_WIDTH * row_ref + row * panel_size,
+					panel_size,
+					panel_size
+				));
+			}
+			sprite.setPosition(
+				col * static_cast<float>(panel_size), row * static_cast<float>(panel_size)
+			);
+			m_blended_texture.draw(sprite);
+		}
 	}
 	m_blended_texture.display();
 	m_blended_sprite.setTexture(m_blended_texture.getTexture());
@@ -144,11 +192,35 @@ void Map::build_road(
 			m_render_texture.draw(m_blended_sprite);
 			i += increment;
 		}
+		blend_textures(Texture::grass, Texture::stone, true);
+		m_blended_sprite.setPosition(
+			(static_cast<float>(origin_x) - 1) * TEXTURE_WIDTH,
+			(static_cast<float>(origin_y) + i) * TEXTURE_WIDTH
+		);
+		m_render_texture.draw(m_blended_sprite);
+		blend_textures_diagonally(Texture::grass, Texture::stone, false);
+		m_blended_sprite.setPosition(
+			(static_cast<float>(origin_x) - 1) * TEXTURE_WIDTH,
+			(static_cast<float>(origin_y) + i + 1) * TEXTURE_WIDTH
+		);
+		m_render_texture.draw(m_blended_sprite);
 	}
 	if (x_diff != 0)
 	{
 		increment = (x_diff > 0) ? 1 : -1;
 		int j{ increment };
+		blend_textures(Texture::stone, Texture::grass, false);
+		m_blended_sprite.setPosition(
+			(static_cast<float>(origin_x)) * TEXTURE_WIDTH,
+			(static_cast<float>(destination_y)) * TEXTURE_WIDTH
+		);
+		m_render_texture.draw(m_blended_sprite);
+		blend_textures_diagonally(Texture::stone, Texture::grass, true);
+		m_blended_sprite.setPosition(
+			(static_cast<float>(origin_x)) * TEXTURE_WIDTH,
+			(static_cast<float>(destination_y) - 1) * TEXTURE_WIDTH
+		);
+		m_render_texture.draw(m_blended_sprite);
 		while (j != (x_diff-increment))
 		{
 			blend_textures(Texture::grass, Texture::stone, false);
