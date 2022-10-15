@@ -60,8 +60,8 @@ void EntityCircle::update_colour()
 EntityCircle* EntityCircle::set_position_randomly()
 {
 	m_shape.setPosition(
-		uniform_distribution_float(edge_buffer, game_width-edge_buffer),
-		uniform_distribution_float(edge_buffer, game_height-edge_buffer)
+		uniform_distribution_float(-game_width, game_width),
+		uniform_distribution_float(-game_height, game_height)
 	);
 	return this;
 }

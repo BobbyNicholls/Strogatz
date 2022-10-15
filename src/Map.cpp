@@ -19,12 +19,6 @@ enum Texture
 Map::Map(sf::Texture& map_texture)
 	: m_map_texture{ map_texture }
 {
-	fill_map();
-}
-
-
-void Map::fill_map()
-{
 	int row{ 0 };
 	int col{ 0 };
 	m_render_texture.create(MAP_GRID_WIDTH * TEXTURE_WIDTH, MAP_GRID_HEIGHT * TEXTURE_WIDTH);
@@ -40,23 +34,22 @@ void Map::fill_map()
 		sf::Sprite sprite;
 		sprite.setTexture(m_map_texture);
 		sprite.setTextureRect(sf::IntRect(
-			TEXTURE_WIDTH * Texture::grass, 
-			TEXTURE_WIDTH * uniform_distribution_int(0, 3), 
-			TEXTURE_WIDTH, 
+			TEXTURE_WIDTH * Texture::grass,
+			TEXTURE_WIDTH * uniform_distribution_int(0, 3),
+			TEXTURE_WIDTH,
 			TEXTURE_WIDTH
 		));
 		sprite.setPosition(col * TEXTURE_WIDTH_f, row * TEXTURE_WIDTH_f);
 		m_render_texture.draw(sprite);
 		++col;
 	}
-	build_road(95, 5, 110, 70);
-	build_road(105, 5, 120, 80);
-	build_road(125, 5, 145, 90);
+	build_road(110, 5, 120, 70);
 	m_render_texture.display();
 	m_sprite.setTexture(m_render_texture.getTexture());
 	m_sprite.setPosition(
 		-MAP_GRID_WIDTH * TEXTURE_WIDTH_f * 0.5f, -MAP_GRID_HEIGHT * TEXTURE_WIDTH_f * 0.5f
 	);
+
 }
 
 
@@ -118,23 +111,24 @@ void Map::blend_textures(
 }
 
 
-void Map::blend_textures_diagonally(const int left_texture_col, const int right_texture_col)
+void Map::blend_textures_diagonally(
+	const int left_texture_col, const int right_texture_col, const bool downward_slope
+)
 {
 	const int panel_size{ 4 };
-	const int panels_per_row{ (TEXTURE_WIDTH / panel_size) };
-	const int neatness_scaler{ 8 };
-	const int slice_scaler{ 12 };
+	const float panels_per_row{ (TEXTURE_WIDTH / panel_size) };
 	int row_ref{ uniform_distribution_int(0, 3) };
-	float probability_denominator{ (static_cast<float>(panels_per_row) - neatness_scaler) };
 	m_blended_texture.create(TEXTURE_WIDTH, TEXTURE_WIDTH);
 	m_blended_texture.clear(sf::Color::Green);
+	int row_mult{ downward_slope ? -1 : 1 };
+	int slider{ downward_slope ? static_cast<int>(panels_per_row) : 0 };
 	for (int row{ 0 }; row < panels_per_row; ++row)
 	{
 		for (int col{ 0 }; col < panels_per_row; ++col)
 		{
 			sf::Sprite sprite;
 			sprite.setTexture(m_map_texture);
-			if (uniform_distribution_float(0, 1) > (((row-col) + slice_scaler) / probability_denominator))
+			if ((col + (row * row_mult) + slider) / (2 * panels_per_row) > uniform_distribution_float(0.65f, 0.85f))
 			{
 				sprite.setTextureRect(sf::IntRect(
 					TEXTURE_WIDTH * right_texture_col + col * panel_size,
@@ -171,9 +165,9 @@ void Map::build_road(
 	const int y_diff{ destination_y - origin_y };
 	// travel the y-axis first
 	int increment{ (y_diff > 0) ? 1 : -1 };
+	int i{ increment };
 	if (y_diff != 0)
 	{
-		int i{ increment };
 		while (i != (y_diff-increment))
 		{
 			blend_textures(Texture::grass, Texture::stone, true);
@@ -190,35 +184,11 @@ void Map::build_road(
 			m_render_texture.draw(m_blended_sprite);
 			i += increment;
 		}
-		blend_textures(Texture::grass, Texture::stone, true);
-		m_blended_sprite.setPosition(
-			(static_cast<float>(origin_x) - 1) * TEXTURE_WIDTH,
-			(static_cast<float>(origin_y) + i) * TEXTURE_WIDTH
-		);
-		m_render_texture.draw(m_blended_sprite);
-		blend_textures_diagonally(Texture::grass, Texture::stone);
-		m_blended_sprite.setPosition(
-			(static_cast<float>(origin_x) - 1) * TEXTURE_WIDTH,
-			(static_cast<float>(origin_y) + i + 1) * TEXTURE_WIDTH
-		);
-		m_render_texture.draw(m_blended_sprite);
 	}
 	if (x_diff != 0)
 	{
 		increment = (x_diff > 0) ? 1 : -1;
 		int j{ increment };
-		blend_textures(Texture::stone, Texture::grass, false);
-		m_blended_sprite.setPosition(
-			(static_cast<float>(origin_x)) * TEXTURE_WIDTH,
-			(static_cast<float>(destination_y)) * TEXTURE_WIDTH
-		);
-		m_render_texture.draw(m_blended_sprite);
-		blend_textures_diagonally(Texture::stone, Texture::grass);
-		m_blended_sprite.setPosition(
-			(static_cast<float>(origin_x)) * TEXTURE_WIDTH,
-			(static_cast<float>(destination_y) - 1) * TEXTURE_WIDTH
-		);
-		m_render_texture.draw(m_blended_sprite);
 		while (j != (x_diff-increment))
 		{
 			blend_textures(Texture::grass, Texture::stone, false);
@@ -236,4 +206,40 @@ void Map::build_road(
 			j += increment;
 		}
 	}
+
+	if (x_diff != 0 && y_diff != 0)
+	{
+		if (x_diff > 0) blend_textures(Texture::grass, Texture::stone, true);
+		else blend_textures_diagonally(Texture::grass, Texture::stone, false);
+		m_blended_sprite.setPosition(
+			(static_cast<float>(origin_x) - 1) * TEXTURE_WIDTH,
+			(static_cast<float>(origin_y) + i) * TEXTURE_WIDTH
+		);
+		m_render_texture.draw(m_blended_sprite);
+		
+		if (x_diff > 0) blend_textures_diagonally(Texture::grass, Texture::stone, true);
+		else blend_textures(Texture::stone, Texture::grass, false);
+		m_blended_sprite.setPosition(
+			(static_cast<float>(origin_x) - 1) * TEXTURE_WIDTH,
+			(static_cast<float>(origin_y) + i + 1) * TEXTURE_WIDTH
+		);
+		m_render_texture.draw(m_blended_sprite);
+		
+		if (x_diff > 0) blend_textures(Texture::stone, Texture::grass, false);
+		else blend_textures_diagonally(Texture::stone, Texture::grass, false);
+		m_blended_sprite.setPosition(
+			(static_cast<float>(origin_x)) * TEXTURE_WIDTH,
+			(static_cast<float>(destination_y)) * TEXTURE_WIDTH
+		);
+		m_render_texture.draw(m_blended_sprite);
+
+		if (x_diff > 0) blend_textures_diagonally(Texture::stone, Texture::grass, true);
+		else blend_textures(Texture::stone, Texture::grass, true);
+		m_blended_sprite.setPosition(
+			(static_cast<float>(origin_x)) * TEXTURE_WIDTH,
+			(static_cast<float>(destination_y) - 1) * TEXTURE_WIDTH
+		);
+		m_render_texture.draw(m_blended_sprite);
+	}
+
 }

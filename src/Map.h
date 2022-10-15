@@ -14,10 +14,9 @@ private:
 
 public:
 	Map(sf::Texture& map_texture);
-	void fill_map();
 	void draw(sf::RenderWindow& window, const float x_move_distance, const float y_move_distance);
 	void blend_textures(const int left_col, const int right_col, const bool blend_vertically);
-	void blend_textures_diagonally(const int left_col, const int right_col);
+	void blend_textures_diagonally(const int left_col, const int right_col, const bool downward_slope);
 	void build_road(
 		const int origin_x, const int origin_y, const int destination_x, const int destination_y
 	);
