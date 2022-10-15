@@ -47,6 +47,14 @@ int main()
     bool draw_links{ false };
 
     Graph graph{ time_period_counter };
+    int max_x_coord;
+    int min_x_coord;
+    int max_y_coord;
+    int min_y_coord;
+    for (int i{ 0 }; i < graph.get_nr_of_entities(); ++i)
+    {
+
+    }
     Map map{ map_texture };
     EntityCircle* player_entity{ get_entity_circle(time_period_counter) };
     player_entity->get_shape().setPosition(window_width/2, window_height/2);

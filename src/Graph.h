@@ -27,11 +27,16 @@ class Graph
 {
 private:
 	std::vector<EntityCircle*> m_entities;
+	std::vector<EntityCircle*> m_leaders;
 	std::vector<Link*> m_links; // this is leaking memory a lot
 	int m_entities_start_size;
 	float m_rewire_prob;
 	float m_new_edge_prob;
 	float m_spawn_chance;
+	float m_min_entity_x_pos;
+	float m_max_entity_x_pos;
+	float m_min_entity_y_pos;
+	float m_max_entity_y_pos;
 	int m_clique_min_size;
 	int m_clique_max_size;
 	int m_link_limit;
@@ -55,6 +60,10 @@ public:
 	float get_spawn_chance() const { return m_spawn_chance; }
 	int get_nr_of_entities() const { return static_cast<int>(m_entities.size()); }
 	bool is_near_link_limit() const { return m_links.size() > static_cast<int>(0.9*m_link_limit); }
+	float get_min_entity_x_pos() const { return m_min_entity_x_pos; };
+	float get_max_entity_x_pos() const { return m_max_entity_x_pos; };
+	float get_min_entity_y_pos() const { return m_min_entity_y_pos; };
+	float get_max_entity_y_pos() const { return m_max_entity_y_pos; };
 
 	void link_entities(EntityCircle* entity_from, EntityCircle* entity_to);
 	EntityCircle* get_preferential_entity();

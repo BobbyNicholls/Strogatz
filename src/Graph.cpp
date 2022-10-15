@@ -161,6 +161,11 @@ Graph::Graph(
             new_entity->set_position_randomly();
             link_anchors.insert(new_entity);
         }
+        sf::Vector2f pos{ new_entity->get_shape().getPosition() };
+        if (pos.x > m_max_entity_x_pos) m_max_entity_x_pos = pos.x;
+        else if (pos.x < m_min_entity_x_pos) m_min_entity_x_pos = pos.x;
+        if (pos.y > m_max_entity_y_pos) m_max_entity_y_pos = pos.y;
+        else if (pos.y < m_min_entity_y_pos) m_min_entity_y_pos = pos.y;
     }
     seed_cliques_and_leaders();
 }
@@ -355,6 +360,7 @@ void Graph::make_leader(EntityCircle* leader)
 {
     std::cout << "Entity " << leader->get_id() << " is a leader with " <<
         leader->get_links().size() << " links.\n";
+    m_leaders.push_back(leader);
 }
 
 
