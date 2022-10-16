@@ -47,7 +47,7 @@ int main()
     bool draw_links{ false };
 
     Graph graph{ time_period_counter };
-    Map map{ map_texture };
+    Map map{ map_texture, graph };
     EntityCircle* player_entity{ get_entity_circle(time_period_counter) };
     player_entity->get_shape().setPosition(window_width/2, window_height/2);
 

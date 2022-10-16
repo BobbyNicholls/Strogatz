@@ -33,10 +33,10 @@ private:
 	float m_rewire_prob;
 	float m_new_edge_prob;
 	float m_spawn_chance;
-	float m_min_entity_x_pos;
-	float m_max_entity_x_pos;
-	float m_min_entity_y_pos;
-	float m_max_entity_y_pos;
+	float m_min_entity_x_pos{ static_cast<float>(game_width) };
+	float m_max_entity_x_pos{ static_cast<float>(-game_width) };
+	float m_min_entity_y_pos{ static_cast<float>(game_height) };
+	float m_max_entity_y_pos{ static_cast<float>(-game_height) };
 	int m_clique_min_size;
 	int m_clique_max_size;
 	int m_link_limit;

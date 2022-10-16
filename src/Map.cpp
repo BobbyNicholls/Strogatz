@@ -16,8 +16,8 @@ enum Texture
 };
 
 
-Map::Map(sf::Texture& map_texture)
-	: m_map_texture{ map_texture }
+Map::Map(sf::Texture& map_texture, const Graph& graph)
+	: m_map_texture{ map_texture }, m_graph{ graph }
 {
 	int row{ 0 };
 	int col{ 0 };
@@ -43,7 +43,12 @@ Map::Map(sf::Texture& map_texture)
 		m_render_texture.draw(sprite);
 		++col;
 	}
-	build_road(110, 5, 120, 70);
+	build_road(
+		graph.get_min_entity_x_pos(), 
+		5, 
+		graph.get_max_entity_x_pos(), 
+		70
+	);
 	m_render_texture.display();
 	m_sprite.setTexture(m_render_texture.getTexture());
 	m_sprite.setPosition(
@@ -158,11 +163,11 @@ void Map::blend_textures_diagonally(
 
 
 void Map::build_road(
-	const int origin_x, const int origin_y, const int destination_x, const int destination_y
+	const float origin_x, const float origin_y, const float destination_x, const float destination_y
 )
 {
-	const int x_diff{ destination_x - origin_x };
-	const int y_diff{ destination_y - origin_y };
+	const float x_diff{ destination_x - origin_x };
+	const float y_diff{ destination_y - origin_y };
 	// travel the y-axis first
 	int increment{ (y_diff > 0) ? 1 : -1 };
 	int i{ increment };
