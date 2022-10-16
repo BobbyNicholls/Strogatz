@@ -5,9 +5,17 @@
 
 #include "Graph.h"
 
+constexpr int MAP_GRID_WIDTH{ 200 };
+constexpr int MAP_GRID_HEIGHT{ 140 };
+constexpr int TEXTURE_WIDTH{ 64 };
+constexpr float TEXTURE_WIDTH_f{ 64.f };
+
+
 class Map
 {
 private:
+	const float m_location_offset_x{ MAP_GRID_WIDTH * TEXTURE_WIDTH_f * 0.5f };
+	const float m_location_offset_y{ MAP_GRID_HEIGHT * TEXTURE_WIDTH_f * 0.5f };
 	sf::Texture& m_map_texture;
 	const Graph& m_graph;
 	sf::RenderTexture m_render_texture;

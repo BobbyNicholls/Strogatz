@@ -1,11 +1,6 @@
 #include "Distributions.h"
 #include "Map.h"
 
-constexpr int MAP_GRID_WIDTH{ 200 };
-constexpr int MAP_GRID_HEIGHT{ 140 };
-constexpr int TEXTURE_WIDTH{ 64 };
-constexpr float TEXTURE_WIDTH_f{ 64.f };
-
 
 enum Texture
 {
@@ -43,18 +38,16 @@ Map::Map(sf::Texture& map_texture, const Graph& graph)
 		m_render_texture.draw(sprite);
 		++col;
 	}
+	float avg_y_pos{ graph.get_min_entity_y_pos() + ((graph.get_max_entity_y_pos() - graph.get_min_entity_y_pos()) / 2.f) };
 	build_road(
-		graph.get_min_entity_x_pos(), 
-		5, 
-		graph.get_max_entity_x_pos(), 
-		70
+		floor((graph.get_min_entity_x_pos() + m_location_offset_x) / TEXTURE_WIDTH_f),
+		floor((avg_y_pos + m_location_offset_y) / TEXTURE_WIDTH_f),
+		floor((graph.get_max_entity_x_pos() + m_location_offset_x) / TEXTURE_WIDTH_f),
+		floor((avg_y_pos + m_location_offset_y) / TEXTURE_WIDTH_f)
 	);
 	m_render_texture.display();
 	m_sprite.setTexture(m_render_texture.getTexture());
-	m_sprite.setPosition(
-		-MAP_GRID_WIDTH * TEXTURE_WIDTH_f * 0.5f, -MAP_GRID_HEIGHT * TEXTURE_WIDTH_f * 0.5f
-	);
-
+	m_sprite.setPosition(-m_location_offset_x, -m_location_offset_y);
 }
 
 
@@ -174,7 +167,7 @@ void Map::build_road(
 	// travel the y-axis first
 	if (y_diff != 0)
 	{
-		while (i != floor(y_diff-increment)) // this could enter inescapable loop?
+		while (i != (floor(y_diff-increment)+1)) // this could enter inescapable loop when y_diff = 1
 		{
 			blend_textures(Texture::grass, Texture::stone, true);
 			m_blended_sprite.setPosition(
@@ -193,7 +186,7 @@ void Map::build_road(
 	{
 		increment = (x_diff > 0) ? 1.f : -1.f;
 		float j{ increment };
-		while (j != (x_diff-increment))
+		while (j != floor(x_diff-increment))
 		{
 			blend_textures(Texture::grass, Texture::stone, false);
 			m_blended_sprite.setPosition(
