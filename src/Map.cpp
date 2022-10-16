@@ -166,25 +166,24 @@ void Map::build_road(
 	const float origin_x, const float origin_y, const float destination_x, const float destination_y
 )
 {
+	float increment;
 	const float x_diff{ destination_x - origin_x };
 	const float y_diff{ destination_y - origin_y };
+	increment = (y_diff > 0.f) ? 1.f : -1.f;
+	float i{ increment };
 	// travel the y-axis first
-	int increment{ (y_diff > 0) ? 1 : -1 };
-	int i{ increment };
 	if (y_diff != 0)
 	{
-		while (i != (y_diff-increment))
+		while (i != floor(y_diff-increment)) // this could enter inescapable loop?
 		{
 			blend_textures(Texture::grass, Texture::stone, true);
 			m_blended_sprite.setPosition(
-				(static_cast<float>(origin_x) - 1) * TEXTURE_WIDTH,
-				(static_cast<float>(origin_y) + i) * TEXTURE_WIDTH
+				(origin_x - 1) * TEXTURE_WIDTH, (origin_y + i) * TEXTURE_WIDTH
 			);
 			m_render_texture.draw(m_blended_sprite);
 			blend_textures(Texture::stone, Texture::grass, true);
 			m_blended_sprite.setPosition(
-				(static_cast<float>(origin_x)) * TEXTURE_WIDTH,
-				(static_cast<float>(origin_y) + i) * TEXTURE_WIDTH
+				origin_x * TEXTURE_WIDTH, (origin_y + i) * TEXTURE_WIDTH
 			);
 			m_render_texture.draw(m_blended_sprite);
 			i += increment;
@@ -192,20 +191,18 @@ void Map::build_road(
 	}
 	if (x_diff != 0)
 	{
-		increment = (x_diff > 0) ? 1 : -1;
-		int j{ increment };
+		increment = (x_diff > 0) ? 1.f : -1.f;
+		float j{ increment };
 		while (j != (x_diff-increment))
 		{
 			blend_textures(Texture::grass, Texture::stone, false);
 			m_blended_sprite.setPosition(
-				(static_cast<float>(origin_x) + j) * TEXTURE_WIDTH,
-				(static_cast<float>(destination_y) - 1) * TEXTURE_WIDTH
+				(origin_x + j) * TEXTURE_WIDTH, (destination_y - 1) * TEXTURE_WIDTH
 			);
 			m_render_texture.draw(m_blended_sprite);
 			blend_textures(Texture::stone, Texture::grass, false);
 			m_blended_sprite.setPosition(
-				(static_cast<float>(origin_x) + j) * TEXTURE_WIDTH,
-				(static_cast<float>(destination_y)) * TEXTURE_WIDTH
+				(origin_x + j) * TEXTURE_WIDTH, destination_y * TEXTURE_WIDTH
 			);
 			m_render_texture.draw(m_blended_sprite);
 			j += increment;
@@ -217,34 +214,29 @@ void Map::build_road(
 		if (x_diff > 0) blend_textures(Texture::grass, Texture::stone, true);
 		else blend_textures_diagonally(Texture::grass, Texture::stone, false);
 		m_blended_sprite.setPosition(
-			(static_cast<float>(origin_x) - 1) * TEXTURE_WIDTH,
-			(static_cast<float>(origin_y) + i) * TEXTURE_WIDTH
+			(origin_x - 1) * TEXTURE_WIDTH, (origin_y + i) * TEXTURE_WIDTH
 		);
 		m_render_texture.draw(m_blended_sprite);
 		
 		if (x_diff > 0) blend_textures_diagonally(Texture::grass, Texture::stone, true);
 		else blend_textures(Texture::stone, Texture::grass, false);
 		m_blended_sprite.setPosition(
-			(static_cast<float>(origin_x) - 1) * TEXTURE_WIDTH,
-			(static_cast<float>(origin_y) + i + 1) * TEXTURE_WIDTH
+			(origin_x - 1) * TEXTURE_WIDTH, (origin_y + i + 1) * TEXTURE_WIDTH
 		);
 		m_render_texture.draw(m_blended_sprite);
 		
 		if (x_diff > 0) blend_textures(Texture::stone, Texture::grass, false);
 		else blend_textures_diagonally(Texture::stone, Texture::grass, false);
 		m_blended_sprite.setPosition(
-			(static_cast<float>(origin_x)) * TEXTURE_WIDTH,
-			(static_cast<float>(destination_y)) * TEXTURE_WIDTH
+			origin_x * TEXTURE_WIDTH, destination_y * TEXTURE_WIDTH
 		);
 		m_render_texture.draw(m_blended_sprite);
 
 		if (x_diff > 0) blend_textures_diagonally(Texture::stone, Texture::grass, true);
 		else blend_textures(Texture::stone, Texture::grass, true);
 		m_blended_sprite.setPosition(
-			(static_cast<float>(origin_x)) * TEXTURE_WIDTH,
-			(static_cast<float>(destination_y) - 1) * TEXTURE_WIDTH
+			origin_x * TEXTURE_WIDTH, (destination_y - 1) * TEXTURE_WIDTH
 		);
 		m_render_texture.draw(m_blended_sprite);
 	}
-
 }
