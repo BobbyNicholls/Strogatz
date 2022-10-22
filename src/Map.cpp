@@ -60,22 +60,58 @@ void Map::build_road_grid()
 	* the min x point to the max x point at the height of y_centre.
 	*/
 
-	const float x_min{ floor((m_graph.get_min_entity_x_pos() + m_location_offset_x) / TEXTURE_WIDTH_f) };
-	const float x_max{ floor((m_graph.get_max_entity_x_pos() + m_location_offset_x) / TEXTURE_WIDTH_f) };
-	const float y_min{ floor((m_graph.get_min_entity_y_pos() + m_location_offset_y) / TEXTURE_WIDTH_f) };
-	const float y_max{ floor((m_graph.get_max_entity_y_pos() + m_location_offset_y) / TEXTURE_WIDTH_f) };
+	const int x_min{ //this point is now 0 on the x-axis for the grid
+		static_cast<int>((m_graph.get_min_entity_x_pos() + m_location_offset_x) / TEXTURE_WIDTH_f) 
+	};
+	const int x_max{ 
+		static_cast<int>((m_graph.get_max_entity_x_pos() + m_location_offset_x) / TEXTURE_WIDTH_f) 
+	};
+	const int y_min{ 
+		static_cast<int>((m_graph.get_min_entity_y_pos() + m_location_offset_y) / TEXTURE_WIDTH_f) 
+	};
+	const int y_max{ 
+		static_cast<int>((m_graph.get_max_entity_y_pos() + m_location_offset_y) / TEXTURE_WIDTH_f) 
+	};
+	const int width{ x_max - x_min + 1 };
+	const int height{ y_max - y_min + 1 };
+	const int mid_y_point{ static_cast<int>(height*0.5) };
 
-	const int width{ static_cast<int>(x_max - x_min) };
-	const int height{ static_cast<int>(y_max - y_min) };
-	// we will need to create a road_grid struct dynamically allocated arrays are stupid
-	uint8_t* road_grid = new uint8_t(width * height);
+	m_road_grid.grid.resize(width*height);
 
-	std::cout << x_min+ x_max+ y_min+ y_max << road_grid; 
+	int y_diff;
+	int increment;
+	int anchor_x;
+	int anchor_y;
 	for (sf::Vector2f anchor_pt : m_graph.m_anchor_points)
 	{
-		std::cout << anchor_pt.x << '\n';
+		anchor_x = static_cast<int>((anchor_pt.x + m_location_offset_x) / TEXTURE_WIDTH_f);
+		anchor_x -= x_min;
+		anchor_y = static_cast<int>((anchor_pt.y + m_location_offset_y) / TEXTURE_WIDTH_f);
+		anchor_y -= y_min;
+		y_diff = mid_y_point - anchor_y;
+		increment = (y_diff > 0) ? -1 : 1;
+
+		while (y_diff != 0)
+		{
+			y_diff += increment;
+			std::cout << (anchor_y + y_diff) * width + anchor_x << '\n';
+			m_road_grid.grid[(anchor_y + y_diff) * width + anchor_x] = 1;
+		}
 	}
-	delete[] road_grid;
+	for (int i{ 0 }; i < width; ++i)
+	{
+		m_road_grid.grid[(mid_y_point * width) + i] = 1;
+	}
+	for (int i{ 0 }; i < height; ++i)
+	{
+		for (int j{ 0 }; j < width; ++j)
+		{
+			if (static_cast<int>(m_road_grid.grid[(i * width) + j])) std::cout << "| |";
+			else std::cout << "   ";
+		}
+		std::cout << '\n';
+	}
+	std::cout << "done";
 }
 
 

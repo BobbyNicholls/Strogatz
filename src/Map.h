@@ -11,13 +11,20 @@ constexpr int TEXTURE_WIDTH{ 64 };
 constexpr float TEXTURE_WIDTH_f{ 64.f };
 
 
+struct RoadGrid
+{
+	std::vector<uint8_t> grid;
+};
+
+
 class Map
 {
 private:
 	const float m_location_offset_x{ MAP_GRID_WIDTH * TEXTURE_WIDTH_f * 0.5f };
 	const float m_location_offset_y{ MAP_GRID_HEIGHT * TEXTURE_WIDTH_f * 0.5f };
-	sf::Texture& m_map_texture;
 	const Graph& m_graph;
+	RoadGrid m_road_grid;
+	sf::Texture& m_map_texture;
 	sf::RenderTexture m_render_texture;
 	sf::Sprite m_sprite;
 	sf::RenderTexture m_blended_texture;
