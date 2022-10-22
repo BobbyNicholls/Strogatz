@@ -18,6 +18,7 @@ Map::Map(sf::Texture& map_texture, const Graph& graph)
 	int col{ 0 };
 	m_render_texture.create(MAP_GRID_WIDTH * TEXTURE_WIDTH, MAP_GRID_HEIGHT * TEXTURE_WIDTH);
 	m_render_texture.clear(sf::Color::Green);
+	build_road_grid();
 
 	for (int i{ 0 }; i < MAP_GRID_WIDTH * MAP_GRID_HEIGHT; ++i)
 	{
@@ -38,16 +39,43 @@ Map::Map(sf::Texture& map_texture, const Graph& graph)
 		m_render_texture.draw(sprite);
 		++col;
 	}
-	float avg_y_pos{ graph.get_min_entity_y_pos() + ((graph.get_max_entity_y_pos() - graph.get_min_entity_y_pos()) / 2.f) };
-	build_road(
-		floor((graph.get_min_entity_x_pos() + m_location_offset_x) / TEXTURE_WIDTH_f),
-		floor((avg_y_pos + m_location_offset_y) / TEXTURE_WIDTH_f),
-		floor((graph.get_max_entity_x_pos() + m_location_offset_x) / TEXTURE_WIDTH_f),
-		floor((avg_y_pos + m_location_offset_y) / TEXTURE_WIDTH_f)
-	);
+	//build_road(
+	//	floor((m_graph.get_min_entity_x_pos() + m_location_offset_x) / TEXTURE_WIDTH_f),
+	//	floor((avg_y_pos + m_location_offset_y) / TEXTURE_WIDTH_f),
+	//	floor((m_graph.get_max_entity_x_pos() + m_location_offset_x) / TEXTURE_WIDTH_f),
+	//	floor((avg_y_pos + m_location_offset_y) / TEXTURE_WIDTH_f)
+	//);
 	m_render_texture.display();
 	m_sprite.setTexture(m_render_texture.getTexture());
 	m_sprite.setPosition(-m_location_offset_x, -m_location_offset_y);
+}
+
+
+void Map::build_road_grid()
+{
+	/*
+	* This function should build a grid of small integers, 8 bit, which will delineate the road grid.
+	* Each anchor point is treated as some kind of building, the goal is to build a road from each 
+	* anchor point's (x,y) location all the way to the y_centre. Then one big left to right road from
+	* the min x point to the max x point at the height of y_centre.
+	*/
+
+	const float x_min{ floor((m_graph.get_min_entity_x_pos() + m_location_offset_x) / TEXTURE_WIDTH_f) };
+	const float x_max{ floor((m_graph.get_max_entity_x_pos() + m_location_offset_x) / TEXTURE_WIDTH_f) };
+	const float y_min{ floor((m_graph.get_min_entity_y_pos() + m_location_offset_y) / TEXTURE_WIDTH_f) };
+	const float y_max{ floor((m_graph.get_max_entity_y_pos() + m_location_offset_y) / TEXTURE_WIDTH_f) };
+
+	const int width{ static_cast<int>(x_max - x_min) };
+	const int height{ static_cast<int>(y_max - y_min) };
+	// we will need to create a road_grid struct dynamically allocated arrays are stupid
+	uint8_t* road_grid = new uint8_t(width * height);
+
+	std::cout << x_min+ x_max+ y_min+ y_max << road_grid; 
+	for (sf::Vector2f anchor_pt : m_graph.m_anchor_points)
+	{
+		std::cout << anchor_pt.x << '\n';
+	}
+	delete[] road_grid;
 }
 
 

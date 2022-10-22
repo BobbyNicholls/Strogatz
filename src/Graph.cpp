@@ -168,6 +168,8 @@ Graph::Graph(
         else if (pos.y < m_min_entity_y_pos) m_min_entity_y_pos = pos.y;
     }
     seed_cliques_and_leaders();
+    m_anchor_points.reserve(link_anchors.size());
+    for (EntityCircle* anchor : link_anchors) m_anchor_points.push_back(anchor->get_shape().getPosition());
 }
 
 

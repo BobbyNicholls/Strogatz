@@ -43,6 +43,9 @@ private:
 	std::vector<EntityVector> m_entity_vectors;
 
 public:
+
+	std::vector<sf::Vector2f> m_anchor_points;
+
 	Graph(
 		const time_period_t start_time,
 		const float rewire_prob = 0.02f,

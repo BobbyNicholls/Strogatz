@@ -25,6 +25,7 @@ private:
 
 public:
 	Map(sf::Texture& map_texture, const Graph& graph);
+	void build_road_grid();
 	void draw(sf::RenderWindow& window, const float x_move_distance, const float y_move_distance);
 	void blend_textures(const int left_col, const int right_col, const bool blend_vertically);
 	void blend_textures_diagonally(const int left_col, const int right_col, const bool downward_slope);
