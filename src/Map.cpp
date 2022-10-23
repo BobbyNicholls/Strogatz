@@ -72,11 +72,10 @@ void Map::build_road_grid()
 	const int y_max{ 
 		static_cast<int>((m_graph.get_max_entity_y_pos() + m_location_offset_y) / TEXTURE_WIDTH_f) 
 	};
-	const int width{ x_max - x_min + 1 };
-	const int height{ y_max - y_min + 1 };
-	const int mid_y_point{ static_cast<int>(height*0.5) };
-
-	m_road_grid.grid.resize(width*height);
+	m_road_grid.width = x_max - x_min + 1;
+	m_road_grid.height = y_max - y_min + 1;
+	m_road_grid.mid_y_coord = static_cast<int>(m_road_grid.height * 0.5);
+	m_road_grid.grid.resize(m_road_grid.width * m_road_grid.height);
 
 	int y_diff;
 	int increment;
@@ -84,34 +83,36 @@ void Map::build_road_grid()
 	int anchor_y;
 	for (sf::Vector2f anchor_pt : m_graph.m_anchor_points)
 	{
-		anchor_x = static_cast<int>((anchor_pt.x + m_location_offset_x) / TEXTURE_WIDTH_f);
-		anchor_x -= x_min;
-		anchor_y = static_cast<int>((anchor_pt.y + m_location_offset_y) / TEXTURE_WIDTH_f);
-		anchor_y -= y_min;
-		y_diff = mid_y_point - anchor_y;
+		anchor_x = static_cast<int>((anchor_pt.x + m_location_offset_x) / TEXTURE_WIDTH_f) - x_min;
+		anchor_y = static_cast<int>((anchor_pt.y + m_location_offset_y) / TEXTURE_WIDTH_f) - y_min;
+		y_diff = m_road_grid.mid_y_coord - anchor_y;
 		increment = (y_diff > 0) ? -1 : 1;
 
 		while (y_diff != 0)
 		{
 			y_diff += increment;
-			std::cout << (anchor_y + y_diff) * width + anchor_x << '\n';
-			m_road_grid.grid[(anchor_y + y_diff) * width + anchor_x] = 1;
+			m_road_grid.grid[(anchor_y + y_diff) * m_road_grid.width + anchor_x] = 1;
 		}
 	}
-	for (int i{ 0 }; i < width; ++i)
+	for (int i{ 0 }; i < m_road_grid.width; ++i)
 	{
-		m_road_grid.grid[(mid_y_point * width) + i] = 1;
+		m_road_grid.grid[(m_road_grid.mid_y_coord * m_road_grid.width) + i] = 1;
 	}
-	for (int i{ 0 }; i < height; ++i)
+	print_road_grid();
+}
+
+
+void Map::print_road_grid()
+{
+	for (int i{ 0 }; i < m_road_grid.height; ++i)
 	{
-		for (int j{ 0 }; j < width; ++j)
+		for (int j{ 0 }; j < m_road_grid.width; ++j)
 		{
-			if (static_cast<int>(m_road_grid.grid[(i * width) + j])) std::cout << "| |";
+			if (static_cast<int>(m_road_grid.grid[(i * m_road_grid.width) + j])) std::cout << "|:|";
 			else std::cout << "   ";
 		}
 		std::cout << '\n';
 	}
-	std::cout << "done";
 }
 
 

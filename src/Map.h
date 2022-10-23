@@ -14,6 +14,9 @@ constexpr float TEXTURE_WIDTH_f{ 64.f };
 struct RoadGrid
 {
 	std::vector<uint8_t> grid;
+	int width;
+	int height;
+	int mid_y_coord; // for the horizonal road's y coordinate
 };
 
 
@@ -39,6 +42,7 @@ public:
 	void build_road(
 		const float origin_x, const float origin_y, const float destination_x, const float destination_y
 	);
+	void print_road_grid();
 };
 
 #endif
