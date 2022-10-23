@@ -16,6 +16,10 @@ struct RoadGrid
 	std::vector<uint8_t> grid;
 	int width{};
 	int height{};
+	int min_x_coord{};
+	int max_x_coord{};
+	int min_y_coord{};
+	int max_y_coord{};
 	int mid_y_coord{}; // for the horizonal road's y coordinate
 };
 
@@ -25,6 +29,10 @@ class Map
 private:
 	const float m_location_offset_x{ MAP_GRID_WIDTH * TEXTURE_WIDTH_f * 0.5f };
 	const float m_location_offset_y{ MAP_GRID_HEIGHT * TEXTURE_WIDTH_f * 0.5f };
+	const int m_panel_size{ 4 };
+	const int m_panels_per_row{ (TEXTURE_WIDTH / m_panel_size) };
+	const float m_neatness_scaler{ 0.3f };
+	float m_probability_denominator{ static_cast<float>(m_panels_per_row) };
 	const Graph& m_graph;
 	RoadGrid m_road_grid;
 	sf::Texture& m_map_texture;
@@ -44,18 +52,21 @@ public:
 	);
 	void print_road_grid();
 	void map_textures_to_road_grid();
-	void blend_ltr();
-	void blend_rtl();
-	void blend_utd();
-	void blend_dtu();
-	void blend_uli();
-	void blend_dli();
-	void blend_uri();
-	void blend_dri();
-	void blend_ulo();
-	void blend_dlo();
-	void blend_uro();
-	void blend_dro();
+	void blend_horizontally(
+		const int up_texture_col, const int down_texture_col, const int pos_x, const int pos_y
+	);
+	void blend_vertically(
+		const int left_texture_col, const int right_texture_col, const int pos_x, const int pos_y
+	);
+	void blend_uli(const int left_texture_col, const int right_texture_col, const int pos_x, const int pos_y);
+	void blend_dli(const int left_texture_col, const int right_texture_col, const int pos_x, const int pos_y);
+	void blend_uri(const int left_texture_col, const int right_texture_col, const int pos_x, const int pos_y);
+	void blend_dri(const int left_texture_col, const int right_texture_col, const int pos_x, const int pos_y);
+	void blend_ulo(const int left_texture_col, const int right_texture_col, const int pos_x, const int pos_y);
+	void blend_dlo(const int left_texture_col, const int right_texture_col, const int pos_x, const int pos_y);
+	void blend_uro(const int left_texture_col, const int right_texture_col, const int pos_x, const int pos_y);
+	void blend_dro(const int left_texture_col, const int right_texture_col, const int pos_x, const int pos_y);
+	void all_one_texture(const int texture_col, const int pos_x, const int pos_y);
 };
 
 #endif
