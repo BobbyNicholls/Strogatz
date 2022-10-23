@@ -19,6 +19,7 @@ Map::Map(sf::Texture& map_texture, const Graph& graph)
 	m_render_texture.create(MAP_GRID_WIDTH * TEXTURE_WIDTH, MAP_GRID_HEIGHT * TEXTURE_WIDTH);
 	m_render_texture.clear(sf::Color::Green);
 	build_road_grid();
+	map_textures_to_road_grid();
 
 	for (int i{ 0 }; i < MAP_GRID_WIDTH * MAP_GRID_HEIGHT; ++i)
 	{
@@ -113,6 +114,112 @@ void Map::print_road_grid()
 		}
 		std::cout << '\n';
 	}
+}
+
+
+void Map::map_textures_to_road_grid()
+{
+	// the matrix might need padding??
+	int top_left{};
+	int top_right{};
+	int bot_left{};
+	int bot_right{};
+	std::vector<int> convolution_window(4);
+	for (int row{ 0 }; row < (m_road_grid.height - 1); ++row)
+	{
+		for (int col{ 0 }; col < (m_road_grid.width - 1); ++col)
+		{
+			top_left = convolution_window[row * m_road_grid.width + col];
+			top_right = convolution_window[row * m_road_grid.width + col + 1];
+			bot_left = convolution_window[(row + 1) * m_road_grid.width + col];
+			bot_left = convolution_window[(row + 1) * m_road_grid.width + col + 1];
+			// case switch??
+			if (top_left && !top_right && bot_left && !bot_right) blend_ltr();
+			else if (!top_left && top_right && !bot_left && bot_right) blend_rtl();
+			else if (top_left && top_right && !bot_left && !bot_right) blend_utd();
+			else if (!top_left && !top_right && bot_left && bot_right) blend_dtu();
+			else if (top_left && top_right && bot_left && !bot_right) blend_uli();
+			else if (top_left && !top_right && bot_left && bot_right) blend_dli();
+			else if (top_left && top_right && !bot_left && bot_right) blend_uri();
+			else if (!top_left && top_right && bot_left && bot_right) blend_dri();
+			else if (top_left && !top_right && !bot_left && !bot_right) blend_ulo();
+			else if (!top_left && !top_right && bot_left && !bot_right) blend_dlo();
+			else if (!top_left && top_right && !bot_left && !bot_right) blend_uro();
+			else if (!top_left && !top_right && !bot_left && bot_right) blend_dro();
+		}
+	}
+}
+
+
+void Map::blend_ltr() // this func and the next should obviously be merged
+{
+
+}
+
+
+void Map::blend_rtl()
+{
+
+}
+
+
+void Map::blend_utd() // same with this and the next
+{
+
+}
+
+
+void Map::blend_dtu()
+{
+
+}
+
+
+void Map::blend_uli()
+{
+
+}
+
+
+void Map::blend_dli()
+{
+
+}
+
+
+void Map::blend_uri()
+{
+
+}
+
+
+void Map::blend_dri()
+{
+
+}
+
+
+void Map::blend_ulo()
+{
+
+}
+
+
+void Map::blend_dlo()
+{
+
+}
+
+
+void Map::blend_uro()
+{
+
+}
+
+
+void Map::blend_dro()
+{
+
 }
 
 

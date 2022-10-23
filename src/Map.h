@@ -43,6 +43,19 @@ public:
 		const float origin_x, const float origin_y, const float destination_x, const float destination_y
 	);
 	void print_road_grid();
+	void map_textures_to_road_grid();
+	void blend_ltr();
+	void blend_rtl();
+	void blend_utd();
+	void blend_dtu();
+	void blend_uli();
+	void blend_dli();
+	void blend_uri();
+	void blend_dri();
+	void blend_ulo();
+	void blend_dlo();
+	void blend_uro();
+	void blend_dro();
 };
 
 #endif
