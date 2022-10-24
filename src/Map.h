@@ -31,7 +31,7 @@ private:
 	const float m_location_offset_y{ MAP_GRID_HEIGHT * TEXTURE_WIDTH_f * 0.5f };
 	const int m_panel_size{ 4 };
 	const int m_panels_per_row{ (TEXTURE_WIDTH / m_panel_size) };
-	const float m_neatness_scaler{ 0.3f };
+	const float m_neatness_scaler{ 0.3f }; // TODO: rename `roughness_scaler`? more accurate
 	float m_probability_denominator{ static_cast<float>(m_panels_per_row) };
 	const Graph& m_graph;
 	RoadGrid m_road_grid;
