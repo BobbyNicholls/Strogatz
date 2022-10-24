@@ -43,12 +43,6 @@ Map::Map(sf::Texture& map_texture, const Graph& graph)
 	build_road_grid();
 	map_textures_to_road_grid(Texture::mud, Texture::grass);
 
-	//build_road(
-	//	floor((m_graph.get_min_entity_x_pos() + m_location_offset_x) / TEXTURE_WIDTH_f),
-	//	floor((avg_y_pos + m_location_offset_y) / TEXTURE_WIDTH_f),
-	//	floor((m_graph.get_max_entity_x_pos() + m_location_offset_x) / TEXTURE_WIDTH_f),
-	//	floor((avg_y_pos + m_location_offset_y) / TEXTURE_WIDTH_f)
-	//);
 	m_render_texture.display();
 	m_sprite.setTexture(m_render_texture.getTexture());
 	m_sprite.setPosition(-m_location_offset_x, -m_location_offset_y);
