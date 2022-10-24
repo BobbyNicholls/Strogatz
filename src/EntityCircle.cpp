@@ -60,8 +60,8 @@ void EntityCircle::update_colour()
 EntityCircle* EntityCircle::set_position_randomly()
 {
 	m_shape.setPosition(
-		uniform_distribution_float(edge_buffer, game_width-edge_buffer),
-		uniform_distribution_float(edge_buffer, game_height-edge_buffer)
+		uniform_distribution_float(-game_width, game_width),
+		uniform_distribution_float(-game_height, game_height)
 	);
 	return this;
 }
@@ -89,7 +89,6 @@ EntityCircle* EntityCircle::move_to_links(const int offset)
 			(y_sum / m_links.size()) + uniform_distribution_float(0, offset)
 		);
 	}
-	else std::cout << "Actually no, " << get_id() << " is already pathing or has no links.\n";
 	return this;
 }
 

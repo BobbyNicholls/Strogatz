@@ -10,6 +10,7 @@
 
 #include "EntityCircle.h"
 #include "Graph.h"
+#include "Map.h"
 #include "Text.h"
 #include "utils.h"
 
@@ -28,6 +29,10 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Strogatz");
     window.setVerticalSyncEnabled(true);
+
+    sf::Texture map_texture;
+    load_texture(map_texture);
+
     sf::Text text;
     sf::Font font;
     std::string time_str{ "Time: " };
@@ -38,10 +43,13 @@ int main()
     constexpr float time_step{ 1.0f / 60.0f };
     time_period_t time_period_counter{ 0 };
     unsigned int frame_counter{ 0 };
-    constexpr unsigned int frames_per_period{ 60 };
+    constexpr unsigned int frames_per_period{ 600 };
+    bool draw_links{ false };
 
     Graph graph{ time_period_counter };
+    Map map{ map_texture, graph };
     EntityCircle* player_entity{ get_entity_circle(time_period_counter) };
+    sf::Vector2f movement{};
     player_entity->get_shape().setPosition(window_width/2, window_height/2);
 
     while (window.isOpen())
@@ -78,8 +86,10 @@ int main()
             // Clear the window with black color (doesnt activate until 
             // window.display(), so has no immediate impact)
             window.clear(sf::Color::Black);
-            //graph.draw_links(window);
-            graph.draw_entities(window, move_speed * time_counter);
+            movement = get_movement(move_speed * time_counter);
+            map.draw(window, movement.x, movement.y);
+            if (draw_links) graph.draw_links(window);
+            graph.draw_entities(window, movement.x, movement.y);
             while (window.pollEvent(event))
             {
                 switch (event.type)
@@ -99,9 +109,9 @@ int main()
 
                 case sf::Event::KeyPressed:
                 {
-                    if (event.key.code == sf::Keyboard::Escape)
+                    if (event.key.code == sf::Keyboard::Space)
                     {
-                        std::cout << "the escape key was pressed" << '\n';
+                        draw_links = !draw_links;
                     }
                     break;
                 }
@@ -109,13 +119,7 @@ int main()
                 {
                     if (event.mouseButton.button == sf::Mouse::Right)
                     {
-                        std::cout << "the right button was pressed" << '\n';
-                        std::cout << "mouse x: "
-                            << event.mouseButton.x
-                            << std::endl; // get the position of the cursor
-                        std::cout << "mouse y: "
-                            << event.mouseButton.y
-                            << std::endl;
+                        draw_links = !draw_links;
                     }
                     break;
                 }

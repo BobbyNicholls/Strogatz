@@ -7,6 +7,29 @@ id_t generate_id()
 }
 
 
+void load_texture(sf::Texture& texture)
+{
+    if (!texture.loadFromFile("textures/texture.png"))
+    {
+        std::cout << "Failed to load texture.\n";
+    }
+}
+
+
+sf::Vector2f get_movement(const float move_distance)
+{
+    float x_move_distance{ 0.f };
+    float y_move_distance{ 0.f };
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) x_move_distance += move_distance;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) x_move_distance -= move_distance;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) y_move_distance += move_distance;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) y_move_distance -= move_distance;
+
+    return sf::Vector2f(x_move_distance, y_move_distance);
+}
+
+
 //bool check_for_double_linkage(Graph& graph)
 //{
 //    size_t link_problems[link_limit][2]{};

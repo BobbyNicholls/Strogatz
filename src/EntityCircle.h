@@ -30,8 +30,8 @@ public:
     EntityCircle(
         time_period_t birth_time,
         float radius = 10.f,
-        float outline_thickness = 1.f,
-        sf::Color outline_colour = sf::Color(250, 150, 100)
+        float outline_thickness = 3.f,
+        sf::Color outline_colour = sf::Color(100, 0, 0)
     );
     float get_radius() const { return m_radius; }
     std::vector<Entity*>& get_links() { return m_links; }

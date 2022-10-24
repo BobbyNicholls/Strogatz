@@ -161,21 +161,22 @@ Graph::Graph(
             new_entity->set_position_randomly();
             link_anchors.insert(new_entity);
         }
+        sf::Vector2f pos{ new_entity->get_shape().getPosition() };
+        if (pos.x > m_max_entity_x_pos) m_max_entity_x_pos = pos.x;
+        else if (pos.x < m_min_entity_x_pos) m_min_entity_x_pos = pos.x;
+        if (pos.y > m_max_entity_y_pos) m_max_entity_y_pos = pos.y;
+        else if (pos.y < m_min_entity_y_pos) m_min_entity_y_pos = pos.y;
     }
     seed_cliques_and_leaders();
+    m_anchor_points.reserve(link_anchors.size());
+    for (EntityCircle* anchor : link_anchors) m_anchor_points.push_back(anchor->get_shape().getPosition());
 }
 
 
-void Graph::draw_entities(sf::RenderWindow& window, const float move_distance)
+void Graph::draw_entities(
+    sf::RenderWindow& window, const float x_move_distance, const float y_move_distance
+)
 {
-    float x_move_distance{ 0.f };
-    float y_move_distance{ 0.f };
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) x_move_distance += move_distance;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) x_move_distance -= move_distance;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) y_move_distance += move_distance;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) y_move_distance -= move_distance;
-
     sf::CircleShape shape;
     for (EntityCircle* entity: m_entities)
     {
@@ -361,6 +362,7 @@ void Graph::make_leader(EntityCircle* leader)
 {
     std::cout << "Entity " << leader->get_id() << " is a leader with " <<
         leader->get_links().size() << " links.\n";
+    m_leaders.push_back(leader);
 }
 
 

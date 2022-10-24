@@ -27,17 +27,25 @@ class Graph
 {
 private:
 	std::vector<EntityCircle*> m_entities;
+	std::vector<EntityCircle*> m_leaders;
 	std::vector<Link*> m_links; // this is leaking memory a lot
 	int m_entities_start_size;
 	float m_rewire_prob;
 	float m_new_edge_prob;
 	float m_spawn_chance;
+	float m_min_entity_x_pos{ static_cast<float>(game_width) }; // these are initialised to confusing values so that they will be updated correctly later
+	float m_max_entity_x_pos{ static_cast<float>(-game_width) };
+	float m_min_entity_y_pos{ static_cast<float>(game_height) };
+	float m_max_entity_y_pos{ static_cast<float>(-game_height) };
 	int m_clique_min_size;
 	int m_clique_max_size;
 	int m_link_limit;
 	std::vector<EntityVector> m_entity_vectors;
 
 public:
+
+	std::vector<sf::Vector2f> m_anchor_points;
+
 	Graph(
 		const time_period_t start_time,
 		const float rewire_prob = 0.02f,
@@ -55,13 +63,19 @@ public:
 	float get_spawn_chance() const { return m_spawn_chance; }
 	int get_nr_of_entities() const { return static_cast<int>(m_entities.size()); }
 	bool is_near_link_limit() const { return m_links.size() > static_cast<int>(0.9*m_link_limit); }
+	float get_min_entity_x_pos() const { return m_min_entity_x_pos; };
+	float get_max_entity_x_pos() const { return m_max_entity_x_pos; };
+	float get_min_entity_y_pos() const { return m_min_entity_y_pos; };
+	float get_max_entity_y_pos() const { return m_max_entity_y_pos; };
 
 	void link_entities(EntityCircle* entity_from, EntityCircle* entity_to);
 	EntityCircle* get_preferential_entity();
 	EntityCircle* add_preferential_links(EntityCircle* entity);
 	void add_random_edge(const int max_entitiy_iloc);
 	void rewire_random_edge();
-	void draw_entities(sf::RenderWindow& window, const float move_distance);
+	void draw_entities(
+		sf::RenderWindow& window, const float x_move_distance, const float y_move_distance
+	);
 	void draw_links(sf::RenderWindow& window);
 	void forward_propagate_beliefs();
 	void propagate_entities(const time_period_t time_period);
