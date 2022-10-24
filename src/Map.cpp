@@ -72,8 +72,8 @@ void Map::build_road_grid()
 	m_road_grid.max_y_coord = static_cast<int>(
 		(m_graph.get_max_entity_y_pos() + m_location_offset_y) / TEXTURE_WIDTH_f
 	);
-	m_road_grid.width = m_road_grid.max_x_coord - m_road_grid.min_x_coord + 1;
-	m_road_grid.height = m_road_grid.max_y_coord - m_road_grid.min_y_coord + 1;
+	m_road_grid.width = m_road_grid.max_x_coord - m_road_grid.min_x_coord + 3;
+	m_road_grid.height = m_road_grid.max_y_coord - m_road_grid.min_y_coord + 3;
 	m_road_grid.mid_y_coord = static_cast<int>(m_road_grid.height * 0.5);
 	m_road_grid.grid.resize(m_road_grid.width * m_road_grid.height);
 
@@ -83,8 +83,8 @@ void Map::build_road_grid()
 	int anchor_y;
 	for (sf::Vector2f anchor_pt : m_graph.m_anchor_points)
 	{
-		anchor_x = static_cast<int>((anchor_pt.x + m_location_offset_x) / TEXTURE_WIDTH_f) - m_road_grid.min_x_coord;
-		anchor_y = static_cast<int>((anchor_pt.y + m_location_offset_y) / TEXTURE_WIDTH_f) - m_road_grid.min_y_coord;
+		anchor_x = static_cast<int>((anchor_pt.x + m_location_offset_x) / TEXTURE_WIDTH_f) - m_road_grid.min_x_coord + 1;
+		anchor_y = static_cast<int>((anchor_pt.y + m_location_offset_y) / TEXTURE_WIDTH_f) - m_road_grid.min_y_coord + 1;
 		y_diff = m_road_grid.mid_y_coord - anchor_y;
 		increment = (y_diff > 0) ? -1 : 1;
 
