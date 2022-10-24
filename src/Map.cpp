@@ -506,7 +506,6 @@ void Map::blend_dro(
 
 void Map::all_one_texture(const int texture_col, const int pos_x, const int pos_y)
 {
-
 	sf::Sprite sprite;
 	sprite.setTexture(m_map_texture);
 	sprite.setTextureRect(sf::IntRect(
