@@ -45,13 +45,9 @@ public:
 	Map(sf::Texture& map_texture, const Graph& graph);
 	void build_road_grid();
 	void draw(sf::RenderWindow& window, const float x_move_distance, const float y_move_distance);
-	void blend_textures(const int left_col, const int right_col, const bool blend_vertically);
-	void blend_textures_diagonally(const int left_col, const int right_col, const bool downward_slope);
-	void build_road(
-		const float origin_x, const float origin_y, const float destination_x, const float destination_y
-	);
 	void print_road_grid();
 	void map_textures_to_road_grid(const int road_texture_columm, const int ground_texture_columm);
+	// texture blending functions:
 	void blend_horizontally(
 		const int up_texture_col, const int down_texture_col, const int pos_x, const int pos_y
 	);
