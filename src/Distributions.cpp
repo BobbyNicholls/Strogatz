@@ -1,10 +1,10 @@
+#include <algorithm> // std::shuffle
 #include <cstdlib>
 #include <random>
 
 #include "Distributions.h"
 
 std::mt19937 mt{ std::random_device{}() };
-
 
 float mild_aversion(float degrees_of_freedom)
 {
@@ -19,6 +19,12 @@ float mild_affinity()
 }
 
 
+void shuffle_vector(std::vector<int>& vector)
+{
+	std::shuffle(vector.begin(), vector.end(), mt);
+}
+
+
 float strong_aversion(float degrees_of_freedom)
 {
 	static std::chi_squared_distribution<float> chi2{ degrees_of_freedom };
@@ -29,14 +35,6 @@ float strong_aversion(float degrees_of_freedom)
 float strong_affinity()
 {
 	return std::max(0.00001f, 10 - strong_aversion());
-}
-
-
-float uniform_distribution_float(int min, int max)
-{
-	// static used for efficiency, so we only calculate this value once
-	static constexpr double fraction{ 1.0 / (RAND_MAX + 1.0) };
-	return min + static_cast<float>((max - min) * (std::rand() * fraction));
 }
 
 

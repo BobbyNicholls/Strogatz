@@ -9,31 +9,44 @@ The features in addition to what is included in Entity are:
 
 #include "Entity.h"
 
+struct Pathing
+{
+    float x_move{};
+    float y_move{};
+    int steps{};
+};
+
+
 class EntityCircle : public Entity
 {
 private:
     float m_radius;
-    // By default, the outline is extruded outwards from the shape (e.g. if you have a circle 
-    // with a radius of 10 and an outline thickness of 5, the total radius of the circle will
-    // be 15). You can make it extrude towards the center of the shape instead, by setting a 
-    // negative thickness.
     float m_outline_thickness;
     sf::Color m_outline_colour;
     sf::CircleShape m_shape;
+    Pathing m_pathing{};
 
 public:
     EntityCircle(
-        id_t id,
+        time_period_t birth_time,
         float radius = 10.f,
-        float outline_thickness = 1.f,
-        sf::Color outline_colour = sf::Color(250, 150, 100)
+        float outline_thickness = 3.f,
+        sf::Color outline_colour = sf::Color(100, 0, 0)
     );
     float get_radius() const { return m_radius; }
     std::vector<Entity*>& get_links() { return m_links; }
     sf::CircleShape& get_shape() { return m_shape; };
+    bool is_pathing() { return static_cast<bool>(m_pathing.steps); };
+
     void update_colour();
-    void set_position_randomly();
-    void set_position_relative_to_links(int offset = 15);
+    EntityCircle* set_position_randomly();
+    EntityCircle* move_to_links(const int offset = 100);
+    void set_position_relative_to_links(const int offset = 100);
+    void move_to_destination(const float destination_x, const float destination_y, const float speed = 1.5f);
+    void move_to_entity(const EntityCircle* entity, const int offset = 100);
+    void move_along_path();
 };
+
+EntityCircle* get_entity_circle(const time_period_t time_period);
 
 #endif
