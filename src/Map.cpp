@@ -116,7 +116,7 @@ void Map::print_road_grid()
 
 void Map::map_textures_to_road_grid(const int road_texture_columm, const int ground_texture_columm)
 {
-	// the matrix might need padding??
+	// TODO: the matrix needs
 	int convolution_window{};
 	for (int row{ 0 }; row < (m_road_grid.height - 1); ++row)
 	{
