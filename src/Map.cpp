@@ -14,12 +14,21 @@ enum Texture
 Map::Map(sf::Texture& map_texture, const Graph& graph)
 	: m_map_texture{ map_texture }, m_graph{ graph }
 {
-	int row{ 0 };
-	int col{ 0 };
 	m_render_texture.create(MAP_GRID_WIDTH * TEXTURE_WIDTH, MAP_GRID_HEIGHT * TEXTURE_WIDTH);
 	m_render_texture.clear(sf::Color::Green);
+	cover_map_with_texture(Texture::grass);
+	build_road_grid();
+	map_textures_to_road_grid(Texture::mud, Texture::grass);
+	m_render_texture.display();
+	m_sprite.setTexture(m_render_texture.getTexture());
+	m_sprite.setPosition(-m_location_offset_x, -m_location_offset_y);
+}
 
-	// functionalise this
+
+void Map::cover_map_with_texture(const int texture_columm)
+{
+	int row{ 0 };
+	int col{ 0 };
 	for (int i{ 0 }; i < MAP_GRID_WIDTH * MAP_GRID_HEIGHT; ++i)
 	{
 		if (col == MAP_GRID_WIDTH)
@@ -30,7 +39,7 @@ Map::Map(sf::Texture& map_texture, const Graph& graph)
 		sf::Sprite sprite;
 		sprite.setTexture(m_map_texture);
 		sprite.setTextureRect(sf::IntRect(
-			TEXTURE_WIDTH * Texture::grass,
+			TEXTURE_WIDTH * texture_columm,
 			TEXTURE_WIDTH * uniform_distribution_int(0, 3),
 			TEXTURE_WIDTH,
 			TEXTURE_WIDTH
@@ -39,13 +48,6 @@ Map::Map(sf::Texture& map_texture, const Graph& graph)
 		m_render_texture.draw(sprite);
 		++col;
 	}
-
-	build_road_grid();
-	map_textures_to_road_grid(Texture::mud, Texture::grass);
-
-	m_render_texture.display();
-	m_sprite.setTexture(m_render_texture.getTexture());
-	m_sprite.setPosition(-m_location_offset_x, -m_location_offset_y);
 }
 
 

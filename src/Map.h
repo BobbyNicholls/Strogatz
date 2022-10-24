@@ -45,6 +45,7 @@ public:
 	Map(sf::Texture& map_texture, const Graph& graph);
 	void build_road_grid();
 	void draw(sf::RenderWindow& window, const float x_move_distance, const float y_move_distance);
+	void cover_map_with_texture(const int texture_columm);
 	void print_road_grid();
 	void map_textures_to_road_grid(const int road_texture_columm, const int ground_texture_columm);
 	// texture blending functions:
