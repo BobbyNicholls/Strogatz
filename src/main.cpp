@@ -49,6 +49,7 @@ int main()
     Graph graph{ time_period_counter };
     Map map{ map_texture, graph };
     EntityCircle* player_entity{ get_entity_circle(time_period_counter) };
+    sf::Vector2f movement{};
     player_entity->get_shape().setPosition(window_width/2, window_height/2);
 
     while (window.isOpen())
@@ -85,7 +86,7 @@ int main()
             // Clear the window with black color (doesnt activate until 
             // window.display(), so has no immediate impact)
             window.clear(sf::Color::Black);
-            sf::Vector2f movement{ get_movement(move_speed * time_counter) };
+            movement = get_movement(move_speed * time_counter);
             map.draw(window, movement.x, movement.y);
             if (draw_links) graph.draw_links(window);
             graph.draw_entities(window, movement.x, movement.y);
