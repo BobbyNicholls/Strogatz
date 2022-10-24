@@ -33,7 +33,7 @@ private:
 	float m_rewire_prob;
 	float m_new_edge_prob;
 	float m_spawn_chance;
-	float m_min_entity_x_pos{ static_cast<float>(game_width) };
+	float m_min_entity_x_pos{ static_cast<float>(game_width) }; // these are initialised to confusing values so that they will be updated correctly later
 	float m_max_entity_x_pos{ static_cast<float>(-game_width) };
 	float m_min_entity_y_pos{ static_cast<float>(game_height) };
 	float m_max_entity_y_pos{ static_cast<float>(-game_height) };
