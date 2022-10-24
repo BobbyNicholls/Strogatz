@@ -41,7 +41,7 @@ Map::Map(sf::Texture& map_texture, const Graph& graph)
 	}
 
 	build_road_grid();
-	map_textures_to_road_grid();
+	map_textures_to_road_grid(Texture::mud, Texture::grass);
 
 	//build_road(
 	//	floor((m_graph.get_min_entity_x_pos() + m_location_offset_x) / TEXTURE_WIDTH_f),
@@ -120,7 +120,7 @@ void Map::print_road_grid()
 }
 
 
-void Map::map_textures_to_road_grid()
+void Map::map_textures_to_road_grid(const int road_texture_columm, const int ground_texture_columm)
 {
 	// the matrix might need padding??
 	int convolution_window{};
@@ -136,55 +136,55 @@ void Map::map_textures_to_road_grid()
 			switch (convolution_window)
 			{
 			case 1111:
-				all_one_texture(Texture::stone, col, row);
+				all_one_texture(road_texture_columm, col, row);
 				break;
 
 			case 1010:
-				blend_vertically(Texture::stone, Texture::grass, col, row);
+				blend_vertically(road_texture_columm, ground_texture_columm, col, row);
 				break;
 
 			case 101:
-				blend_vertically(Texture::grass, Texture::stone, col, row);
+				blend_vertically(ground_texture_columm, road_texture_columm, col, row);
 				break;
 
 			case 1100:
-				blend_horizontally(Texture::stone, Texture::grass, col, row);
+				blend_horizontally(road_texture_columm, ground_texture_columm, col, row);
 				break;
 
 			case 11:
-				blend_horizontally(Texture::grass, Texture::stone, col, row);
+				blend_horizontally(ground_texture_columm, road_texture_columm, col, row);
 				break;
 
 			case 1110:
-				blend_uli(Texture::stone, Texture::grass, col, row);
+				blend_uli(road_texture_columm, ground_texture_columm, col, row);
 				break;
 
 			case 1011:
-				blend_dli(Texture::stone, Texture::grass, col, row);
+				blend_dli(road_texture_columm, ground_texture_columm, col, row);
 				break;
 
 			case 1101:
-				blend_uri(Texture::grass, Texture::stone, col, row);
+				blend_uri(ground_texture_columm, road_texture_columm, col, row);
 				break;
 
 			case 111:
-				blend_dri(Texture::grass, Texture::stone, col, row);
+				blend_dri(ground_texture_columm, road_texture_columm, col, row);
 				break;
 
 			case 1000:
-				blend_ulo(Texture::stone, Texture::grass, col, row);
+				blend_ulo(road_texture_columm, ground_texture_columm, col, row);
 				break;
 
 			case 10:
-				blend_dlo(Texture::stone, Texture::grass, col, row);
+				blend_dlo(road_texture_columm, ground_texture_columm, col, row);
 				break;
 
 			case 100:
-				blend_uro(Texture::grass, Texture::stone, col, row);
+				blend_uro(ground_texture_columm, road_texture_columm, col, row);
 				break;
 
 			case 1:
-				blend_dro(Texture::grass, Texture::stone, col, row);
+				blend_dro(ground_texture_columm, road_texture_columm, col, row);
 				break;
 			}
 		}

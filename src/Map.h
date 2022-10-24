@@ -51,7 +51,7 @@ public:
 		const float origin_x, const float origin_y, const float destination_x, const float destination_y
 	);
 	void print_road_grid();
-	void map_textures_to_road_grid();
+	void map_textures_to_road_grid(const int road_texture_columm, const int ground_texture_columm);
 	void blend_horizontally(
 		const int up_texture_col, const int down_texture_col, const int pos_x, const int pos_y
 	);
