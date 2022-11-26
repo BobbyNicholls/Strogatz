@@ -8,10 +8,10 @@ Entity::Entity(time_period_t birth_time)
 	:m_id{ generate_id() }, m_birth_time{ birth_time }
 {
     m_links.reserve(5);
-    m_beliefs[0][0] = mild_aversion();
-    m_beliefs[0][1] = mild_aversion();
-    m_beliefs[1][0] = mild_aversion();
-    m_beliefs[1][1] = mild_aversion();
+    m_beliefs[0][0] = Beleif::mild_aversion();
+    m_beliefs[0][1] = Beleif::mild_aversion();
+    m_beliefs[1][0] = Beleif::mild_aversion();
+    m_beliefs[1][1] = Beleif::mild_aversion();
     normalise_beliefs();
 
     m_sex = uniform_distribution_int(0, 1);
@@ -128,7 +128,7 @@ void Entity::update_beliefs(Entity* influencer) // influencer should be const?
             result[i][j] = (
                 influencer->m_beliefs[i][0] * m_beliefs[0][j] +
                 influencer->m_beliefs[i][1] * m_beliefs[1][j]
-                );
+            );
         }
     }
 

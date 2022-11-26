@@ -6,35 +6,38 @@
 
 std::mt19937 mt{ std::random_device{}() };
 
-float mild_aversion(float degrees_of_freedom)
+namespace Beleif
 {
-	static std::chi_squared_distribution<float> chi2{ degrees_of_freedom };
-	return chi2(mt);
-}
+	float mild_aversion(float degrees_of_freedom)
+	{
+		static std::chi_squared_distribution<float> chi2{ degrees_of_freedom };
+		return chi2(mt);
+	}
 
 
-float mild_affinity()
-{
-	return std::max(0.00001f, 10 - mild_aversion());;
+	float mild_affinity()
+	{
+		return std::max(0.00001f, 10 - mild_aversion());;
+	}
+
+
+	float strong_aversion(float degrees_of_freedom)
+	{
+		static std::chi_squared_distribution<float> chi2{ degrees_of_freedom };
+		return chi2(mt);
+	}
+
+
+	float strong_affinity()
+	{
+		return std::max(0.00001f, 10 - strong_aversion());
+	}
 }
 
 
 void shuffle_vector(std::vector<int>& vector)
 {
 	std::shuffle(vector.begin(), vector.end(), mt);
-}
-
-
-float strong_aversion(float degrees_of_freedom)
-{
-	static std::chi_squared_distribution<float> chi2{ degrees_of_freedom };
-	return chi2(mt);
-}
-
-
-float strong_affinity()
-{
-	return std::max(0.00001f, 10 - strong_aversion());
 }
 
 
