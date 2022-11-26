@@ -35,14 +35,14 @@ namespace Beleif
 }
 
 
-void shuffle_vector(std::vector<int>& vector)
-{
-	std::shuffle(vector.begin(), vector.end(), mt);
-}
-
-
 int uniform_distribution_int(int min, int max)
 {
 	static constexpr double fraction{ 1.0 / (RAND_MAX + 1.0) };
 	return min + static_cast<int>((max - min + 1) * (std::rand() * fraction));
+}
+
+
+void shuffle_vector(std::vector<int>& vector)
+{
+	std::shuffle(vector.begin(), vector.end(), mt);
 }

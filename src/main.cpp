@@ -11,6 +11,7 @@
 #include "EntityCircle.h"
 #include "Graph.h"
 #include "Map.h"
+#include "Race.h"
 #include "Text.h"
 #include "utils.h"
 
@@ -18,13 +19,13 @@ extern const int edge_buffer{ 10 };
 extern const int game_height{ 1200 };
 extern const int game_width{ 1600 };
 constexpr float move_speed{ 200.f };
+constexpr int nr_of_races{ 2 };
 constexpr int window_height{ 900 };
 constexpr int window_width{ 1200 };
 
 
 int main()
 {
-
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
     sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Strogatz");
@@ -48,6 +49,7 @@ int main()
 
     Graph graph{ time_period_counter };
     Map map{ map_texture, graph };
+    Races races{ nr_of_races };
     EntityCircle* player_entity{ get_entity_circle(time_period_counter) };
     sf::Vector2f movement{};
     player_entity->get_shape().setPosition(window_width/2, window_height/2);

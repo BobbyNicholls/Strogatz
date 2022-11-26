@@ -29,7 +29,7 @@ class Entity
 {
 private:
 	time_period_t m_birth_time{ 0 }; // is this slower than int?
-	Race& m_race;
+	//Race& m_race;
 	bool m_sex;
 	bool m_paired { false };
 	bool m_leader { false };
