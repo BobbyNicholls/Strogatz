@@ -50,13 +50,13 @@ public:
 		const time_period_t start_time,
 		const Races* races,
 		const float rewire_prob = 0.02f,
-		const float new_edge_prob = 0.01f,
+		const float new_edge_prob = 0.002f,
 		const float spawn_chance = 0.12f,
 		const int entities_start_size = 60,
 		const int entities_reserve_limit = 400,
 		const int link_limit = 3000,
-		const int clique_min_size = 4,
-		const int clique_max_size = 10
+		const int clique_min_size = 3,
+		const int clique_max_size = 7
 	);
 
 	float get_rewire_prob() const { return m_rewire_prob; }
@@ -83,7 +83,7 @@ public:
 	float death_sigmoid(const int age, const int fifty_pct_age = 85, const int hundred_pct_age = 110);
 	void tidy_up_entities();
 	void kill_entities(const time_period_t time_period);
-	void seed_cliques_and_leaders(const int leaders = 4, const int cliques = 8);
+	void seed_cliques_and_leaders(const int leaders = 3, const int cliques = 4);
 	void make_leader(EntityCircle* seed);
 	void form_clique_from_seed(const int seed);
 	void vectorise_nodes(const bool vectorise_all_nodes = true);
