@@ -4,8 +4,8 @@
 #include "Entity.h"
 
 
-Entity::Entity(time_period_t birth_time)
-	:m_id{ generate_id() }, m_birth_time{ birth_time }
+Entity::Entity(time_period_t birth_time, const Race* race)
+    :m_id{ generate_id() }, m_birth_time{ birth_time }, m_race{ race }
 {
     m_links.reserve(5);
     m_beliefs[0][0] = Beleif::mild_aversion();

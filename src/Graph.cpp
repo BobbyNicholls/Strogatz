@@ -99,6 +99,7 @@ void Graph::rewire_random_edge()
 
 Graph::Graph(
     const time_period_t start_time,
+    const Races* races,
     const float rewire_prob,
     const float new_edge_prob,
     const float spawn_chance,
@@ -131,8 +132,8 @@ Graph::Graph(
     m_links.reserve(m_link_limit);
     m_entity_vectors.reserve(100);
 
-    m_entities.push_back(get_entity_circle(start_time));
-    m_entities.push_back(get_entity_circle(start_time));
+    m_entities.push_back(get_entity_circle(start_time, races->get_random_race()));
+    m_entities.push_back(get_entity_circle(start_time, races->get_random_race()));
     link_entities(m_entities[0], m_entities[1]);
     m_entities[0]->set_position_randomly();
     m_entities[1]->set_position_randomly()->move_to_links();
@@ -141,7 +142,7 @@ Graph::Graph(
     std::set<EntityCircle*> link_anchors{ m_entities[0] };
     for (int i{ 2 }; i < m_entities_start_size; ++i)
     {
-        EntityCircle* new_entity{ get_entity_circle(start_time) };
+        EntityCircle* new_entity{ get_entity_circle(start_time, races->get_random_race()) };
         m_entities.push_back(new_entity);
         chosen_entity = add_preferential_links(new_entity);
         if (uniform_distribution_float(0, 1) < m_new_edge_prob)
@@ -228,7 +229,7 @@ void Graph::propagate_entities(const time_period_t time_period)
             EntityCircle* to_entity{ link->to };
             if (to_entity->is_paired() && (to_entity->get_partner() == from_entity))
             {
-                EntityCircle* child_entity{ get_entity_circle(time_period) };
+                EntityCircle* child_entity{ get_entity_circle(time_period, to_entity->get_race()) };
                 std::cout << "Paired entities spawned a child: " << 
                     child_entity->get_id() << '\n';
                 m_entities.push_back(child_entity);

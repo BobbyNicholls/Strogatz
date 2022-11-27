@@ -47,10 +47,10 @@ int main()
     constexpr unsigned int frames_per_period{ 600 };
     bool draw_links{ false };
 
-    Graph graph{ time_period_counter };
-    Map map{ map_texture, graph };
     Races races{ nr_of_races };
-    EntityCircle* player_entity{ get_entity_circle(time_period_counter) };
+    Graph graph{ time_period_counter, &races };
+    Map map{ map_texture, graph };
+    EntityCircle* player_entity{ get_entity_circle(time_period_counter, races.get_random_race()) };
     sf::Vector2f movement{};
     player_entity->get_shape().setPosition(window_width/2, window_height/2);
 

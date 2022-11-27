@@ -5,6 +5,18 @@ Race::Race(Race::Index index)
 {}
 
 
+std::map<Race::Index, std::string> Race::index_to_name_map{
+		{Race::Index::elf, "Elf"},
+		{Race::Index::human, "Human"},
+		{Race::Index::goblin, "Goblin"},
+		{Race::Index::gnome, "Gnome"},
+		{Race::Index::troll , "Troll"},
+		{Race::Index::beastmen, "Beastmen"},
+		{Race::Index::zombie, "Zombie"},
+		{Race::Index::dwarf, "Dwarf"},
+};
+
+
 Races::Races(int nr_of_races)
 {
 	std::vector<int> race_vector(Race::Index::max_races);
@@ -20,13 +32,7 @@ Races::Races(int nr_of_races)
 }
 
 
-std::map<Race::Index, std::string> Race::index_to_name_map{
-		{Race::Index::elf, "Elf"},
-		{Race::Index::human, "Human"},
-		{Race::Index::goblin, "Goblin"},
-		{Race::Index::gnome, "Gnome"},
-		{Race::Index::troll , "Troll"},
-		{Race::Index::beastmen, "Beastmen"},
-		{Race::Index::zombie, "Zombie"},
-		{Race::Index::dwarf, "Dwarf"},
-};
+const Race* Races::get_random_race() const
+{
+	return m_races[uniform_distribution_int(0, static_cast<int>(m_races.size()-1))];
+}

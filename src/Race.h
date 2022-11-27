@@ -42,7 +42,9 @@ private:
 	std::vector<Race*> m_races;
 
 public:
+	Races() = delete;
 	Races(int nr_of_races);
+	const Race* get_random_race() const;
 };
 
 #endif // !STROG_RACE_H

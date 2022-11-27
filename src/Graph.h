@@ -27,7 +27,7 @@ class Graph
 {
 private:
 	std::vector<EntityCircle*> m_entities;
-	std::vector<EntityCircle*> m_leaders;
+	std::vector<EntityCircle*> m_leaders; // TODO: entities not having m_leader set to true
 	std::vector<Link*> m_links; // this is leaking memory a lot
 	int m_entities_start_size;
 	float m_rewire_prob;
@@ -48,6 +48,7 @@ public:
 
 	Graph(
 		const time_period_t start_time,
+		const Races* races,
 		const float rewire_prob = 0.02f,
 		const float new_edge_prob = 0.01f,
 		const float spawn_chance = 0.12f,
