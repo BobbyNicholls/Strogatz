@@ -77,6 +77,7 @@ int main()
                 }
             }
 
+            // this is happening once every frame, shouldnt it happen once every period?
             if (uniform_distribution_float(0, 1) < graph.get_rewire_prob())
                 graph.rewire_random_edge();
             if (uniform_distribution_float(0, 1) < graph.get_new_edge_prob())
