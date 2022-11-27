@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "Race.h"
 
 Race::Race(Race::Index index)
@@ -28,6 +30,7 @@ Races::Races(int nr_of_races)
 	for (int i{ 0 }; i < nr_of_races; ++i)
 	{
 		m_races.push_back(new Race{ static_cast<Race::Index>(race_vector[i]) });
+		std::cout << Race::index_to_name_map[static_cast<Race::Index>(race_vector[i])] << '\n';
 	}
 }
 

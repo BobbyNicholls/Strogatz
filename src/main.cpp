@@ -19,7 +19,7 @@ extern const int edge_buffer{ 10 };
 extern const int game_height{ 1200 };
 extern const int game_width{ 1600 };
 constexpr float move_speed{ 200.f };
-constexpr int nr_of_races{ 2 };
+constexpr int nr_of_races{ 6 };
 constexpr int window_height{ 900 };
 constexpr int window_width{ 1200 };
 

@@ -8,6 +8,10 @@ std::mt19937 mt{ std::random_device{}() };
 
 namespace Beleif
 {
+
+	float true_random() { return uniform_distribution_float(0.00001f, 10.f); };
+
+	// TODO: add true randomness and also indifference?
 	float mild_aversion(float degrees_of_freedom)
 	{
 		static std::chi_squared_distribution<float> chi2{ degrees_of_freedom };

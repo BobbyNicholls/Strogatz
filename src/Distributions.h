@@ -11,6 +11,7 @@ class Race;
 
 namespace Beleif
 {
+	float true_random();
 	float mild_affinity();
 	float strong_affinity();
 	float strong_aversion(float degrees_of_freedom = 0.2f);

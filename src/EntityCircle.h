@@ -30,7 +30,7 @@ public:
     EntityCircle(
         time_period_t birth_time,
         const Race* race,
-        float radius = 10.f,
+        float radius = 15.f,
         float outline_thickness = 3.f,
         sf::Color outline_colour = sf::Color(100, 0, 0)
     );

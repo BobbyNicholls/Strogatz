@@ -8,10 +8,72 @@ Entity::Entity(time_period_t birth_time, const Race* race)
     :m_id{ generate_id() }, m_birth_time{ birth_time }, m_race{ race }
 {
     m_links.reserve(5);
-    m_beliefs[0][0] = Beleif::mild_aversion();
-    m_beliefs[0][1] = Beleif::mild_aversion();
-    m_beliefs[1][0] = Beleif::mild_aversion();
-    m_beliefs[1][1] = Beleif::mild_aversion();
+    switch (race->get_index())
+    {
+    case Race::Index::elf:
+        m_beliefs[0][0] = Beleif::strong_affinity(); // spiritual / matrialist
+        m_beliefs[0][1] = Beleif::strong_aversion(); // violent / pacifist
+        m_beliefs[1][0] = Beleif::mild_affinity(); // authoritarian / liberal
+        m_beliefs[1][1] = Beleif::strong_affinity(); // conservative / progressive
+        break;
+
+    case Race::Index::human:
+        m_beliefs[0][0] = Beleif::true_random(); // spiritual / matrialist
+        m_beliefs[0][1] = Beleif::true_random(); // violent / pacifist
+        m_beliefs[1][0] = Beleif::true_random(); // authoritarian / liberal
+        m_beliefs[1][1] = Beleif::true_random(); // conservative / progressive
+        break;
+
+    case Race::Index::goblin:
+        m_beliefs[0][0] = Beleif::strong_aversion(); // spiritual / matrialist
+        m_beliefs[0][1] = Beleif::strong_affinity(); // violent / pacifist
+        m_beliefs[1][0] = Beleif::mild_aversion(); // authoritarian / liberal
+        m_beliefs[1][1] = Beleif::true_random(); // conservative / progressive
+        break;
+
+    case Race::Index::gnome:
+        m_beliefs[0][0] = Beleif::strong_aversion(); // spiritual / matrialist
+        m_beliefs[0][1] = Beleif::mild_aversion(); // violent / pacifist
+        m_beliefs[1][0] = Beleif::true_random(); // authoritarian / liberal
+        m_beliefs[1][1] = Beleif::true_random(); // conservative / progressive
+        break;
+
+    case Race::Index::troll:
+        m_beliefs[0][0] = Beleif::strong_aversion(); // spiritual / matrialist
+        m_beliefs[0][1] = Beleif::strong_affinity(); // violent / pacifist
+        m_beliefs[1][0] = Beleif::strong_aversion(); // authoritarian / liberal
+        m_beliefs[1][1] = Beleif::mild_affinity(); // conservative / progressive
+        break;
+
+    case Race::Index::beastmen:
+        m_beliefs[0][0] = Beleif::strong_affinity(); // spiritual / matrialist
+        m_beliefs[0][1] = Beleif::strong_affinity(); // violent / pacifist
+        m_beliefs[1][0] = Beleif::strong_aversion(); // authoritarian / liberal
+        m_beliefs[1][1] = Beleif::true_random(); // conservative / progressive
+        break;
+
+    case Race::Index::zombie:
+        m_beliefs[0][0] = Beleif::true_random(); // spiritual / matrialist
+        m_beliefs[0][1] = Beleif::true_random(); // violent / pacifist
+        m_beliefs[1][0] = Beleif::true_random(); // authoritarian / liberal
+        m_beliefs[1][1] = Beleif::true_random(); // conservative / progressive
+        break;
+
+    case Race::Index::dwarf:
+        m_beliefs[0][0] = Beleif::mild_aversion(); // spiritual / matrialist
+        m_beliefs[0][1] = Beleif::mild_affinity(); // violent / pacifist
+        m_beliefs[1][0] = Beleif::strong_affinity(); // authoritarian / liberal
+        m_beliefs[1][1] = Beleif::strong_affinity(); // conservative / progressive
+        break;
+
+    default:
+        m_beliefs[0][0] = Beleif::mild_aversion();
+        m_beliefs[0][1] = Beleif::mild_affinity();
+        m_beliefs[1][0] = Beleif::strong_aversion();
+        m_beliefs[1][1] = Beleif::strong_affinity();
+        break;
+    }
+
     normalise_beliefs();
 
     m_sex = uniform_distribution_int(0, 1);

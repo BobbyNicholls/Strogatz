@@ -34,6 +34,7 @@ EntityCircle::EntityCircle(
 	m_outline_colour{ outline_colour }
 {
 	m_shape.setRadius(m_radius);
+	m_shape.setPointCount(3 + race->get_index());
 	update_colour();
 	m_shape.setOutlineThickness(m_outline_thickness);
 	m_shape.setOutlineColor(m_outline_colour);

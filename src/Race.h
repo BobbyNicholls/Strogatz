@@ -33,6 +33,8 @@ private:
 public:
 	Race() = delete;
 	Race(Race::Index index);
+
+	const Index get_index() const { return m_index; };
 };
 
 
