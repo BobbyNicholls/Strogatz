@@ -8,14 +8,14 @@ Race::Race(Race::Index index)
 
 
 std::map<Race::Index, std::string> Race::index_to_name_map{
-		{Race::Index::elf, "Elf"},
-		{Race::Index::human, "Human"},
-		{Race::Index::goblin, "Goblin"},
-		{Race::Index::gnome, "Gnome"},
-		{Race::Index::troll , "Troll"},
-		{Race::Index::beastmen, "Beastmen"},
-		{Race::Index::zombie, "Zombie"},
-		{Race::Index::dwarf, "Dwarf"},
+	{Race::Index::elf, "Elf"},
+	{Race::Index::human, "Human"},
+	{Race::Index::goblin, "Goblin"},
+	{Race::Index::gnome, "Gnome"},
+	{Race::Index::troll , "Troll"},
+	{Race::Index::beastmen, "Beastmen"},
+	{Race::Index::zombie, "Zombie"},
+	{Race::Index::dwarf, "Dwarf"},
 };
 
 
