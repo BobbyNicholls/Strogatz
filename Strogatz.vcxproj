@@ -136,6 +136,7 @@
     <ClCompile Include="src\Graph.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Map.cpp" />
+    <ClCompile Include="src\Race.cpp" />
     <ClCompile Include="src\Text.cpp" />
     <ClCompile Include="src\utils.cpp" />
   </ItemGroup>
@@ -145,6 +146,7 @@
     <ClInclude Include="src\EntityCircle.h" />
     <ClInclude Include="src\Graph.h" />
     <ClInclude Include="src\Map.h" />
+    <ClInclude Include="src\Race.h" />
     <ClInclude Include="src\Text.h" />
     <ClInclude Include="src\utils.h" />
   </ItemGroup>

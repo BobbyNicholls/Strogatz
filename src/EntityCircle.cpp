@@ -7,9 +7,9 @@ extern const int game_height;
 extern const int game_width;
 
 
-EntityCircle* get_entity_circle(const time_period_t time_period)
+EntityCircle* get_entity_circle(const time_period_t time_period, const Race* race)
 {
-	EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle(time_period) };
+	EntityCircle* entity_pointer{ new (std::nothrow) EntityCircle(time_period, race) };
 
 	if (!entity_pointer) // handle case where new returned null
 	{
@@ -23,16 +23,18 @@ EntityCircle* get_entity_circle(const time_period_t time_period)
 
 EntityCircle::EntityCircle(
 	time_period_t birth_time,
+	const Race* race,
 	float radius,
 	float outline_thickness, 
 	sf::Color outline_colour
 )
-	: Entity{ birth_time },
+	: Entity{ birth_time, race },
 	m_radius{ radius },
 	m_outline_thickness{ outline_thickness }, 
 	m_outline_colour{ outline_colour }
 {
 	m_shape.setRadius(m_radius);
+	m_shape.setPointCount(3 + race->get_index());
 	update_colour();
 	m_shape.setOutlineThickness(m_outline_thickness);
 	m_shape.setOutlineColor(m_outline_colour);

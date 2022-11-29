@@ -29,7 +29,8 @@ private:
 public:
     EntityCircle(
         time_period_t birth_time,
-        float radius = 10.f,
+        const Race* race,
+        float radius = 15.f,
         float outline_thickness = 3.f,
         sf::Color outline_colour = sf::Color(100, 0, 0)
     );
@@ -47,6 +48,6 @@ public:
     void move_along_path();
 };
 
-EntityCircle* get_entity_circle(const time_period_t time_period);
+EntityCircle* get_entity_circle(const time_period_t time_period, const Race* race);
 
 #endif

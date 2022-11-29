@@ -27,13 +27,14 @@ class Graph
 {
 private:
 	std::vector<EntityCircle*> m_entities;
-	std::vector<EntityCircle*> m_leaders;
+	std::vector<EntityCircle*> m_leaders; // TODO: entities not having m_leader set to true
 	std::vector<Link*> m_links; // this is leaking memory a lot
 	int m_entities_start_size;
 	float m_rewire_prob;
 	float m_new_edge_prob;
 	float m_spawn_chance;
-	float m_min_entity_x_pos{ static_cast<float>(game_width) }; // these are initialised to confusing values so that they will be updated correctly later
+	// these are initialised to confusing values so that they will be updated correctly in the Graph constructor
+	float m_min_entity_x_pos{ static_cast<float>(game_width) };
 	float m_max_entity_x_pos{ static_cast<float>(-game_width) };
 	float m_min_entity_y_pos{ static_cast<float>(game_height) };
 	float m_max_entity_y_pos{ static_cast<float>(-game_height) };
@@ -48,14 +49,15 @@ public:
 
 	Graph(
 		const time_period_t start_time,
-		const float rewire_prob = 0.02f,
-		const float new_edge_prob = 0.01f,
+		const Races* races,
+		const float rewire_prob = 0.004f,
+		const float new_edge_prob = 0.00005f,
 		const float spawn_chance = 0.12f,
-		const int entities_start_size = 60,
+		const int entities_start_size = 120,
 		const int entities_reserve_limit = 400,
 		const int link_limit = 3000,
-		const int clique_min_size = 4,
-		const int clique_max_size = 10
+		const int clique_min_size = 3,
+		const int clique_max_size = 7
 	);
 
 	float get_rewire_prob() const { return m_rewire_prob; }
@@ -69,7 +71,8 @@ public:
 	float get_max_entity_y_pos() const { return m_max_entity_y_pos; };
 
 	void link_entities(EntityCircle* entity_from, EntityCircle* entity_to);
-	EntityCircle* get_preferential_entity();
+	EntityCircle* get_preferential_entity() const;
+	EntityCircle* get_belief_compatible_entity(EntityCircle* entity) const;
 	EntityCircle* add_preferential_links(EntityCircle* entity);
 	void add_random_edge(const int max_entitiy_iloc);
 	void rewire_random_edge();
@@ -82,7 +85,7 @@ public:
 	float death_sigmoid(const int age, const int fifty_pct_age = 85, const int hundred_pct_age = 110);
 	void tidy_up_entities();
 	void kill_entities(const time_period_t time_period);
-	void seed_cliques_and_leaders(const int leaders = 4, const int cliques = 8);
+	void seed_cliques_and_leaders(const int leaders = 3, const int cliques = 4);
 	void make_leader(EntityCircle* seed);
 	void form_clique_from_seed(const int seed);
 	void vectorise_nodes(const bool vectorise_all_nodes = true);

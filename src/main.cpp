@@ -11,20 +11,21 @@
 #include "EntityCircle.h"
 #include "Graph.h"
 #include "Map.h"
+#include "Race.h"
 #include "Text.h"
 #include "utils.h"
 
 extern const int edge_buffer{ 10 };
-extern const int game_height{ 1200 };
-extern const int game_width{ 1600 };
-constexpr float move_speed{ 200.f };
-constexpr int window_height{ 900 };
-constexpr int window_width{ 1200 };
+extern const int game_height{ 4800 };
+extern const int game_width{ 6400 };
+constexpr float move_speed{ 400.f };
+constexpr int nr_of_races{ 6 };
+constexpr int window_height{ 1080 };
+constexpr int window_width{ 1920 };
 
 
 int main()
 {
-
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
     sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Strogatz");
@@ -43,12 +44,13 @@ int main()
     constexpr float time_step{ 1.0f / 60.0f };
     time_period_t time_period_counter{ 0 };
     unsigned int frame_counter{ 0 };
-    constexpr unsigned int frames_per_period{ 600 };
+    constexpr unsigned int frames_per_period{ 6 };
     bool draw_links{ false };
 
-    Graph graph{ time_period_counter };
+    Races races{ nr_of_races };
+    Graph graph{ time_period_counter, &races };
     Map map{ map_texture, graph };
-    EntityCircle* player_entity{ get_entity_circle(time_period_counter) };
+    EntityCircle* player_entity{ get_entity_circle(time_period_counter, races.get_random_race()) };
     sf::Vector2f movement{};
     player_entity->get_shape().setPosition(window_width/2, window_height/2);
 
@@ -75,6 +77,7 @@ int main()
                 }
             }
 
+            // this is happening once every frame, shouldnt it happen once every period?
             if (uniform_distribution_float(0, 1) < graph.get_rewire_prob())
                 graph.rewire_random_edge();
             if (uniform_distribution_float(0, 1) < graph.get_new_edge_prob())
