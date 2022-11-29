@@ -43,6 +43,10 @@ EntityCircle* Graph::get_preferential_entity() const
 
 EntityCircle* Graph::get_belief_compatible_entity(EntityCircle* entity) const
 {
+    /*
+    Gets the most belief compatible entity for the input `entity` that the input 
+    `entity` is not already linked to.
+    */
     std::cout << "BELIEF LINK" << '\n';
     EntityCircle* chosen_entity{};
     float min_belief_distance{ 9999.f };
