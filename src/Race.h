@@ -23,7 +23,6 @@ public:
 		max_races,
 	};
 	
-	// move out of class? gets instantited for each instance?
 	static std::map<Index, std::string> index_to_name_map;
 
 private:
