@@ -19,10 +19,7 @@ namespace Beleif
 	}
 
 
-	float mild_affinity()
-	{
-		return std::max(0.00001f, 10 - mild_aversion());;
-	}
+	float mild_affinity() { return std::max(0.00001f, 10 - mild_aversion()); };
 
 
 	float strong_aversion(float degrees_of_freedom)
@@ -32,10 +29,7 @@ namespace Beleif
 	}
 
 
-	float strong_affinity()
-	{
-		return std::max(0.00001f, 10 - strong_aversion());
-	}
+	float strong_affinity() { return std::max(0.00001f, 10 - strong_aversion()); };
 }
 
 
