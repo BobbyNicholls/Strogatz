@@ -16,12 +16,12 @@
 #include "utils.h"
 
 extern const int edge_buffer{ 10 };
-extern const int game_height{ 1200 };
-extern const int game_width{ 1600 };
-constexpr float move_speed{ 200.f };
+extern const int game_height{ 4800 };
+extern const int game_width{ 6400 };
+constexpr float move_speed{ 400.f };
 constexpr int nr_of_races{ 6 };
-constexpr int window_height{ 900 };
-constexpr int window_width{ 1200 };
+constexpr int window_height{ 1080 };
+constexpr int window_width{ 1920 };
 
 
 int main()
@@ -44,7 +44,7 @@ int main()
     constexpr float time_step{ 1.0f / 60.0f };
     time_period_t time_period_counter{ 0 };
     unsigned int frame_counter{ 0 };
-    constexpr unsigned int frames_per_period{ 600 };
+    constexpr unsigned int frames_per_period{ 6 };
     bool draw_links{ false };
 
     Races races{ nr_of_races };

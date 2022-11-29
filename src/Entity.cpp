@@ -5,7 +5,10 @@
 
 
 Entity::Entity(time_period_t birth_time, const Race* race)
-    :m_id{ generate_id() }, m_birth_time{ birth_time }, m_race{ race }
+    : m_id{ generate_id() }, 
+    m_birth_time{ birth_time }, 
+    m_race{ race }, 
+    m_sex{ static_cast<bool>(uniform_distribution_int(0, 1)) }
 {
     m_links.reserve(5);
     switch (race->get_index())
@@ -75,8 +78,6 @@ Entity::Entity(time_period_t birth_time, const Race* race)
     }
 
     normalise_beliefs();
-
-    m_sex = uniform_distribution_int(0, 1);
 }
 
 

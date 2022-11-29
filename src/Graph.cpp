@@ -271,7 +271,7 @@ void Graph::propagate_entities(const time_period_t time_period)
                 child_entity->add_parents(from_entity, to_entity);
                 link_entities(from_entity, child_entity);
                 link_entities(to_entity, child_entity);
-                child_entity->set_position_randomly();
+                child_entity->set_position_relative_to_links();
             }
 
             else if (

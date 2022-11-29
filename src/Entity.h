@@ -28,9 +28,9 @@ It contains information regarding things every entity must have:
 class Entity
 {
 private:
-	time_period_t m_birth_time{ 0 }; // is this slower than int?
+	const time_period_t m_birth_time; // is this slower than int?
 	const Race* m_race;
-	bool m_sex;
+	const bool m_sex;
 	bool m_paired { false };
 	bool m_leader { false };
 	id_t m_id;

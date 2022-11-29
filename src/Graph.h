@@ -33,7 +33,8 @@ private:
 	float m_rewire_prob;
 	float m_new_edge_prob;
 	float m_spawn_chance;
-	float m_min_entity_x_pos{ static_cast<float>(game_width) }; // these are initialised to confusing values so that they will be updated correctly later
+	// these are initialised to confusing values so that they will be updated correctly in the Graph constructor
+	float m_min_entity_x_pos{ static_cast<float>(game_width) };
 	float m_max_entity_x_pos{ static_cast<float>(-game_width) };
 	float m_min_entity_y_pos{ static_cast<float>(game_height) };
 	float m_max_entity_y_pos{ static_cast<float>(-game_height) };
@@ -52,7 +53,7 @@ public:
 		const float rewire_prob = 0.004f,
 		const float new_edge_prob = 0.00005f,
 		const float spawn_chance = 0.12f,
-		const int entities_start_size = 60,
+		const int entities_start_size = 120,
 		const int entities_reserve_limit = 400,
 		const int link_limit = 3000,
 		const int clique_min_size = 3,
