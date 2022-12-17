@@ -34,8 +34,8 @@ int main()
     sf::Texture map_texture;
     load_texture(map_texture, "map");
 
-    sf::Texture house_texture;
-    load_texture(house_texture, "houses");
+    sf::Texture anchor_texture;
+    load_texture(anchor_texture, "houses");
 
     sf::Text text;
     sf::Font font;
@@ -52,7 +52,7 @@ int main()
 
     Races races{ nr_of_races };
     Graph graph{ time_period_counter, &races };
-    Map map{ map_texture, graph };
+    Map map{ map_texture, anchor_texture, graph };
     EntityCircle* player_entity{ get_entity_circle(time_period_counter, races.get_random_race()) };
     sf::Vector2f movement{};
     player_entity->get_shape().setPosition(window_width/2, window_height/2);

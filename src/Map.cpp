@@ -29,6 +29,8 @@ void Map::cover_map_with_texture(const int texture_columm)
 {
 	int row{ 0 };
 	int col{ 0 };
+	sf::Sprite sprite;
+	sprite.setTexture(m_map_texture);
 	for (int i{ 0 }; i < MAP_GRID_WIDTH * MAP_GRID_HEIGHT; ++i)
 	{
 		if (col == MAP_GRID_WIDTH)
@@ -36,8 +38,6 @@ void Map::cover_map_with_texture(const int texture_columm)
 			col = 0;
 			++row;
 		}
-		sf::Sprite sprite;
-		sprite.setTexture(m_map_texture);
 		sprite.setTextureRect(sf::IntRect(
 			TEXTURE_WIDTH * texture_columm,
 			TEXTURE_WIDTH * uniform_distribution_int(0, 3),
@@ -189,7 +189,19 @@ void Map::map_textures_to_road_grid(const int road_texture_columm, const int gro
 
 void Map::map_textures_to_anchor_points()
 {
-
+	for (sf::Vector2f anchor_pt : m_graph.m_anchor_points)
+	{
+		//sf::Sprite sprite;
+		//sprite.setTexture(m_map_texture);
+		//sprite.setTextureRect(sf::IntRect(
+		//	TEXTURE_WIDTH * texture_columm,
+		//	TEXTURE_WIDTH * uniform_distribution_int(0, 3),
+		//	TEXTURE_WIDTH,
+		//	TEXTURE_WIDTH
+		//));
+		//sprite.setPosition(col * TEXTURE_WIDTH_f, row * TEXTURE_WIDTH_f);
+		//m_render_texture.draw(sprite);
+	}
 }
 
 
