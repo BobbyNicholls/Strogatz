@@ -11,8 +11,8 @@ enum Texture
 };
 
 
-Map::Map(sf::Texture& map_texture, const Graph& graph)
-	: m_map_texture{ map_texture }, m_graph{ graph }
+Map::Map(sf::Texture& map_texture, sf::Texture& anchor_texture, const Graph& graph)
+	: m_map_texture{ map_texture }, m_anchor_texture{ anchor_texture }, m_graph{ graph }
 {
 	m_render_texture.create(MAP_GRID_WIDTH * TEXTURE_WIDTH, MAP_GRID_HEIGHT * TEXTURE_WIDTH);
 	m_render_texture.clear(sf::Color::Green);
@@ -184,6 +184,12 @@ void Map::map_textures_to_road_grid(const int road_texture_columm, const int gro
 			}
 		}
 	}
+}
+
+
+void Map::map_textures_to_anchor_points()
+{
+
 }
 
 

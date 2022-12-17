@@ -35,7 +35,7 @@ int main()
     load_texture(map_texture, "map");
 
     sf::Texture house_texture;
-    load_texture(map_texture, "map");
+    load_texture(house_texture, "houses");
 
     sf::Text text;
     sf::Font font;

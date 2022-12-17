@@ -36,18 +36,20 @@ private:
 	const Graph& m_graph;
 	RoadGrid m_road_grid;
 	sf::Texture& m_map_texture;
+	sf::Texture& m_anchor_texture;
 	sf::RenderTexture m_render_texture;
 	sf::Sprite m_sprite;
 	sf::RenderTexture m_blended_texture;
 	sf::Sprite m_blended_sprite;
 
 public:
-	Map(sf::Texture& map_texture, const Graph& graph);
+	Map(sf::Texture& map_texture, sf::Texture& anchor_texture, const Graph& graph);
 	void build_road_grid();
 	void draw(sf::RenderWindow& window, const float x_move_distance, const float y_move_distance);
 	void cover_map_with_texture(const int texture_columm);
 	void print_road_grid();
 	void map_textures_to_road_grid(const int road_texture_columm, const int ground_texture_columm);
+	void map_textures_to_anchor_points();
 	// texture blending functions:
 	void blend_horizontally(
 		const int up_texture_col, const int down_texture_col, const int pos_x, const int pos_y
