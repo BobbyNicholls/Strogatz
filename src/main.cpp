@@ -32,7 +32,10 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     sf::Texture map_texture;
-    load_texture(map_texture);
+    load_texture(map_texture, "map");
+
+    sf::Texture house_texture;
+    load_texture(map_texture, "map");
 
     sf::Text text;
     sf::Font font;
