@@ -198,13 +198,13 @@ void Map::map_textures_to_anchor_points()
 	{
 		sprite.setTextureRect(sf::IntRect(
 			TEXTURE_WIDTH * 0,
-			TEXTURE_WIDTH * uniform_distribution_int(0, 1),
-			TEXTURE_WIDTH * 2,
-			TEXTURE_WIDTH
+			TEXTURE_WIDTH * 0,
+			TEXTURE_WIDTH * 16,
+			TEXTURE_WIDTH * 8
 		));
 		//anchor_x = static_cast<int>((anchor_pt.x + m_location_offset_x) / TEXTURE_WIDTH_f) - m_road_grid.min_x_coord + 1;
 		//anchor_y = static_cast<int>((anchor_pt.y + m_location_offset_y) / TEXTURE_WIDTH_f) - m_road_grid.min_y_coord + 1;
-		sprite.setPosition(anchor_pt.x + m_location_offset_x - 28.f, anchor_pt.y + m_location_offset_y);
+		sprite.setPosition(anchor_pt.x + m_location_offset_x - 128.f, anchor_pt.y + m_location_offset_y - 32.f);
 		m_render_texture.draw(sprite);
 	}
 }

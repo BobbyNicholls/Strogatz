@@ -35,7 +35,7 @@ int main()
     load_texture(map_texture, "map");
 
     sf::Texture anchor_texture;
-    load_texture(anchor_texture, "houses");
+    load_texture(anchor_texture, "pixel_house");
 
     sf::Text text;
     sf::Font font;
