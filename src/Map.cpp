@@ -190,21 +190,37 @@ void Map::map_textures_to_road_grid(const int road_texture_columm, const int gro
 
 void Map::map_textures_to_anchor_points()
 {
-	//int anchor_x;
-	//int anchor_y;
+	int anchor_x;
+	int anchor_y;
 	sf::Sprite sprite;
 	sprite.setTexture(m_anchor_texture);
+
 	for (sf::Vector2f anchor_pt : m_graph.m_anchor_points)
 	{
-		sprite.setTextureRect(sf::IntRect(
-			TEXTURE_WIDTH * 0,
-			TEXTURE_WIDTH * 0,
-			TEXTURE_WIDTH * 16,
-			TEXTURE_WIDTH * 8
-		));
-		//anchor_x = static_cast<int>((anchor_pt.x + m_location_offset_x) / TEXTURE_WIDTH_f) - m_road_grid.min_x_coord + 1;
-		//anchor_y = static_cast<int>((anchor_pt.y + m_location_offset_y) / TEXTURE_WIDTH_f) - m_road_grid.min_y_coord + 1;
-		sprite.setPosition(anchor_pt.x + m_location_offset_x - 128.f, anchor_pt.y + m_location_offset_y - 32.f);
+		anchor_x = static_cast<int>((anchor_pt.x + m_location_offset_x) / TEXTURE_WIDTH_f);
+		anchor_y = static_cast<int>((anchor_pt.y + m_location_offset_y) / TEXTURE_WIDTH_f);
+		if (anchor_y > m_road_grid.mid_y_coord)
+		{
+			sprite.setTextureRect(sf::IntRect(
+				TEXTURE_WIDTH * 0,
+				TEXTURE_WIDTH * 4,
+				TEXTURE_WIDTH * 4,
+				TEXTURE_WIDTH * 4
+			));
+		}
+		else
+		{
+			sprite.setTextureRect(sf::IntRect(
+				TEXTURE_WIDTH * 0,
+				TEXTURE_WIDTH * 0,
+				TEXTURE_WIDTH * 4,
+				TEXTURE_WIDTH * 4
+			));
+		}
+		sprite.setPosition(
+			(anchor_x * TEXTURE_WIDTH_f) - TEXTURE_WIDTH_f, 
+			(anchor_y * TEXTURE_WIDTH_f) - TEXTURE_WIDTH_f
+		);
 		m_render_texture.draw(sprite);
 	}
 }
