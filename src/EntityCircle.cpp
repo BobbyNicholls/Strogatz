@@ -59,11 +59,16 @@ void EntityCircle::update_colour()
 }
 
 
-EntityCircle* EntityCircle::set_position_randomly()
+EntityCircle* EntityCircle::set_position_randomly(
+	const float min_x, 
+	const float max_x,
+	const float min_y,
+	const float max_y
+)
 {
 	m_shape.setPosition(
-		uniform_distribution_float(-game_width, game_width),
-		uniform_distribution_float(-game_height, game_height)
+		uniform_distribution_float(-min_x, max_x),
+		uniform_distribution_float(-min_y, max_y)
 	);
 	return this;
 }

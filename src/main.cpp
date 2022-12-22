@@ -16,8 +16,8 @@
 #include "utils.h"
 
 extern const int edge_buffer{ 10 };
-extern const int game_height{ 4800 };
-extern const int game_width{ 6400 };
+extern const int game_height{ 2400 };
+extern const int game_width{ 3200 };
 constexpr float move_speed{ 400.f };
 constexpr int nr_of_races{ 6 };
 constexpr int window_height{ 1080 };

@@ -5,8 +5,8 @@
 
 #include "Graph.h"
 
-constexpr int MAP_GRID_WIDTH{ 200 };
-constexpr int MAP_GRID_HEIGHT{ 140 };
+constexpr int MAP_GRID_WIDTH{ 100 };
+constexpr int MAP_GRID_HEIGHT{ 70 };
 constexpr int TEXTURE_WIDTH{ 64 };
 constexpr float TEXTURE_WIDTH_f{ 64.f };
 
