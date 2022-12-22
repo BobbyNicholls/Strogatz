@@ -47,11 +47,12 @@ int main()
     constexpr float time_step{ 1.0f / 60.0f };
     time_period_t time_period_counter{ 0 };
     unsigned int frame_counter{ 0 };
-    constexpr unsigned int frames_per_period{ 6 };
+    constexpr unsigned int frames_per_period{ 60 };
     bool draw_links{ false };
 
     Races races{ nr_of_races };
-    Graph graph{ time_period_counter, &races, 0, 100, 0, 100 };
+    Graph graph{ time_period_counter, &races, 
+        -2000 + (window_width /2), 2000 + (window_width/2), -1000 + (window_height / 2), 1000 + (window_height / 2)};
     Map map{ map_texture, anchor_texture, graph };
     EntityCircle* player_entity{ get_entity_circle(time_period_counter, races.get_random_race()) };
     sf::Vector2f movement{};

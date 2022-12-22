@@ -36,10 +36,10 @@ private:
 	int m_link_limit;
 	int m_clique_min_size;
 	int m_clique_max_size;
-	const float m_min_x;
-	const float m_max_x;
-	const float m_min_y;
-	const float m_max_y;
+	const int m_min_x;
+	const int m_max_x;
+	const int m_min_y;
+	const int m_max_y;
 	std::vector<EntityVector> m_entity_vectors;
 	// these are initialised to confusing values so that they will be updated correctly in the Graph constructor
 	float m_min_entity_x_pos{ static_cast<float>(game_width) };
@@ -53,14 +53,14 @@ public:
 	Graph(
 		const time_period_t start_time,
 		const Races* races,
-		const float min_x,
-		const float max_x,
-		const float min_y,
-		const float max_y,
+		const int min_x,
+		const int max_x,
+		const int min_y,
+		const int max_y,
 		const float rewire_prob = 0.004f,
 		const float new_edge_prob = 0.00005f,
 		const float spawn_chance = 0.12f,
-		const int entities_start_size = 30,
+		const int entities_start_size = 15,
 		const int entities_reserve_limit = 400,
 		const int link_limit = 3000,
 		const int clique_min_size = 3,
@@ -76,6 +76,12 @@ public:
 	float get_max_entity_x_pos() const { return m_max_entity_x_pos; };
 	float get_min_entity_y_pos() const { return m_min_entity_y_pos; };
 	float get_max_entity_y_pos() const { return m_max_entity_y_pos; };
+	int get_min_x() const { return m_min_x; };
+	int get_max_x() const { return m_max_x; };
+	int get_min_y() const { return m_min_y; };
+	int get_max_y() const { return m_max_y; };
+	int get_width() const { return m_max_x - m_min_x; };
+	int get_height() const { return m_max_y - m_min_y; };
 
 	void link_entities(EntityCircle* entity_from, EntityCircle* entity_to);
 	EntityCircle* get_preferential_entity() const;

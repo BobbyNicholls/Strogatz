@@ -5,8 +5,6 @@
 
 #include "Graph.h"
 
-constexpr int MAP_GRID_WIDTH{ 100 };
-constexpr int MAP_GRID_HEIGHT{ 70 };
 constexpr int TEXTURE_WIDTH{ 64 };
 constexpr float TEXTURE_WIDTH_f{ 64.f };
 
@@ -27,8 +25,12 @@ struct RoadGrid
 class Map
 {
 private:
-	const float m_location_offset_x{ MAP_GRID_WIDTH * TEXTURE_WIDTH_f * 0.5f };
-	const float m_location_offset_y{ MAP_GRID_HEIGHT * TEXTURE_WIDTH_f * 0.5f };
+	const float m_location_offset_x;
+	const float m_location_offset_y;
+	const int m_map_grid_width;
+	const int m_map_pixel_width;
+	const int m_map_grid_height;
+	const int m_map_pixel_height;
 	const int m_panel_size{ 4 };
 	const int m_panels_per_row{ (TEXTURE_WIDTH / m_panel_size) };
 	const float m_neatness_scaler{ 0.3f }; // TODO: rename `roughness_scaler`? more accurate

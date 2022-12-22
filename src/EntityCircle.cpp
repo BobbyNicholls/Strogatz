@@ -60,15 +60,15 @@ void EntityCircle::update_colour()
 
 
 EntityCircle* EntityCircle::set_position_randomly(
-	const float min_x, 
-	const float max_x,
-	const float min_y,
-	const float max_y
+	const int min_x, 
+	const int max_x,
+	const int min_y,
+	const int max_y
 )
 {
 	m_shape.setPosition(
-		uniform_distribution_float(-min_x, max_x),
-		uniform_distribution_float(-min_y, max_y)
+		uniform_distribution_float(min_x, max_x),
+		uniform_distribution_float(min_y, max_y)
 	);
 	return this;
 }
@@ -101,10 +101,10 @@ EntityCircle* EntityCircle::move_to_links(const int offset)
 
 
 void EntityCircle::set_position_relative_to_links(
-	const float min_x,
-	const float max_x,
-	const float min_y,
-	const float max_y,
+	const int min_x,
+	const int max_x,
+	const int min_y,
+	const int max_y,
 	const int offset
 )
 {

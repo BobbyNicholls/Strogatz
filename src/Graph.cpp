@@ -138,10 +138,10 @@ void Graph::rewire_random_edge()
 Graph::Graph(
     const time_period_t start_time,
     const Races* races,
-    const float min_x,
-    const float max_x,
-    const float min_y,
-    const float max_y,
+    const int min_x,
+    const int max_x,
+    const int min_y,
+    const int max_y,
     const float rewire_prob,
     const float new_edge_prob,
     const float spawn_chance,
@@ -173,8 +173,8 @@ Graph::Graph(
      preferentially
     */
     // todo: make a set of non-anchors then make it less likely to attch to those?
-    assert(m_min_x < m_max_x);
-    assert(m_min_y < m_max_y);
+    assert((m_min_x < m_max_x) && "Graph min_x must be smaller than max_x");
+    assert((m_min_y < m_max_y) && "Graph min_y must be smaller than max_y");
     m_entities.reserve(entities_reserve_limit);
     m_links.reserve(m_link_limit);
     m_entity_vectors.reserve(100);

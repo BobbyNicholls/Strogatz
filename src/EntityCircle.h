@@ -41,17 +41,17 @@ public:
 
     void update_colour();
     EntityCircle* set_position_randomly(
-        const float min_x,
-        const float max_x,
-        const float min_y,
-        const float max_y
+        const int min_x,
+        const int max_x,
+        const int min_y,
+        const int max_y
     );
     EntityCircle* move_to_links(const int offset = 100);
     void set_position_relative_to_links(
-        const float min_x,
-        const float max_x,
-        const float min_y,
-        const float max_y,
+        const int min_x,
+        const int max_x,
+        const int min_y,
+        const int max_y,
         const int offset = 100
     );
     void move_to_destination(const float destination_x, const float destination_y, const float speed = 1.5f);
