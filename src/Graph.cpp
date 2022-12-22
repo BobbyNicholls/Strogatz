@@ -207,7 +207,8 @@ Graph::Graph(
     }
     seed_cliques_and_leaders();
     m_anchor_points.reserve(link_anchors.size());
-    for (EntityCircle* anchor : link_anchors) m_anchor_points.push_back(anchor->get_shape().getPosition());
+    for (EntityCircle* anchor : link_anchors) 
+        m_anchor_points.push_back(anchor->get_shape().getPosition());
 }
 
 
