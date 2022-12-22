@@ -29,19 +29,23 @@ private:
 	std::vector<EntityCircle*> m_entities;
 	std::vector<EntityCircle*> m_leaders; // TODO: entities not having m_leader set to true
 	std::vector<Link*> m_links; // this is leaking memory a lot
-	int m_entities_start_size;
 	float m_rewire_prob;
 	float m_new_edge_prob;
 	float m_spawn_chance;
+	int m_entities_start_size;
+	int m_link_limit;
+	int m_clique_min_size;
+	int m_clique_max_size;
+	const float m_min_x;
+	const float m_max_x;
+	const float m_min_y;
+	const float m_max_y;
+	std::vector<EntityVector> m_entity_vectors;
 	// these are initialised to confusing values so that they will be updated correctly in the Graph constructor
 	float m_min_entity_x_pos{ static_cast<float>(game_width) };
 	float m_max_entity_x_pos{ static_cast<float>(-game_width) };
 	float m_min_entity_y_pos{ static_cast<float>(game_height) };
 	float m_max_entity_y_pos{ static_cast<float>(-game_height) };
-	int m_clique_min_size;
-	int m_clique_max_size;
-	int m_link_limit;
-	std::vector<EntityVector> m_entity_vectors;
 
 public:
 	std::vector<sf::Vector2f> m_anchor_points;
@@ -49,6 +53,10 @@ public:
 	Graph(
 		const time_period_t start_time,
 		const Races* races,
+		const float min_x,
+		const float max_x,
+		const float min_y,
+		const float max_y,
 		const float rewire_prob = 0.004f,
 		const float new_edge_prob = 0.00005f,
 		const float spawn_chance = 0.12f,

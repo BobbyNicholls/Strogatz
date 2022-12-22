@@ -100,7 +100,13 @@ EntityCircle* EntityCircle::move_to_links(const int offset)
 }
 
 
-void EntityCircle::set_position_relative_to_links(const int offset)
+void EntityCircle::set_position_relative_to_links(
+	const float min_x,
+	const float max_x,
+	const float min_y,
+	const float max_y,
+	const int offset
+)
 {
 	/*
 	Makes the position of the node the average position of all nodes connected to
@@ -125,7 +131,7 @@ void EntityCircle::set_position_relative_to_links(const int offset)
 	}
 	else
 	{
-		set_position_randomly();
+		set_position_randomly(min_x, max_x, min_y, max_y);
 	}
 }
 

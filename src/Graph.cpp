@@ -1,3 +1,4 @@
+#include <cassert>
 #include <SFML/Graphics.hpp>
 
 #include "Graph.h"
@@ -137,6 +138,10 @@ void Graph::rewire_random_edge()
 Graph::Graph(
     const time_period_t start_time,
     const Races* races,
+    const float min_x,
+    const float max_x,
+    const float min_y,
+    const float max_y,
     const float rewire_prob,
     const float new_edge_prob,
     const float spawn_chance,
@@ -146,7 +151,11 @@ Graph::Graph(
     const int clique_min_size,
     const int clique_max_size
 )
-    : m_rewire_prob{ rewire_prob },
+    : m_min_x{ min_x },
+    m_max_x{ max_x },
+    m_min_y{ min_y },
+    m_max_y{ max_y },
+    m_rewire_prob{ rewire_prob },
     m_new_edge_prob{ new_edge_prob },
     m_spawn_chance{ spawn_chance },
     m_entities_start_size { entities_start_size },
@@ -164,7 +173,8 @@ Graph::Graph(
      preferentially
     */
     // todo: make a set of non-anchors then make it less likely to attch to those?
-
+    assert(m_min_x < m_max_x);
+    assert(m_min_y < m_max_y);
     m_entities.reserve(entities_reserve_limit);
     m_links.reserve(m_link_limit);
     m_entity_vectors.reserve(100);
@@ -172,8 +182,8 @@ Graph::Graph(
     m_entities.push_back(get_entity_circle(start_time, races->get_random_race()));
     m_entities.push_back(get_entity_circle(start_time, races->get_random_race()));
     link_entities(m_entities[0], m_entities[1]);
-    m_entities[0]->set_position_randomly();
-    m_entities[1]->set_position_randomly()->move_to_links();
+    m_entities[0]->set_position_randomly(m_min_x, m_max_x, m_min_y, m_max_y);
+    m_entities[1]->set_position_randomly(m_min_x, m_max_x, m_min_y, m_max_y)->move_to_links();
 
     EntityCircle* chosen_entity{ nullptr };
     std::set<EntityCircle*> link_anchors{ m_entities[0] };
@@ -192,11 +202,11 @@ Graph::Graph(
         }
         if (link_anchors.contains(chosen_entity))
         {
-            new_entity->set_position_relative_to_links();
+            new_entity->set_position_relative_to_links(m_min_x, m_max_x, m_min_y, m_max_y);
         }
         else
         {
-            new_entity->set_position_randomly();
+            new_entity->set_position_randomly(m_min_x, m_max_x, m_min_y, m_max_y);
             link_anchors.insert(new_entity);
         }
         sf::Vector2f pos{ new_entity->get_shape().getPosition() };
@@ -276,7 +286,7 @@ void Graph::propagate_entities(const time_period_t time_period)
                 child_entity->add_parents(from_entity, to_entity);
                 link_entities(from_entity, child_entity);
                 link_entities(to_entity, child_entity);
-                child_entity->set_position_relative_to_links();
+                child_entity->set_position_relative_to_links(m_min_x, m_max_x, m_min_y, m_max_y);
             }
 
             else if (

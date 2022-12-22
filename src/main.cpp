@@ -51,7 +51,7 @@ int main()
     bool draw_links{ false };
 
     Races races{ nr_of_races };
-    Graph graph{ time_period_counter, &races };
+    Graph graph{ time_period_counter, &races, 0, 100, 0, 100 };
     Map map{ map_texture, anchor_texture, graph };
     EntityCircle* player_entity{ get_entity_circle(time_period_counter, races.get_random_race()) };
     sf::Vector2f movement{};
