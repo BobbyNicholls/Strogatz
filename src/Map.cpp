@@ -26,7 +26,7 @@ Map::Map(sf::Texture& map_texture, sf::Texture& anchor_texture, const Graph& gra
 	m_render_texture.clear(sf::Color::Green);
 	cover_map_with_texture(Texture::grass);
 	build_road_grid();
-	map_textures_to_road_grid(Texture::mud, Texture::grass);
+	map_textures_to_road_grid(Texture::stone, Texture::grass);
 	map_textures_to_anchor_points();
 	m_render_texture.display();
 	m_sprite.setTexture(m_render_texture.getTexture());
