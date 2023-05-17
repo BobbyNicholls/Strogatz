@@ -38,7 +38,7 @@ private:
 	float m_probability_denominator{ static_cast<float>(m_panels_per_row) };
 	const Graph& m_graph;
 	RoadGrid m_road_grid;
-	std::vector<Structure*> m_structures;
+	std::vector<Structure> m_structures;
 	sf::Texture& m_map_texture;
 	sf::Texture& m_anchor_texture;
 	sf::RenderTexture m_render_texture;
