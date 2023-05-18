@@ -94,7 +94,9 @@ void Map::build_road_grid()
 	{
 		anchor_x = static_cast<int>((anchor_pt.x - m_location_offset_x) / TEXTURE_WIDTH_f) - m_road_grid.min_x_coord + 1;
 		anchor_y = static_cast<int>((anchor_pt.y - m_location_offset_y) / TEXTURE_WIDTH_f) - m_road_grid.min_y_coord + 1;
-		m_structures.push_back(Structure(static_cast<float>(anchor_x), static_cast<float>(anchor_y)));
+		m_structures.push_back(Structure(
+			static_cast<float>(anchor_x), static_cast<float>(anchor_y), Structure::Index::home
+		));
 		y_diff = m_road_grid.mid_y_coord - anchor_y;
 		increment = (y_diff > 0) ? -1 : 1;
 

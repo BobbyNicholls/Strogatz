@@ -10,11 +10,25 @@
 
 class Structure
 {
+public:
+
+	enum Index
+	{
+		home,
+		work,
+		social,
+
+		max_structures,
+	};
+
 private:
-	sf::Vector2f m_location;
+	sf::Vector2f m_location{};
+	Structure::Index m_index;
 
 public:
-	Structure(float x, float y);
+	Structure() = delete;
+	Structure(float x, float y, Structure::Index index);
+
 };
 
 #endif
