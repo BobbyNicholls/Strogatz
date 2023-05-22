@@ -20,7 +20,7 @@
 # To do:
 - Refactor and functionalise main.
 - Figure out why `Graph` contains a vector of pointers to dynamically allocated entities and not
-just a regular vector of entities???
+just a regular vector of entities??? maybe so they can be quickly assigned to other places like m_leaders
 - Map related ativities on the individual graph level:
   - Put anchor points on the map where entities return to and congregate.
   - Explorers and returners??
