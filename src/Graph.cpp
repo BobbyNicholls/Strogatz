@@ -217,8 +217,13 @@ Graph::Graph(
     }
     seed_cliques_and_leaders();
     m_anchor_points.reserve(link_anchors.size());
-    for (EntityCircle* anchor : link_anchors) 
+    for (EntityCircle* anchor : link_anchors)
         m_anchor_points.push_back(anchor->get_shape().getPosition());
+        m_structures.push_back(Structure(
+            static_cast<float>(m_anchor_points.back().x),
+            static_cast<float>(m_anchor_points.back().y),
+            Structure::Index::home
+        ));
 }
 
 

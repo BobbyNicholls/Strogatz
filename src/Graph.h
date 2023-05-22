@@ -2,11 +2,12 @@
 #define STROG_GRAPH_H
 
 #include <set>
-#include<vector>
+#include <vector>
 
 #include <SFML/Window.hpp>
 
 #include "EntityCircle.h"
+#include "Structure.h"
 
 
 struct Link
@@ -46,6 +47,7 @@ private:
 	float m_max_entity_x_pos{ static_cast<float>(-game_width) };
 	float m_min_entity_y_pos{ static_cast<float>(game_height) };
 	float m_max_entity_y_pos{ static_cast<float>(-game_height) };
+	std::vector<Structure> m_structures;
 
 public:
 	std::vector<sf::Vector2f> m_anchor_points;
