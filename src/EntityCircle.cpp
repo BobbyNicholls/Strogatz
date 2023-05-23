@@ -170,3 +170,17 @@ void EntityCircle::move_along_path()
 	m_shape.move(m_pathing.x_move, m_pathing.y_move);
 	--m_pathing.steps;
 }
+
+
+void EntityCircle::move_to_home(const float speed = 1.5f)
+{
+	Structure* home{ get_home() };
+	if (home)
+	{
+		move_to_destination(
+			home->get_location_x(),
+			home->get_location_y(),
+			speed
+		);
+	}
+}

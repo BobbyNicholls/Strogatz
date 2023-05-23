@@ -56,6 +56,7 @@ public:
 	const Race* get_race() const { return m_race; }
 	uint8_t get_sex() const { return m_sex; }
 	bool is_paired() const { return m_paired; };
+	Structure* get_home() const { return m_home; };
 
 	void add_child(Entity* entity);
 	void add_link(Entity* entity);

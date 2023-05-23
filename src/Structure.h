@@ -28,7 +28,8 @@ private:
 public:
 	Structure() = delete;
 	Structure(float x, float y, Structure::Index index);
-
+	float get_location_x() const { return m_location.x; };
+	float get_location_y() const { return m_location.y; };
 };
 
 #endif
