@@ -239,3 +239,9 @@ float Entity::get_abs_belief_diff(Entity* entity)
     abs_belief_diff += abs(m_beliefs[1][1] - entity->m_beliefs[1][1]);
     return abs_belief_diff;
 }
+
+
+void Entity::set_home(Structure* home_structure)
+{
+    m_home = home_structure;
+}

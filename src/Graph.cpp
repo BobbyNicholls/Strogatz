@@ -226,6 +226,7 @@ Graph::Graph(
             static_cast<float>(m_anchor_points.back().y),
             Structure::Index::home
         ));
+        anchor->set_home(&(m_structures.back()));
     }
 }
 

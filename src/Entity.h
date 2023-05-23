@@ -20,6 +20,7 @@ It contains information regarding things every entity must have:
 
 #include "Distributions.h"
 #include "Race.h"
+#include "Structure.h"
 #include "utils.h"
 
 #include<vector>
@@ -31,6 +32,7 @@ private:
 	const time_period_t m_birth_time; // is this slower than int?
 	const Race* m_race;
 	const bool m_sex;
+	Structure* m_home{ nullptr };
 	bool m_paired { false };
 	bool m_leader { false };
 	id_t m_id;
@@ -67,6 +69,7 @@ public:
 	void normalise_beliefs();
 	void do_random_walks(std::map<int, int>& map_to_fill, const int steps=10, const int walks=50);
 	float get_abs_belief_diff(Entity* entity);
+	void set_home(Structure* home_structure);
 };
 
 
