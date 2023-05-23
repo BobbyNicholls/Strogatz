@@ -31,6 +31,7 @@ private:
 	std::vector<EntityCircle*> m_leaders; // TODO: entities not having m_leader set to true
 	std::vector<Link*> m_links; // this is leaking memory a lot
 	std::vector<Structure> m_structures;
+	sf::Vector2f m_current_offset{};
 	float m_rewire_prob;
 	float m_new_edge_prob;
 	float m_spawn_chance;
@@ -78,6 +79,7 @@ public:
 	float get_max_entity_x_pos() const { return m_max_entity_x_pos; };
 	float get_min_entity_y_pos() const { return m_min_entity_y_pos; };
 	float get_max_entity_y_pos() const { return m_max_entity_y_pos; };
+	const sf::Vector2f& get_current_offset() const { return m_current_offset; };
 	int get_min_x() const { return m_min_x; };
 	int get_max_x() const { return m_max_x; };
 	int get_min_y() const { return m_min_y; };
@@ -106,6 +108,7 @@ public:
 	void vectorise_nodes(const bool vectorise_all_nodes = true);
 	void reserve_more_links(const float increment_fraction=1.5);
 	void check_entities_have_homes();
+	void update_offset(const float x, const float y);
 };
 
 #endif

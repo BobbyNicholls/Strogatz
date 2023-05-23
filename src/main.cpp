@@ -98,6 +98,7 @@ int main()
             map.draw(window, movement.x, movement.y);
             if (draw_links) graph.draw_links(window);
             graph.draw_entities(window, movement.x, movement.y);
+            graph.update_offset(movement.x, movement.y);
             while (window.pollEvent(event))
             {
                 switch (event.type)

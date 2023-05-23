@@ -283,9 +283,9 @@ void Graph::propagate_entities(const time_period_t time_period)
         if (uniform_distribution_float(0, 1) < m_spawn_chance)
         {
             EntityCircle* from_entity{ link->from };
-            from_entity->move_to_home();
+            from_entity->move_to_home(m_current_offset.x, m_current_offset.y);
             EntityCircle* to_entity{ link->to };
-            to_entity->move_to_home();
+            to_entity->move_to_home(m_current_offset.x, m_current_offset.y);
             std::cout << "Entities are going home\n";
             if (to_entity->is_paired() && (to_entity->get_partner() == from_entity))
             {
@@ -502,10 +502,22 @@ void Graph::reserve_more_links(const float increment_fraction)
 void Graph::check_entities_have_homes()
 {
     std::cout << "Checking entity homes:\n";
+    int homeless_count{};
     for (EntityCircle* entity : m_entities)
     {
         std::cout << "Entity " << entity->get_id();
         if (entity->get_home()) std::cout << " has a home\n";
-        else std::cout << " is homeless\n";
+        else
+        {
+            std::cout << " is homeless\n";
+            ++homeless_count;
+        }
     }
+    std::cout << homeless_count << " total entities are homeless :(\n";
+}
+
+void Graph::update_offset(const float x, const float y)
+{
+    m_current_offset.x += x;
+    m_current_offset.y += y;
 }
