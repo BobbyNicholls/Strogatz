@@ -54,10 +54,14 @@ public:
         const int max_y,
         const int offset = 100
     );
-    void move_to_destination(const float destination_x, const float destination_y, const float speed = 1.5f);
+    void move_to_destination(
+        const float destination_x, 
+        const float destination_y, 
+        const float speed = 1.5f
+    );
     void move_to_entity(const EntityCircle* entity, const int offset = 100);
     void move_along_path();
-    void move_to_home();
+    void move_to_home(const float speed = 1.5f);
 };
 
 EntityCircle* get_entity_circle(const time_period_t time_period, const Race* race);

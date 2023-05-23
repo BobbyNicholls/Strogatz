@@ -172,7 +172,7 @@ void EntityCircle::move_along_path()
 }
 
 
-void EntityCircle::move_to_home(const float speed = 1.5f)
+void EntityCircle::move_to_home(const float speed)
 {
 	Structure* home{ get_home() };
 	if (home)

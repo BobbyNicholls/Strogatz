@@ -105,6 +105,7 @@ public:
 	void form_clique_from_seed(const int seed);
 	void vectorise_nodes(const bool vectorise_all_nodes = true);
 	void reserve_more_links(const float increment_fraction=1.5);
+	void check_entities_have_homes();
 };
 
 #endif

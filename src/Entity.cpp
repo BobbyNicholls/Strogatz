@@ -139,6 +139,8 @@ void Entity::add_partner(Entity* entity)
     m_partner = entity;
     entity->m_paired = true;
     entity->m_partner = this;
+    if (this->get_home()) entity->set_home(this->get_home());
+    else if (entity->get_home()) this->set_home(entity->get_home());
 }
 
 bool Entity::is_linked_to(Entity* entity) const

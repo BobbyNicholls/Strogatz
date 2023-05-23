@@ -283,7 +283,10 @@ void Graph::propagate_entities(const time_period_t time_period)
         if (uniform_distribution_float(0, 1) < m_spawn_chance)
         {
             EntityCircle* from_entity{ link->from };
+            from_entity->move_to_home();
             EntityCircle* to_entity{ link->to };
+            to_entity->move_to_home();
+            std::cout << "Entities are going home\n";
             if (to_entity->is_paired() && (to_entity->get_partner() == from_entity))
             {
                 EntityCircle* child_entity{ get_entity_circle(time_period, to_entity->get_race()) };
@@ -295,6 +298,7 @@ void Graph::propagate_entities(const time_period_t time_period)
                 child_entity->add_parents(from_entity, to_entity);
                 link_entities(from_entity, child_entity);
                 link_entities(to_entity, child_entity);
+                child_entity->set_home(from_entity->get_home());
                 child_entity->set_position_relative_to_links(m_min_x, m_max_x, m_min_y, m_max_y);
             }
 
@@ -492,4 +496,16 @@ void Graph::reserve_more_links(const float increment_fraction)
 {
     m_link_limit = static_cast<int>(m_link_limit * increment_fraction);
     m_links.reserve(m_link_limit);
+}
+
+
+void Graph::check_entities_have_homes()
+{
+    std::cout << "Checking entity homes:\n";
+    for (EntityCircle* entity : m_entities)
+    {
+        std::cout << "Entity " << entity->get_id();
+        if (entity->get_home()) std::cout << " has a home\n";
+        else std::cout << " is homeless\n";
+    }
 }
