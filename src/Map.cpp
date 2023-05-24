@@ -11,7 +11,7 @@ enum Texture
 };
 
 
-Map::Map(sf::Texture& map_texture, sf::Texture& anchor_texture, const Graph& graph)
+Map::Map(const sf::Texture& map_texture, const sf::Texture& anchor_texture, const Graph& graph)
 	: m_location_offset_x { graph.get_min_x() - (2 * TEXTURE_WIDTH_f) },
 	m_location_offset_y{ graph.get_min_y() - (2 * TEXTURE_WIDTH_f) },
 	m_map_grid_width{ static_cast<int>((graph.get_width() + (4 * TEXTURE_WIDTH)) / TEXTURE_WIDTH) + 1 },

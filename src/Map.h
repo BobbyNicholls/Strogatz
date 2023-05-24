@@ -37,15 +37,15 @@ private:
 	float m_probability_denominator{ static_cast<float>(m_panels_per_row) };
 	const Graph& m_graph;
 	RoadGrid m_road_grid;
-	sf::Texture& m_map_texture;
-	sf::Texture& m_anchor_texture;
+	const sf::Texture& m_map_texture;
+	const sf::Texture& m_anchor_texture;
 	sf::RenderTexture m_render_texture;
 	sf::Sprite m_sprite;
 	sf::RenderTexture m_blended_texture;
 	sf::Sprite m_blended_sprite;
 
 public:
-	Map(sf::Texture& map_texture, sf::Texture& anchor_texture, const Graph& graph);
+	Map(const sf::Texture& map_texture, const sf::Texture& anchor_texture, const Graph& graph);
 	void build_road_grid();
 	void draw(sf::RenderWindow& window, const float x_move_distance, const float y_move_distance);
 	void cover_map_with_texture(const int texture_columm);
