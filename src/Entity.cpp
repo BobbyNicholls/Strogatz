@@ -232,7 +232,7 @@ void Entity::do_random_walks(std::map<int, int>& map_to_fill, const int steps, c
 }
 
 
-float Entity::get_abs_belief_diff(Entity* entity)
+float Entity::get_abs_belief_diff(Entity* entity) const
 {
     float abs_belief_diff{};
     abs_belief_diff += abs(m_beliefs[0][0] - entity->m_beliefs[0][0]);
