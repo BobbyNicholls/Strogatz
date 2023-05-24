@@ -2,11 +2,12 @@
 #define STROG_GRAPH_H
 
 #include <set>
-#include<vector>
+#include <vector>
 
 #include <SFML/Window.hpp>
 
 #include "EntityCircle.h"
+#include "Structure.h"
 
 
 struct Link
@@ -29,31 +30,40 @@ private:
 	std::vector<EntityCircle*> m_entities;
 	std::vector<EntityCircle*> m_leaders; // TODO: entities not having m_leader set to true
 	std::vector<Link*> m_links; // this is leaking memory a lot
-	int m_entities_start_size;
+	std::vector<Structure> m_structures;
+	sf::Vector2f m_current_offset{};
 	float m_rewire_prob;
 	float m_new_edge_prob;
 	float m_spawn_chance;
+	int m_entities_start_size;
+	int m_link_limit;
+	int m_clique_min_size;
+	int m_clique_max_size;
+	const int m_min_x;
+	const int m_max_x;
+	const int m_min_y;
+	const int m_max_y;
+	std::vector<EntityVector> m_entity_vectors;
 	// these are initialised to confusing values so that they will be updated correctly in the Graph constructor
 	float m_min_entity_x_pos{ static_cast<float>(game_width) };
 	float m_max_entity_x_pos{ static_cast<float>(-game_width) };
 	float m_min_entity_y_pos{ static_cast<float>(game_height) };
 	float m_max_entity_y_pos{ static_cast<float>(-game_height) };
-	int m_clique_min_size;
-	int m_clique_max_size;
-	int m_link_limit;
-	std::vector<EntityVector> m_entity_vectors;
 
 public:
-
 	std::vector<sf::Vector2f> m_anchor_points;
 
 	Graph(
 		const time_period_t start_time,
 		const Races* races,
+		const int min_x,
+		const int max_x,
+		const int min_y,
+		const int max_y,
 		const float rewire_prob = 0.004f,
 		const float new_edge_prob = 0.00005f,
 		const float spawn_chance = 0.12f,
-		const int entities_start_size = 120,
+		const int entities_start_size = 15,
 		const int entities_reserve_limit = 400,
 		const int link_limit = 3000,
 		const int clique_min_size = 3,
@@ -69,6 +79,13 @@ public:
 	float get_max_entity_x_pos() const { return m_max_entity_x_pos; };
 	float get_min_entity_y_pos() const { return m_min_entity_y_pos; };
 	float get_max_entity_y_pos() const { return m_max_entity_y_pos; };
+	const sf::Vector2f& get_current_offset() const { return m_current_offset; };
+	int get_min_x() const { return m_min_x; };
+	int get_max_x() const { return m_max_x; };
+	int get_min_y() const { return m_min_y; };
+	int get_max_y() const { return m_max_y; };
+	int get_width() const { return m_max_x - m_min_x; };
+	int get_height() const { return m_max_y - m_min_y; };
 
 	void link_entities(EntityCircle* entity_from, EntityCircle* entity_to);
 	EntityCircle* get_preferential_entity() const;
@@ -90,6 +107,8 @@ public:
 	void form_clique_from_seed(const int seed);
 	void vectorise_nodes(const bool vectorise_all_nodes = true);
 	void reserve_more_links(const float increment_fraction=1.5);
+	void check_entities_have_homes();
+	void update_offset(const float x, const float y);
 };
 
 #endif

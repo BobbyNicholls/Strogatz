@@ -7,9 +7,9 @@ id_t generate_id()
 }
 
 
-void load_texture(sf::Texture& texture)
+void load_texture(sf::Texture& texture, const std::string& texture_name)
 {
-    if (!texture.loadFromFile("textures/texture.png"))
+    if (!texture.loadFromFile("textures/" + texture_name + ".png"))
     {
         std::cout << "Failed to load texture.\n";
     }

@@ -40,12 +40,28 @@ public:
     bool is_pathing() { return static_cast<bool>(m_pathing.steps); };
 
     void update_colour();
-    EntityCircle* set_position_randomly();
+    EntityCircle* set_position_randomly(
+        const int min_x,
+        const int max_x,
+        const int min_y,
+        const int max_y
+    );
     EntityCircle* move_to_links(const int offset = 100);
-    void set_position_relative_to_links(const int offset = 100);
-    void move_to_destination(const float destination_x, const float destination_y, const float speed = 1.5f);
+    void set_position_relative_to_links(
+        const int min_x,
+        const int max_x,
+        const int min_y,
+        const int max_y,
+        const int offset = 100
+    );
+    void move_to_destination(
+        const float destination_x, 
+        const float destination_y, 
+        const float speed = 1.5f
+    );
     void move_to_entity(const EntityCircle* entity, const int offset = 100);
     void move_along_path();
+    void move_to_home(const float offset_x, const float offset_y, const float speed = 1.5f);
 };
 
 EntityCircle* get_entity_circle(const time_period_t time_period, const Race* race);

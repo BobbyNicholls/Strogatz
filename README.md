@@ -19,11 +19,11 @@
 
 # To do:
 - Refactor and functionalise main.
+- Figure out why `Graph` contains a vector of pointers to dynamically allocated entities and not
+just a regular vector of entities??? maybe so they can be quickly assigned to other places like m_leaders
 - Map related ativities on the individual graph level:
   - Put anchor points on the map where entities return to and congregate.
   - Explorers and returners??
-  - Have tiles blend in to each other more naturally.
-  - Generate the map according to the anchors.
   - Housing, places of work, etc.
 - Add routing so entities travel along sensible paths
 - Add factions
@@ -44,3 +44,9 @@
 - Play Rimworld for inspiration??
 - Add a player.
 - ...etc
+
+
+Issues:
+Entities should track where they live? And then should regularly return there.
+
+There are too many links

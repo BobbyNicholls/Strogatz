@@ -59,11 +59,16 @@ void EntityCircle::update_colour()
 }
 
 
-EntityCircle* EntityCircle::set_position_randomly()
+EntityCircle* EntityCircle::set_position_randomly(
+	const int min_x, 
+	const int max_x,
+	const int min_y,
+	const int max_y
+)
 {
 	m_shape.setPosition(
-		uniform_distribution_float(-game_width, game_width),
-		uniform_distribution_float(-game_height, game_height)
+		uniform_distribution_float(min_x, max_x),
+		uniform_distribution_float(min_y, max_y)
 	);
 	return this;
 }
@@ -95,7 +100,13 @@ EntityCircle* EntityCircle::move_to_links(const int offset)
 }
 
 
-void EntityCircle::set_position_relative_to_links(const int offset)
+void EntityCircle::set_position_relative_to_links(
+	const int min_x,
+	const int max_x,
+	const int min_y,
+	const int max_y,
+	const int offset
+)
 {
 	/*
 	Makes the position of the node the average position of all nodes connected to
@@ -120,7 +131,7 @@ void EntityCircle::set_position_relative_to_links(const int offset)
 	}
 	else
 	{
-		set_position_randomly();
+		set_position_randomly(min_x, max_x, min_y, max_y);
 	}
 }
 
@@ -158,4 +169,18 @@ void EntityCircle::move_along_path()
 {
 	m_shape.move(m_pathing.x_move, m_pathing.y_move);
 	--m_pathing.steps;
+}
+
+
+void EntityCircle::move_to_home(const float offset_x, const float offset_y, const float speed)
+{
+	Structure* home{ get_home() };
+	if (home)
+	{
+		move_to_destination(
+			home->get_location_x() + offset_x,
+			home->get_location_y() + offset_y,
+			speed
+		);
+	}
 }

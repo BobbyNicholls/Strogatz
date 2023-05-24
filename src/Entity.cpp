@@ -139,6 +139,8 @@ void Entity::add_partner(Entity* entity)
     m_partner = entity;
     entity->m_paired = true;
     entity->m_partner = this;
+    if (this->get_home()) entity->set_home(this->get_home());
+    else if (entity->get_home()) this->set_home(entity->get_home());
 }
 
 bool Entity::is_linked_to(Entity* entity) const
@@ -238,4 +240,10 @@ float Entity::get_abs_belief_diff(Entity* entity)
     abs_belief_diff += abs(m_beliefs[1][0] - entity->m_beliefs[1][0]);
     abs_belief_diff += abs(m_beliefs[1][1] - entity->m_beliefs[1][1]);
     return abs_belief_diff;
+}
+
+
+void Entity::set_home(Structure* home_structure)
+{
+    m_home = home_structure;
 }

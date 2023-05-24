@@ -1,3 +1,4 @@
+#include <cassert>
 #include <SFML/Graphics.hpp>
 
 #include "Graph.h"
@@ -137,6 +138,10 @@ void Graph::rewire_random_edge()
 Graph::Graph(
     const time_period_t start_time,
     const Races* races,
+    const int min_x,
+    const int max_x,
+    const int min_y,
+    const int max_y,
     const float rewire_prob,
     const float new_edge_prob,
     const float spawn_chance,
@@ -146,7 +151,11 @@ Graph::Graph(
     const int clique_min_size,
     const int clique_max_size
 )
-    : m_rewire_prob{ rewire_prob },
+    : m_min_x{ min_x },
+    m_max_x{ max_x },
+    m_min_y{ min_y },
+    m_max_y{ max_y },
+    m_rewire_prob{ rewire_prob },
     m_new_edge_prob{ new_edge_prob },
     m_spawn_chance{ spawn_chance },
     m_entities_start_size { entities_start_size },
@@ -164,7 +173,8 @@ Graph::Graph(
      preferentially
     */
     // todo: make a set of non-anchors then make it less likely to attch to those?
-
+    assert((m_min_x < m_max_x) && "Graph min_x must be smaller than max_x");
+    assert((m_min_y < m_max_y) && "Graph min_y must be smaller than max_y");
     m_entities.reserve(entities_reserve_limit);
     m_links.reserve(m_link_limit);
     m_entity_vectors.reserve(100);
@@ -172,8 +182,8 @@ Graph::Graph(
     m_entities.push_back(get_entity_circle(start_time, races->get_random_race()));
     m_entities.push_back(get_entity_circle(start_time, races->get_random_race()));
     link_entities(m_entities[0], m_entities[1]);
-    m_entities[0]->set_position_randomly();
-    m_entities[1]->set_position_randomly()->move_to_links();
+    m_entities[0]->set_position_randomly(m_min_x, m_max_x, m_min_y, m_max_y);
+    m_entities[1]->set_position_randomly(m_min_x, m_max_x, m_min_y, m_max_y)->move_to_links();
 
     EntityCircle* chosen_entity{ nullptr };
     std::set<EntityCircle*> link_anchors{ m_entities[0] };
@@ -192,11 +202,11 @@ Graph::Graph(
         }
         if (link_anchors.contains(chosen_entity))
         {
-            new_entity->set_position_relative_to_links();
+            new_entity->set_position_relative_to_links(m_min_x, m_max_x, m_min_y, m_max_y);
         }
         else
         {
-            new_entity->set_position_randomly();
+            new_entity->set_position_randomly(m_min_x, m_max_x, m_min_y, m_max_y);
             link_anchors.insert(new_entity);
         }
         sf::Vector2f pos{ new_entity->get_shape().getPosition() };
@@ -207,7 +217,17 @@ Graph::Graph(
     }
     seed_cliques_and_leaders();
     m_anchor_points.reserve(link_anchors.size());
-    for (EntityCircle* anchor : link_anchors) m_anchor_points.push_back(anchor->get_shape().getPosition());
+    m_structures.reserve(link_anchors.size());
+    for (EntityCircle* anchor : link_anchors)
+    {
+        m_anchor_points.push_back(anchor->get_shape().getPosition());
+        m_structures.push_back(Structure(
+            static_cast<float>(m_anchor_points.back().x),
+            static_cast<float>(m_anchor_points.back().y),
+            Structure::Index::home
+        ));
+        anchor->set_home(&(m_structures.back()));
+    }
 }
 
 
@@ -263,7 +283,10 @@ void Graph::propagate_entities(const time_period_t time_period)
         if (uniform_distribution_float(0, 1) < m_spawn_chance)
         {
             EntityCircle* from_entity{ link->from };
+            from_entity->move_to_home(m_current_offset.x, m_current_offset.y);
             EntityCircle* to_entity{ link->to };
+            to_entity->move_to_home(m_current_offset.x, m_current_offset.y);
+            std::cout << "Entities are going home\n";
             if (to_entity->is_paired() && (to_entity->get_partner() == from_entity))
             {
                 EntityCircle* child_entity{ get_entity_circle(time_period, to_entity->get_race()) };
@@ -275,7 +298,8 @@ void Graph::propagate_entities(const time_period_t time_period)
                 child_entity->add_parents(from_entity, to_entity);
                 link_entities(from_entity, child_entity);
                 link_entities(to_entity, child_entity);
-                child_entity->set_position_relative_to_links();
+                child_entity->set_home(from_entity->get_home());
+                child_entity->set_position_relative_to_links(m_min_x, m_max_x, m_min_y, m_max_y);
             }
 
             else if (
@@ -472,4 +496,28 @@ void Graph::reserve_more_links(const float increment_fraction)
 {
     m_link_limit = static_cast<int>(m_link_limit * increment_fraction);
     m_links.reserve(m_link_limit);
+}
+
+
+void Graph::check_entities_have_homes()
+{
+    std::cout << "Checking entity homes:\n";
+    int homeless_count{};
+    for (EntityCircle* entity : m_entities)
+    {
+        std::cout << "Entity " << entity->get_id();
+        if (entity->get_home()) std::cout << " has a home\n";
+        else
+        {
+            std::cout << " is homeless\n";
+            ++homeless_count;
+        }
+    }
+    std::cout << homeless_count << " total entities are homeless :(\n";
+}
+
+void Graph::update_offset(const float x, const float y)
+{
+    m_current_offset.x += x;
+    m_current_offset.y += y;
 }
