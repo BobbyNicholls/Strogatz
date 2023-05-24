@@ -22,6 +22,8 @@ constexpr float move_speed{ 400.f };
 constexpr int nr_of_races{ 6 };
 constexpr int window_height{ 1080 };
 constexpr int window_width{ 1920 };
+const int graph_horizontal_side_boundary_length{ 2000 };
+const int graph_vertial_side_boundary_length{ 1000 };
 
 
 int main()
@@ -51,8 +53,14 @@ int main()
     bool draw_links{ false };
 
     Races races{ nr_of_races };
-    Graph graph{ time_period_counter, &races, 
-        -2000 + (window_width /2), 2000 + (window_width/2), -1000 + (window_height / 2), 1000 + (window_height / 2)};
+    Graph graph{ 
+        time_period_counter, 
+        &races, 
+        -graph_horizontal_side_boundary_length + (window_width /2), 
+        graph_horizontal_side_boundary_length + (window_width/2), 
+        -graph_vertial_side_boundary_length + (window_height / 2), 
+        graph_vertial_side_boundary_length + (window_height / 2)
+    };
     Map map{ map_texture, anchor_texture, graph };
     EntityCircle* player_entity{ get_entity_circle(time_period_counter, races.get_random_race()) };
     sf::Vector2f movement{};
