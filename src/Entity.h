@@ -19,6 +19,8 @@ It contains information regarding things every entity must have:
 #define STROG_ENTITY_H
 
 #include "Distributions.h"
+#include "Race.h"
+#include "Structure.h"
 #include "utils.h"
 
 #include<vector>
@@ -27,8 +29,10 @@ It contains information regarding things every entity must have:
 class Entity
 {
 private:
-	time_period_t m_birth_time{ 0 }; // is this slower than int?
-	bool m_sex;
+	const time_period_t m_birth_time; // is this slower than int?
+	const Race* m_race;
+	const bool m_sex;
+	Structure* m_home{ nullptr };
 	bool m_paired { false };
 	bool m_leader { false };
 	id_t m_id;
@@ -43,14 +47,16 @@ protected:
 	float m_beliefs[2][2];
 
 public:
-	Entity(time_period_t birth_time);
+	Entity(time_period_t birth_time, const Race* race);
 
 	time_period_t get_birth_time() const { return m_birth_time; }
 	id_t get_id() const { return m_id; }
 	std::vector<Entity*>& get_links() { return m_links; } // this func should be const?
 	Entity* get_partner() const { return m_partner; };
+	const Race* get_race() const { return m_race; }
 	uint8_t get_sex() const { return m_sex; }
 	bool is_paired() const { return m_paired; };
+	Structure* get_home() const { return m_home; };
 
 	void add_child(Entity* entity);
 	void add_link(Entity* entity);
@@ -63,7 +69,8 @@ public:
 	void update_beliefs(Entity* influencer);
 	void normalise_beliefs();
 	void do_random_walks(std::map<int, int>& map_to_fill, const int steps=10, const int walks=50);
-	float get_abs_belief_diff(Entity* entity);
+	float get_abs_belief_diff(Entity* entity) const;
+	void set_home(Structure* home_structure);
 };
 
 

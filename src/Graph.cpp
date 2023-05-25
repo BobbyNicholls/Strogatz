@@ -1,26 +1,31 @@
+#include <cassert>
 #include <SFML/Graphics.hpp>
 
 #include "Graph.h"
 
+// this is the chance of an entity choosing popularity over belief compatibility when being connected to
+// the graph or having their edge rewired.
+float POPULARITY_PROB{ 0.3f };
 
 void Graph::link_entities(EntityCircle* entity_from, EntityCircle* entity_to)
 {
-    entity_from->add_link(entity_to);
-    entity_to->add_link(entity_from);
-    m_links.push_back(new Link{ entity_from, entity_to });
+    if (!entity_from->is_linked_to(entity_to))
+    {
+        entity_from->add_link(entity_to);
+        entity_to->add_link(entity_from);
+        m_links.push_back(new Link{ entity_from, entity_to });
+    }
 }
 
 
-EntityCircle* Graph::get_preferential_entity()
+EntityCircle* Graph::get_preferential_entity() const
 {
     /*
     Selects an entity "preferentially" from the list of currently existing entities, preferentially means
     that the likelihood of selecting a given entity is proportional to its degree centrality (number of
     connected edges).
     */
-
-    // TODO: enable belief preference (at cost of performance?? use compiler flag)
-
+    std::cout << "PREFERNTIAL LINK" << '\n';
     const int links_vector_size{ static_cast<int>(m_links.size()) };
     int link_iloc{ uniform_distribution_int(1, links_vector_size * 2) };
 
@@ -37,16 +42,44 @@ EntityCircle* Graph::get_preferential_entity()
 }
 
 
+EntityCircle* Graph::get_belief_compatible_entity(EntityCircle* entity) const
+{
+    /*
+    Gets the most belief compatible entity for the input `entity` that the input 
+    `entity` is not already linked to.
+    */
+    std::cout << "BELIEF LINK" << '\n';
+    EntityCircle* chosen_entity{};
+    float min_belief_distance{ 9999.f };
+    float current_belief_distance;
+    for (EntityCircle* candidate_entity : m_entities)
+    {
+        if (!entity->is_linked_to(candidate_entity) and !(entity==candidate_entity))
+        {
+            current_belief_distance = entity->get_abs_belief_diff(candidate_entity);
+            if (current_belief_distance < min_belief_distance)
+            {
+                min_belief_distance = current_belief_distance;
+                chosen_entity = candidate_entity;
+            }
+        }
+    }
+    return chosen_entity;
+}
+
+
 EntityCircle* Graph::add_preferential_links(EntityCircle* entity)
 {
     /*
     For now, for `entity` node, just add a link to a node chosen at random weighted by number
     of existing edges.
     */
-    EntityCircle* chosen_entity{ get_preferential_entity() };
+    EntityCircle* chosen_entity;
+    if (uniform_distribution_float(0, 1) < POPULARITY_PROB) chosen_entity = get_preferential_entity();
+    else chosen_entity = get_belief_compatible_entity(entity);
 
     if (chosen_entity == entity) return chosen_entity;
-    if (entity->is_linked_to(chosen_entity)) return chosen_entity;
+    if (!chosen_entity) return chosen_entity;
     link_entities(chosen_entity, entity);
     return chosen_entity;
 }
@@ -54,6 +87,7 @@ EntityCircle* Graph::add_preferential_links(EntityCircle* entity)
 
 void Graph::add_random_edge(const int max_entitiy_iloc)
 {
+    std::cout << "Adding random edge." << '\n';
     const int random_entity_iloc{ uniform_distribution_int(0, max_entitiy_iloc) };
     EntityCircle* linked_entity;
 
@@ -72,6 +106,8 @@ void Graph::rewire_random_edge()
     but keeps the other end attached to the `pivot_node`, then re-attaches it preferentially to a 
     `new_target`.
     */
+    std::cout << "Rewiring random edge." << '\n';
+    EntityCircle* new_target;
     const int random_link_iloc{ uniform_distribution_int(0, static_cast<int>(m_links.size()) - 2) };
     const int random_end_iloc{ uniform_distribution_int(0, 1) };
 
@@ -81,7 +117,9 @@ void Graph::rewire_random_edge()
     EntityCircle* old_target{
         !random_end_iloc ? m_links[random_link_iloc]->to : m_links[random_link_iloc]->from
     };
-    EntityCircle* new_target{ get_preferential_entity() };
+
+    if (uniform_distribution_float(0, 1) < POPULARITY_PROB) new_target = get_preferential_entity();
+    else new_target = get_belief_compatible_entity(pivot_entity);
 
     if ((pivot_entity != new_target) && 
         !(new_target->is_linked_to(pivot_entity)) && 
@@ -99,6 +137,11 @@ void Graph::rewire_random_edge()
 
 Graph::Graph(
     const time_period_t start_time,
+    const Races* races,
+    const int min_x,
+    const int max_x,
+    const int min_y,
+    const int max_y,
     const float rewire_prob,
     const float new_edge_prob,
     const float spawn_chance,
@@ -108,7 +151,11 @@ Graph::Graph(
     const int clique_min_size,
     const int clique_max_size
 )
-    : m_rewire_prob{ rewire_prob },
+    : m_min_x{ min_x },
+    m_max_x{ max_x },
+    m_min_y{ min_y },
+    m_max_y{ max_y },
+    m_rewire_prob{ rewire_prob },
     m_new_edge_prob{ new_edge_prob },
     m_spawn_chance{ spawn_chance },
     m_entities_start_size { entities_start_size },
@@ -126,22 +173,23 @@ Graph::Graph(
      preferentially
     */
     // todo: make a set of non-anchors then make it less likely to attch to those?
-
+    assert((m_min_x < m_max_x) && "Graph min_x must be smaller than max_x");
+    assert((m_min_y < m_max_y) && "Graph min_y must be smaller than max_y");
     m_entities.reserve(entities_reserve_limit);
     m_links.reserve(m_link_limit);
     m_entity_vectors.reserve(100);
 
-    m_entities.push_back(get_entity_circle(start_time));
-    m_entities.push_back(get_entity_circle(start_time));
+    m_entities.push_back(get_entity_circle(start_time, races->get_random_race()));
+    m_entities.push_back(get_entity_circle(start_time, races->get_random_race()));
     link_entities(m_entities[0], m_entities[1]);
-    m_entities[0]->set_position_randomly();
-    m_entities[1]->set_position_randomly()->move_to_links();
+    m_entities[0]->set_position_randomly(m_min_x, m_max_x, m_min_y, m_max_y);
+    m_entities[1]->set_position_randomly(m_min_x, m_max_x, m_min_y, m_max_y)->move_to_links();
 
     EntityCircle* chosen_entity{ nullptr };
     std::set<EntityCircle*> link_anchors{ m_entities[0] };
     for (int i{ 2 }; i < m_entities_start_size; ++i)
     {
-        EntityCircle* new_entity{ get_entity_circle(start_time) };
+        EntityCircle* new_entity{ get_entity_circle(start_time, races->get_random_race()) };
         m_entities.push_back(new_entity);
         chosen_entity = add_preferential_links(new_entity);
         if (uniform_distribution_float(0, 1) < m_new_edge_prob)
@@ -154,11 +202,11 @@ Graph::Graph(
         }
         if (link_anchors.contains(chosen_entity))
         {
-            new_entity->set_position_relative_to_links();
+            new_entity->set_position_relative_to_links(m_min_x, m_max_x, m_min_y, m_max_y);
         }
         else
         {
-            new_entity->set_position_randomly();
+            new_entity->set_position_randomly(m_min_x, m_max_x, m_min_y, m_max_y);
             link_anchors.insert(new_entity);
         }
         sf::Vector2f pos{ new_entity->get_shape().getPosition() };
@@ -169,7 +217,17 @@ Graph::Graph(
     }
     seed_cliques_and_leaders();
     m_anchor_points.reserve(link_anchors.size());
-    for (EntityCircle* anchor : link_anchors) m_anchor_points.push_back(anchor->get_shape().getPosition());
+    m_structures.reserve(link_anchors.size());
+    for (EntityCircle* anchor : link_anchors)
+    {
+        m_anchor_points.push_back(anchor->get_shape().getPosition());
+        m_structures.push_back(Structure(
+            static_cast<float>(m_anchor_points.back().x),
+            static_cast<float>(m_anchor_points.back().y),
+            Structure::Index::home
+        ));
+        anchor->set_home(&(m_structures.back()));
+    }
 }
 
 
@@ -225,10 +283,13 @@ void Graph::propagate_entities(const time_period_t time_period)
         if (uniform_distribution_float(0, 1) < m_spawn_chance)
         {
             EntityCircle* from_entity{ link->from };
+            from_entity->move_to_home(m_current_offset.x, m_current_offset.y);
             EntityCircle* to_entity{ link->to };
+            to_entity->move_to_home(m_current_offset.x, m_current_offset.y);
+            std::cout << "Entities are going home\n";
             if (to_entity->is_paired() && (to_entity->get_partner() == from_entity))
             {
-                EntityCircle* child_entity{ get_entity_circle(time_period) };
+                EntityCircle* child_entity{ get_entity_circle(time_period, to_entity->get_race()) };
                 std::cout << "Paired entities spawned a child: " << 
                     child_entity->get_id() << '\n';
                 m_entities.push_back(child_entity);
@@ -237,7 +298,8 @@ void Graph::propagate_entities(const time_period_t time_period)
                 child_entity->add_parents(from_entity, to_entity);
                 link_entities(from_entity, child_entity);
                 link_entities(to_entity, child_entity);
-                child_entity->set_position_randomly();
+                child_entity->set_home(from_entity->get_home());
+                child_entity->set_position_relative_to_links(m_min_x, m_max_x, m_min_y, m_max_y);
             }
 
             else if (
@@ -434,4 +496,28 @@ void Graph::reserve_more_links(const float increment_fraction)
 {
     m_link_limit = static_cast<int>(m_link_limit * increment_fraction);
     m_links.reserve(m_link_limit);
+}
+
+
+void Graph::check_entities_have_homes()
+{
+    std::cout << "Checking entity homes:\n";
+    int homeless_count{};
+    for (EntityCircle* entity : m_entities)
+    {
+        std::cout << "Entity " << entity->get_id();
+        if (entity->get_home()) std::cout << " has a home\n";
+        else
+        {
+            std::cout << " is homeless\n";
+            ++homeless_count;
+        }
+    }
+    std::cout << homeless_count << " total entities are homeless :(\n";
+}
+
+void Graph::update_offset(const float x, const float y)
+{
+    m_current_offset.x += x;
+    m_current_offset.y += y;
 }

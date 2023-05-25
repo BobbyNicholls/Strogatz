@@ -11,27 +11,33 @@
 #include "EntityCircle.h"
 #include "Graph.h"
 #include "Map.h"
+#include "Race.h"
 #include "Text.h"
 #include "utils.h"
 
 extern const int edge_buffer{ 10 };
-extern const int game_height{ 1200 };
-extern const int game_width{ 1600 };
-constexpr float move_speed{ 200.f };
-constexpr int window_height{ 900 };
-constexpr int window_width{ 1200 };
+extern const int game_height{ 2400 };
+extern const int game_width{ 3200 };
+constexpr float move_speed{ 400.f };
+constexpr int nr_of_races{ 6 };
+constexpr int window_height{ 1080 };
+constexpr int window_width{ 1920 };
+const int graph_horizontal_side_boundary_length{ 2000 };
+const int graph_vertial_side_boundary_length{ 1000 };
 
 
 int main()
 {
-
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
     sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Strogatz");
     window.setVerticalSyncEnabled(true);
 
     sf::Texture map_texture;
-    load_texture(map_texture);
+    load_texture(map_texture, "map");
+
+    sf::Texture anchor_texture;
+    load_texture(anchor_texture, "pixel_house2");
 
     sf::Text text;
     sf::Font font;
@@ -43,12 +49,20 @@ int main()
     constexpr float time_step{ 1.0f / 60.0f };
     time_period_t time_period_counter{ 0 };
     unsigned int frame_counter{ 0 };
-    constexpr unsigned int frames_per_period{ 600 };
+    constexpr unsigned int frames_per_period{ 60 };
     bool draw_links{ false };
 
-    Graph graph{ time_period_counter };
-    Map map{ map_texture, graph };
-    EntityCircle* player_entity{ get_entity_circle(time_period_counter) };
+    Races races{ nr_of_races };
+    Graph graph{ 
+        time_period_counter, 
+        &races, 
+        -graph_horizontal_side_boundary_length + (window_width /2), 
+        graph_horizontal_side_boundary_length + (window_width/2), 
+        -graph_vertial_side_boundary_length + (window_height / 2), 
+        graph_vertial_side_boundary_length + (window_height / 2)
+    };
+    Map map{ map_texture, anchor_texture, graph };
+    EntityCircle* player_entity{ get_entity_circle(time_period_counter, races.get_random_race()) };
     sf::Vector2f movement{};
     player_entity->get_shape().setPosition(window_width/2, window_height/2);
 
@@ -67,14 +81,16 @@ int main()
                 // we iterate over links and entities twice in one frame unnecessarily due to this:
                 if (time_period_counter % 2 == 0) graph.kill_entities(time_period_counter);
                 if (time_period_counter % 20 == 0) graph.forward_propagate_beliefs();
-                if (time_period_counter % 15 == 0) graph.seed_cliques_and_leaders();
+                if (time_period_counter % 45 == 0) graph.seed_cliques_and_leaders();
                 if (time_period_counter % 10 == 0)
                 {
                     if (graph.is_near_link_limit()) graph.reserve_more_links();
                     graph.propagate_entities(time_period_counter);
+                    graph.check_entities_have_homes();
                 }
             }
 
+            // this is happening once every frame, shouldnt it happen once every period?
             if (uniform_distribution_float(0, 1) < graph.get_rewire_prob())
                 graph.rewire_random_edge();
             if (uniform_distribution_float(0, 1) < graph.get_new_edge_prob())
@@ -90,6 +106,7 @@ int main()
             map.draw(window, movement.x, movement.y);
             if (draw_links) graph.draw_links(window);
             graph.draw_entities(window, movement.x, movement.y);
+            graph.update_offset(movement.x, movement.y);
             while (window.pollEvent(event))
             {
                 switch (event.type)

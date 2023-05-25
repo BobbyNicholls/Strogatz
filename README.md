@@ -19,12 +19,15 @@
 
 # To do:
 - Refactor and functionalise main.
-- Add tiled maps.
+- Figure out why `Graph` contains a vector of pointers to dynamically allocated entities and not
+just a regular vector of entities??? maybe so they can be quickly assigned to other places like m_leaders
+- Map related ativities on the individual graph level:
   - Put anchor points on the map where entities return to and congregate.
   - Explorers and returners??
-  - Have tiles blend in to each other more naturally.
-  - Generate the map according to the anchors.
   - Housing, places of work, etc.
+- Add routing so entities travel along sensible paths
+- Add factions
+- Environments: Have maps exist inside a wider world
 - Multiple graphs.
 - Graph migration.
 - Make it so we dont loop through entities and links multiple times unnecessarily.
@@ -32,9 +35,8 @@
 	https://www.sfml-dev.org/tutorials/2.5/graphics-draw.php#drawing-from-threads
 - Multi-thread processes in general.
 - Data representation of networks.
-- Meaningful visual entity representation.
+- Character models: Meaningful visual entity representation.
 - Entity AI.
-- Environments.
 - Economy.
 - Conflict.
 - Seed / parameters yaml.
@@ -42,3 +44,9 @@
 - Play Rimworld for inspiration??
 - Add a player.
 - ...etc
+
+
+Issues:
+Entities should track where they live? And then should regularly return there.
+
+There are too many links

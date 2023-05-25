@@ -6,11 +6,19 @@
 #include <random>
 #include<vector>
 
-float mild_affinity();
-float strong_affinity();
+
+class Race;
+
+namespace Beleif
+{
+	float true_random();
+	float mild_affinity();
+	float strong_affinity();
+	float strong_aversion(float degrees_of_freedom = 0.2f);
+	float mild_aversion(float degrees_of_freedom = 1.f);
+}
+
 void shuffle_vector(std::vector<int>& vector);
-float strong_aversion(float degrees_of_freedom = 0.2f);
-float mild_aversion(float degrees_of_freedom = 1.f);
 int uniform_distribution_int(int min, int max);
 
 template <typename num_t>

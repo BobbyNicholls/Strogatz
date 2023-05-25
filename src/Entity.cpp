@@ -4,17 +4,80 @@
 #include "Entity.h"
 
 
-Entity::Entity(time_period_t birth_time)
-	:m_id{ generate_id() }, m_birth_time{ birth_time }
+Entity::Entity(time_period_t birth_time, const Race* race)
+    : m_id{ generate_id() }, 
+    m_birth_time{ birth_time }, 
+    m_race{ race }, 
+    m_sex{ static_cast<bool>(uniform_distribution_int(0, 1)) }
 {
     m_links.reserve(5);
-    m_beliefs[0][0] = mild_aversion();
-    m_beliefs[0][1] = mild_aversion();
-    m_beliefs[1][0] = mild_aversion();
-    m_beliefs[1][1] = mild_aversion();
-    normalise_beliefs();
+    switch (race->get_index())
+    {
+    case Race::Index::elf:
+        m_beliefs[0][0] = Beleif::strong_affinity(); // spiritual / matrialist
+        m_beliefs[0][1] = Beleif::strong_aversion(); // violent / pacifist
+        m_beliefs[1][0] = Beleif::mild_affinity(); // authoritarian / liberal
+        m_beliefs[1][1] = Beleif::strong_affinity(); // conservative / progressive
+        break;
 
-    m_sex = uniform_distribution_int(0, 1);
+    case Race::Index::human:
+        m_beliefs[0][0] = Beleif::true_random(); // spiritual / matrialist
+        m_beliefs[0][1] = Beleif::true_random(); // violent / pacifist
+        m_beliefs[1][0] = Beleif::true_random(); // authoritarian / liberal
+        m_beliefs[1][1] = Beleif::true_random(); // conservative / progressive
+        break;
+
+    case Race::Index::goblin:
+        m_beliefs[0][0] = Beleif::strong_aversion(); // spiritual / matrialist
+        m_beliefs[0][1] = Beleif::strong_affinity(); // violent / pacifist
+        m_beliefs[1][0] = Beleif::mild_aversion(); // authoritarian / liberal
+        m_beliefs[1][1] = Beleif::true_random(); // conservative / progressive
+        break;
+
+    case Race::Index::gnome:
+        m_beliefs[0][0] = Beleif::strong_aversion(); // spiritual / matrialist
+        m_beliefs[0][1] = Beleif::mild_aversion(); // violent / pacifist
+        m_beliefs[1][0] = Beleif::true_random(); // authoritarian / liberal
+        m_beliefs[1][1] = Beleif::true_random(); // conservative / progressive
+        break;
+
+    case Race::Index::troll:
+        m_beliefs[0][0] = Beleif::strong_aversion(); // spiritual / matrialist
+        m_beliefs[0][1] = Beleif::strong_affinity(); // violent / pacifist
+        m_beliefs[1][0] = Beleif::strong_aversion(); // authoritarian / liberal
+        m_beliefs[1][1] = Beleif::mild_affinity(); // conservative / progressive
+        break;
+
+    case Race::Index::beastmen:
+        m_beliefs[0][0] = Beleif::strong_affinity(); // spiritual / matrialist
+        m_beliefs[0][1] = Beleif::strong_affinity(); // violent / pacifist
+        m_beliefs[1][0] = Beleif::strong_aversion(); // authoritarian / liberal
+        m_beliefs[1][1] = Beleif::true_random(); // conservative / progressive
+        break;
+
+    case Race::Index::zombie:
+        m_beliefs[0][0] = Beleif::true_random(); // spiritual / matrialist
+        m_beliefs[0][1] = Beleif::true_random(); // violent / pacifist
+        m_beliefs[1][0] = Beleif::true_random(); // authoritarian / liberal
+        m_beliefs[1][1] = Beleif::true_random(); // conservative / progressive
+        break;
+
+    case Race::Index::dwarf:
+        m_beliefs[0][0] = Beleif::mild_aversion(); // spiritual / matrialist
+        m_beliefs[0][1] = Beleif::mild_affinity(); // violent / pacifist
+        m_beliefs[1][0] = Beleif::strong_affinity(); // authoritarian / liberal
+        m_beliefs[1][1] = Beleif::strong_affinity(); // conservative / progressive
+        break;
+
+    default:
+        m_beliefs[0][0] = Beleif::mild_aversion();
+        m_beliefs[0][1] = Beleif::mild_affinity();
+        m_beliefs[1][0] = Beleif::strong_aversion();
+        m_beliefs[1][1] = Beleif::strong_affinity();
+        break;
+    }
+
+    normalise_beliefs();
 }
 
 
@@ -76,6 +139,8 @@ void Entity::add_partner(Entity* entity)
     m_partner = entity;
     entity->m_paired = true;
     entity->m_partner = this;
+    if (this->get_home()) entity->set_home(this->get_home());
+    else if (entity->get_home()) this->set_home(entity->get_home());
 }
 
 bool Entity::is_linked_to(Entity* entity) const
@@ -128,7 +193,7 @@ void Entity::update_beliefs(Entity* influencer) // influencer should be const?
             result[i][j] = (
                 influencer->m_beliefs[i][0] * m_beliefs[0][j] +
                 influencer->m_beliefs[i][1] * m_beliefs[1][j]
-                );
+            );
         }
     }
 
@@ -167,7 +232,7 @@ void Entity::do_random_walks(std::map<int, int>& map_to_fill, const int steps, c
 }
 
 
-float Entity::get_abs_belief_diff(Entity* entity)
+float Entity::get_abs_belief_diff(Entity* entity) const
 {
     float abs_belief_diff{};
     abs_belief_diff += abs(m_beliefs[0][0] - entity->m_beliefs[0][0]);
@@ -175,4 +240,10 @@ float Entity::get_abs_belief_diff(Entity* entity)
     abs_belief_diff += abs(m_beliefs[1][0] - entity->m_beliefs[1][0]);
     abs_belief_diff += abs(m_beliefs[1][1] - entity->m_beliefs[1][1]);
     return abs_belief_diff;
+}
+
+
+void Entity::set_home(Structure* home_structure)
+{
+    m_home = home_structure;
 }
