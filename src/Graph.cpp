@@ -299,7 +299,7 @@ void Graph::propagate_entities(const time_period_t time_period)
                 link_entities(from_entity, child_entity);
                 link_entities(to_entity, child_entity);
                 child_entity->set_home(from_entity->get_home());
-                child_entity->set_position_relative_to_links(m_min_x, m_max_x, m_min_y, m_max_y);
+                child_entity->set_position_to_home();
             }
 
             else if (

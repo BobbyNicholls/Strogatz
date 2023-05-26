@@ -74,6 +74,19 @@ EntityCircle* EntityCircle::set_position_randomly(
 }
 
 
+void EntityCircle::set_position_to_home()
+{
+	Structure* home{ get_home() };
+	if (home)
+	{
+		m_shape.setPosition(
+			home->get_location_x() + uniform_distribution_float(-10, 10),
+			home->get_location_y() + uniform_distribution_float(-10, 10)
+		);
+	}
+}
+
+
 EntityCircle* EntityCircle::move_to_links(const int offset)
 {
 	/*
@@ -178,8 +191,8 @@ void EntityCircle::move_to_home(const float offset_x, const float offset_y, cons
 	if (home)
 	{
 		move_to_destination(
-			home->get_location_x() + offset_x,
-			home->get_location_y() + offset_y,
+			home->get_location_x() + offset_x + uniform_distribution_float(-10, 10),
+			home->get_location_y() + offset_y + uniform_distribution_float(-10, 10),
 			speed
 		);
 	}
