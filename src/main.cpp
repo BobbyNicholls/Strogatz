@@ -22,8 +22,8 @@ constexpr float move_speed{ 400.f };
 constexpr int nr_of_races{ 6 };
 constexpr int window_height{ 1080 };
 constexpr int window_width{ 1920 };
-const int graph_horizontal_side_boundary_length{ 2000 };
-const int graph_vertial_side_boundary_length{ 1000 };
+const float graph_horizontal_side_boundary_length{ 2000.0f };
+const float graph_vertial_side_boundary_length{ 1000.0f };
 
 
 int main()

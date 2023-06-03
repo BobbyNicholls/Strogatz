@@ -14,15 +14,15 @@ enum Texture
 Map::Map(const sf::Texture& map_texture, const sf::Texture& anchor_texture, const Graph& graph)
 	: m_location_offset_x { graph.get_min_x() - (2 * TEXTURE_WIDTH_f) },
 	m_location_offset_y{ graph.get_min_y() - (2 * TEXTURE_WIDTH_f) },
-	m_map_grid_width{ static_cast<int>((graph.get_width() + (4 * TEXTURE_WIDTH)) / TEXTURE_WIDTH) + 1 },
-	m_map_pixel_width { graph.get_width() + (4 * TEXTURE_WIDTH) },
-	m_map_grid_height{ static_cast<int>((graph.get_height() + (4 * TEXTURE_WIDTH)) / TEXTURE_WIDTH) + 1 },
-	m_map_pixel_height{ graph.get_height() + (4 * TEXTURE_WIDTH) },
+	m_map_grid_width{ static_cast<int>((graph.get_width() + (4 * TEXTURE_WIDTH_f)) / TEXTURE_WIDTH_f) + 1 },
+	m_map_pixel_width { graph.get_width() + (4 * TEXTURE_WIDTH_f) },
+	m_map_grid_height{ static_cast<int>((graph.get_height() + (4 * TEXTURE_WIDTH_f)) / TEXTURE_WIDTH_f) + 1 },
+	m_map_pixel_height{ graph.get_height() + (4 * TEXTURE_WIDTH_f) },
 	m_map_texture{ map_texture }, 
 	m_anchor_texture{ anchor_texture }, 
 	m_graph{ graph }
 {
-	m_render_texture.create(m_map_pixel_width, m_map_pixel_height);
+	m_render_texture.create(static_cast<int>(m_map_pixel_width), static_cast<int>(m_map_pixel_height));
 	m_render_texture.clear(sf::Color::Green);
 	cover_map_with_texture(Texture::grass);
 	build_road_grid();
@@ -108,6 +108,7 @@ void Map::build_road_grid()
 		m_road_grid.grid[(m_road_grid.mid_y_coord * m_road_grid.width) + i] = 1;
 	}
 	print_road_grid();
+	std::cout << '\n';
 }
 
 

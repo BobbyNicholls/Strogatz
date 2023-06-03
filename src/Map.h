@@ -28,9 +28,9 @@ private:
 	const float m_location_offset_x;
 	const float m_location_offset_y;
 	const int m_map_grid_width;
-	const int m_map_pixel_width;
+	const float m_map_pixel_width;
 	const int m_map_grid_height;
-	const int m_map_pixel_height;
+	const float m_map_pixel_height;
 	const int m_panel_size{ 4 };
 	const int m_panels_per_row{ (TEXTURE_WIDTH / m_panel_size) };
 	const float m_neatness_scaler{ 0.3f }; // TODO: rename `roughness_scaler`? more accurate

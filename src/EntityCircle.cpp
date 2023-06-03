@@ -60,10 +60,10 @@ void EntityCircle::update_colour()
 
 
 EntityCircle* EntityCircle::set_position_randomly(
-	const int min_x, 
-	const int max_x,
-	const int min_y,
-	const int max_y
+	const float min_x, 
+	const float max_x,
+	const float min_y,
+	const float max_y
 )
 {
 	m_shape.setPosition(
@@ -80,8 +80,8 @@ void EntityCircle::set_position_to_home()
 	if (home)
 	{
 		m_shape.setPosition(
-			home->get_location_x() + uniform_distribution_float(-10, 10),
-			home->get_location_y() + uniform_distribution_float(-10, 10)
+			home->get_location_x() + uniform_distribution_float(-10, 50),
+			home->get_location_y() + uniform_distribution_float(-10, 50)
 		);
 	}
 }
@@ -114,10 +114,10 @@ EntityCircle* EntityCircle::move_to_links(const int offset)
 
 
 void EntityCircle::set_position_relative_to_links(
-	const int min_x,
-	const int max_x,
-	const int min_y,
-	const int max_y,
+	const float min_x,
+	const float max_x,
+	const float min_y,
+	const float max_y,
 	const int offset
 )
 {
@@ -191,8 +191,8 @@ void EntityCircle::move_to_home(const float offset_x, const float offset_y, cons
 	if (home)
 	{
 		move_to_destination(
-			home->get_location_x() + offset_x + uniform_distribution_float(-10, 10),
-			home->get_location_y() + offset_y + uniform_distribution_float(-10, 10),
+			home->get_location_x() + offset_x + uniform_distribution_float(-10, 50),
+			home->get_location_y() + offset_y + uniform_distribution_float(-10, 50),
 			speed
 		);
 	}
