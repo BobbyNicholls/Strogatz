@@ -65,6 +65,7 @@ public:
     void move_along_path();
     void move_to_home(const float offset_x, const float offset_y, const float speed = 1.5f);
     void snap_to_grid();
+    void get_current_grid_ref();
 };
 
 EntityCircle* get_entity_circle(const time_period_t time_period, const Race* race);
