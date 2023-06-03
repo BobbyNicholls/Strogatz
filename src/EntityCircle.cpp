@@ -197,3 +197,22 @@ void EntityCircle::move_to_home(const float offset_x, const float offset_y, cons
 		);
 	}
 }
+
+
+void EntityCircle::snap_to_grid()
+{
+	/*
+	The steps are the following:
+		1) Translate the x,y coords of the location of the EntityCircle to a grid reference
+		2) Iterate over the grid to find the nearest non-0 grid reference
+		3) Translate this grid reference back to x,y coords (reverse of step 1)
+		4) Move to the coords discovered in step 3)
+	*/
+}
+
+
+void EntityCircle::get_current_grid_ref()
+{
+
+}
+

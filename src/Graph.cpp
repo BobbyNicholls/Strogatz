@@ -7,6 +7,7 @@
 // the graph or having their edge rewired.
 float POPULARITY_PROB{ 0.3f };
 
+
 Graph::Graph(
     const time_period_t start_time,
     const Races* races,

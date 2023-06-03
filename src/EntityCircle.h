@@ -25,6 +25,7 @@ private:
     sf::Color m_outline_colour;
     sf::CircleShape m_shape;
     Pathing m_pathing{};
+    sf::Vector2f m_current_grid_location{};
 
 public:
     EntityCircle(
@@ -63,6 +64,7 @@ public:
     void move_to_entity(const EntityCircle* entity, const int offset = 100);
     void move_along_path();
     void move_to_home(const float offset_x, const float offset_y, const float speed = 1.5f);
+    void snap_to_grid();
 };
 
 EntityCircle* get_entity_circle(const time_period_t time_period, const Race* race);

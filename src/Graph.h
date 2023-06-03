@@ -39,9 +39,9 @@ private:
 	int m_link_limit;
 	int m_clique_min_size;
 	int m_clique_max_size;
-	const float m_min_x;
+	const float m_min_x; // determines the start location of the map's texture
 	const float m_max_x;
-	const float m_min_y;
+	const float m_min_y; // determines the start location of the map's texture
 	const float m_max_y;
 	std::vector<EntityVector> m_entity_vectors;
 	// these are initialised to confusing values so that they will be updated correctly in the Graph constructor
