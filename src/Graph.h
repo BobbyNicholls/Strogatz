@@ -7,6 +7,7 @@
 #include <SFML/Window.hpp>
 
 #include "EntityCircle.h"
+#include "RoadGrid.h"
 #include "Structure.h"
 
 
@@ -110,6 +111,7 @@ public:
 	void check_entities_have_homes();
 	void update_offset(const float x, const float y);
 	void set_offset(const float x, const float y);
+	void snap_entities_to_grid(const RoadGrid& road_grid) const;
 };
 
 #endif

@@ -31,6 +31,7 @@ Map::Map(const sf::Texture& map_texture, const sf::Texture& anchor_texture, cons
 	m_render_texture.display();
 	m_sprite.setTexture(m_render_texture.getTexture());
 	m_sprite.setPosition(m_location_offset_x, m_location_offset_y);
+	snap_entities_to_grid();
 }
 
 
@@ -575,4 +576,10 @@ void Map::draw(sf::RenderWindow& window, const float x_move_distance, const floa
 {
 	m_sprite.move(x_move_distance, y_move_distance);
 	window.draw(m_sprite);
+}
+
+
+void Map::snap_entities_to_grid() const
+{
+	m_graph.snap_entities_to_grid(m_road_grid);
 }

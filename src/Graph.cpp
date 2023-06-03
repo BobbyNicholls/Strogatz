@@ -46,6 +46,8 @@ Graph::Graph(
      preferentially
     */
     // todo: make a set of non-anchors then make it less likely to attch to those?
+
+    sf::Vector2f pos{};
     assert((m_min_x < m_max_x) && "Graph min_x must be smaller than max_x");
     assert((m_min_y < m_max_y) && "Graph min_y must be smaller than max_y");
     set_offset(m_min_x, m_min_y);
@@ -83,7 +85,7 @@ Graph::Graph(
             new_entity->set_position_randomly(m_min_x, m_max_x, m_min_y, m_max_y);
             link_anchors.insert(new_entity);
         }
-        sf::Vector2f pos{ new_entity->get_shape().getPosition() };
+        pos = new_entity->get_shape().getPosition();
         if (pos.x > m_max_entity_x_pos) m_max_entity_x_pos = pos.x;
         else if (pos.x < m_min_entity_x_pos) m_min_entity_x_pos = pos.x;
         if (pos.y > m_max_entity_y_pos) m_max_entity_y_pos = pos.y;
@@ -518,6 +520,7 @@ void Graph::check_entities_have_homes()
     std::cout << homeless_count << " total entities are homeless :(\n";
 }
 
+
 void Graph::update_offset(const float x, const float y)
 {
     m_current_offset.x += x;
@@ -529,4 +532,28 @@ void Graph::set_offset(const float x, const float y)
 {
     m_current_offset.x = x;
     m_current_offset.y = y;
+}
+
+
+void Graph::snap_entities_to_grid(const RoadGrid& road_grid) const
+{
+    /*
+    The steps are the following:
+        1) Translate the x,y coords of the location of the EntityCircle to a grid reference
+        2) Iterate over the grid to find the nearest non-0 grid reference
+        3) Translate this grid reference back to x,y coords (reverse of step 1)
+        4) Move to the coords discovered in step 3)
+    */
+
+    sf::Vector2f pos{};
+    sf::Vector2f grid_ref{};
+
+    for (EntityCircle* entity : m_entities)
+    {
+        pos = entity->get_shape().getPosition();
+        grid_ref = translate_coords_to_grid_ref(pos);
+        grid_ref = road_grid.find_nearest_non_zero_ref(grid_ref);
+        pos = translate_grid_ref_to_coords(grid_ref);
+        entity->move_to_destination(pos);
+    }
 }

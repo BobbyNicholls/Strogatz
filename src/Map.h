@@ -9,19 +9,6 @@ constexpr int TEXTURE_WIDTH{ 64 };
 constexpr float TEXTURE_WIDTH_f{ 64.f };
 
 
-struct RoadGrid
-{
-	std::vector<uint8_t> grid;
-	int width{};
-	int height{};
-	int min_x_coord{};
-	int max_x_coord{};
-	int min_y_coord{};
-	int max_y_coord{};
-	int mid_y_coord{}; // for the horizonal road's y coordinate
-};
-
-
 class Map
 {
 private:
@@ -68,6 +55,7 @@ public:
 	void blend_uro(const int left_texture_col, const int right_texture_col, const int pos_x, const int pos_y);
 	void blend_dro(const int left_texture_col, const int right_texture_col, const int pos_x, const int pos_y);
 	void all_one_texture(const int texture_col, const int pos_x, const int pos_y);
+	void snap_entities_to_grid() const;
 };
 
 #endif
