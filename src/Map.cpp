@@ -12,12 +12,12 @@ enum Texture
 
 
 Map::Map(const sf::Texture& map_texture, const sf::Texture& anchor_texture, const Graph& graph)
-	: m_location_offset_x { graph.get_min_x() - (2 * TEXTURE_WIDTH_f) },
-	m_location_offset_y{ graph.get_min_y() - (2 * TEXTURE_WIDTH_f) },
-	m_map_grid_width{ static_cast<int>((graph.get_width() + (4 * TEXTURE_WIDTH_f)) / TEXTURE_WIDTH_f) + 1 },
-	m_map_pixel_width { graph.get_width() + (4 * TEXTURE_WIDTH_f) },
-	m_map_grid_height{ static_cast<int>((graph.get_height() + (4 * TEXTURE_WIDTH_f)) / TEXTURE_WIDTH_f) + 1 },
-	m_map_pixel_height{ graph.get_height() + (4 * TEXTURE_WIDTH_f) },
+	: m_map_start_loc_x { graph.get_min_x() },
+	m_map_start_loc_y{ graph.get_min_y() },
+	m_map_grid_width{ static_cast<int>(graph.get_width() / TEXTURE_WIDTH_f) },
+	m_map_pixel_width { graph.get_width() },
+	m_map_grid_height{ static_cast<int>(graph.get_height() / TEXTURE_WIDTH_f) },
+	m_map_pixel_height{ graph.get_height() },
 	m_map_texture{ map_texture }, 
 	m_anchor_texture{ anchor_texture }, 
 	m_graph{ graph }
@@ -30,7 +30,7 @@ Map::Map(const sf::Texture& map_texture, const sf::Texture& anchor_texture, cons
 	map_textures_to_anchor_points();
 	m_render_texture.display();
 	m_sprite.setTexture(m_render_texture.getTexture());
-	m_sprite.setPosition(m_location_offset_x, m_location_offset_y);
+	m_sprite.setPosition(m_map_start_loc_x, m_map_start_loc_y);
 	snap_entities_to_grid();
 }
 
@@ -70,21 +70,14 @@ void Map::build_road_grid()
 	* the min x point to the max x point at the height of y_centre.
 	*/
 
-	m_road_grid.min_x_coord = static_cast<int>(
-		(m_graph.get_min_entity_x_pos() - m_location_offset_x) / TEXTURE_WIDTH_f
-	);
-	m_road_grid.max_x_coord = static_cast<int>(
-		(m_graph.get_max_entity_x_pos() - m_location_offset_x) / TEXTURE_WIDTH_f
-	);
-	m_road_grid.min_y_coord = static_cast<int>(
-		(m_graph.get_min_entity_y_pos() - m_location_offset_y) / TEXTURE_WIDTH_f
-	);
-	m_road_grid.max_y_coord = static_cast<int>(
-		(m_graph.get_max_entity_y_pos() - m_location_offset_y) / TEXTURE_WIDTH_f
-	);
-	m_road_grid.width = m_road_grid.max_x_coord - m_road_grid.min_x_coord + 3;
-	m_road_grid.height = m_road_grid.max_y_coord - m_road_grid.min_y_coord + 3;
-	m_road_grid.mid_y_coord = static_cast<int>((m_road_grid.height * 0.5) + m_road_grid.min_y_coord);
+	m_road_grid.width = static_cast<int>(
+		(m_graph.get_max_entity_x_pos() - m_graph.get_min_entity_x_pos()) / TEXTURE_WIDTH_f
+	) + 2; // note, a buffer of 2 texture widths is added here to ensure enough space on the grid around
+		   // the entities.
+	m_road_grid.height = static_cast<int>(
+		(m_graph.get_max_entity_y_pos() - m_graph.get_min_entity_y_pos()) / TEXTURE_WIDTH_f
+	) + 2;
+	m_road_grid.mid_y_coord = static_cast<int>(m_road_grid.height * 0.5);
 	m_road_grid.grid.resize(m_road_grid.width * m_road_grid.height);
 
 	int y_diff;
@@ -93,14 +86,15 @@ void Map::build_road_grid()
 	int anchor_y;
 	for (sf::Vector2f anchor_pt : m_graph.m_anchor_points)
 	{
-		anchor_x = static_cast<int>((anchor_pt.x - m_location_offset_x) / TEXTURE_WIDTH_f) - m_road_grid.min_x_coord + 1;
-		anchor_y = static_cast<int>((anchor_pt.y - m_location_offset_y) / TEXTURE_WIDTH_f) - m_road_grid.min_y_coord + 1;
+		anchor_x = static_cast<int>((anchor_pt.x - m_graph.get_min_entity_x_pos()) / TEXTURE_WIDTH_f);
+		anchor_y = static_cast<int>((anchor_pt.y - m_graph.get_min_entity_y_pos()) / TEXTURE_WIDTH_f);
 		y_diff = m_road_grid.mid_y_coord - anchor_y;
 		increment = (y_diff > 0) ? -1 : 1;
 
 		while (y_diff != 0)
 		{
 			y_diff += increment;
+			// THIS LINE IS BUGGING OUT SOMETIMES
 			m_road_grid.grid[(anchor_y + y_diff) * m_road_grid.width + anchor_x] = 1;
 		}
 	}
@@ -207,8 +201,8 @@ void Map::map_textures_to_anchor_points()
 
 	for (sf::Vector2f anchor_pt : m_graph.m_anchor_points)
 	{
-		anchor_x = static_cast<int>((anchor_pt.x - m_location_offset_x) / TEXTURE_WIDTH_f);
-		anchor_y = static_cast<int>((anchor_pt.y - m_location_offset_y) / TEXTURE_WIDTH_f);
+		anchor_x = static_cast<int>((anchor_pt.x - m_map_start_loc_x) / TEXTURE_WIDTH_f);
+		anchor_y = static_cast<int>((anchor_pt.y - m_map_start_loc_y) / TEXTURE_WIDTH_f);
 		if (anchor_y > m_road_grid.mid_y_coord)
 		{
 			sprite.setTextureRect(sf::IntRect(
@@ -581,5 +575,20 @@ void Map::draw(sf::RenderWindow& window, const float x_move_distance, const floa
 
 void Map::snap_entities_to_grid() const
 {
-	m_graph.snap_entities_to_grid(m_road_grid);
+	/*
+	The steps are the following:
+		1) Translate the x,y coords of the location of the EntityCircle to a grid reference
+		2) Iterate over the grid to find the nearest non-0 grid reference
+		3) Translate this grid reference back to x,y coords (reverse of step 1)
+		4) Move to the coords discovered in step 3)
+	*/
+
+	for (EntityCircle* entity : m_graph.m_entities)
+	{
+		std::cout << "Entity sent to grid...\n";
+		m_road_grid.send_entity_to_nearest_non_0_ref(
+			entity, m_graph.m_current_offset.x, m_graph.m_current_offset.y
+		);
+	}
+	std::cout << '\n';
 }

@@ -50,7 +50,6 @@ Graph::Graph(
     sf::Vector2f pos{};
     assert((m_min_x < m_max_x) && "Graph min_x must be smaller than max_x");
     assert((m_min_y < m_max_y) && "Graph min_y must be smaller than max_y");
-    set_offset(m_min_x, m_min_y);
     m_entities.reserve(entities_reserve_limit);
     m_links.reserve(m_link_limit);
     m_entity_vectors.reserve(100);
@@ -58,8 +57,12 @@ Graph::Graph(
     m_entities.push_back(get_entity_circle(start_time, races->get_random_race()));
     m_entities.push_back(get_entity_circle(start_time, races->get_random_race()));
     link_entities(m_entities[0], m_entities[1]);
-    m_entities[0]->set_position_randomly(m_min_x, m_max_x, m_min_y, m_max_y);
-    m_entities[1]->set_position_randomly(m_min_x, m_max_x, m_min_y, m_max_y)->move_to_links();
+    m_entities[0]->set_position_randomly(
+        m_min_x * 0.5f, m_max_x * 0.5f, m_min_y * 0.5f, m_max_y * 0.5f
+    );
+    m_entities[1]->set_position_randomly(
+        m_min_x * 0.5f, m_max_x * 0.5f, m_min_y * 0.5f, m_max_y * 0.5f
+    )->move_to_links();
 
     EntityCircle* chosen_entity{ nullptr };
     std::set<EntityCircle*> link_anchors{ m_entities[0] };
@@ -78,11 +81,15 @@ Graph::Graph(
         }
         if (link_anchors.contains(chosen_entity))
         {
-            new_entity->set_position_relative_to_links(m_min_x, m_max_x, m_min_y, m_max_y);
+            new_entity->set_position_relative_to_links(
+                m_min_x * 0.5f, m_max_x * 0.5f, m_min_y * 0.5f, m_max_y * 0.5f
+            );
         }
         else
         {
-            new_entity->set_position_randomly(m_min_x, m_max_x, m_min_y, m_max_y);
+            new_entity->set_position_randomly(
+                m_min_x * 0.5f, m_max_x * 0.5f, m_min_y * 0.5f, m_max_y * 0.5f
+            );
             link_anchors.insert(new_entity);
         }
         pos = new_entity->get_shape().getPosition();
@@ -518,42 +525,4 @@ void Graph::check_entities_have_homes()
         }
     }
     std::cout << homeless_count << " total entities are homeless :(\n";
-}
-
-
-void Graph::update_offset(const float x, const float y)
-{
-    m_current_offset.x += x;
-    m_current_offset.y += y;
-}
-
-
-void Graph::set_offset(const float x, const float y)
-{
-    m_current_offset.x = x;
-    m_current_offset.y = y;
-}
-
-
-void Graph::snap_entities_to_grid(const RoadGrid& road_grid) const
-{
-    /*
-    The steps are the following:
-        1) Translate the x,y coords of the location of the EntityCircle to a grid reference
-        2) Iterate over the grid to find the nearest non-0 grid reference
-        3) Translate this grid reference back to x,y coords (reverse of step 1)
-        4) Move to the coords discovered in step 3)
-    */
-
-    sf::Vector2f pos{};
-    sf::Vector2f grid_ref{};
-
-    for (EntityCircle* entity : m_entities)
-    {
-        pos = entity->get_shape().getPosition();
-        grid_ref = translate_coords_to_grid_ref(pos);
-        grid_ref = road_grid.find_nearest_non_zero_ref(grid_ref);
-        pos = translate_grid_ref_to_coords(grid_ref);
-        entity->move_to_destination(pos);
-    }
 }

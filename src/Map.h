@@ -5,14 +5,14 @@
 
 #include "Graph.h"
 
-constexpr int TEXTURE_WIDTH{ 64 };
-constexpr float TEXTURE_WIDTH_f{ 64.f };
+extern const int TEXTURE_WIDTH;
+extern const float TEXTURE_WIDTH_f;
 
 
 class Map
 {
 private:
-	const float m_location_offset_x;
+	const float m_map_start_loc_x;
 	const float m_location_offset_y;
 	const int m_map_grid_width;
 	const float m_map_pixel_width;

@@ -18,12 +18,14 @@
 extern const int edge_buffer{ 10 };
 extern const int game_height{ 2400 };
 extern const int game_width{ 3200 };
+extern const int TEXTURE_WIDTH{ 64 };
+extern const float TEXTURE_WIDTH_f{ 64.f };
 constexpr float move_speed{ 400.f };
 constexpr int nr_of_races{ 6 };
 constexpr int window_height{ 1080 };
 constexpr int window_width{ 1920 };
-const float graph_horizontal_side_boundary_length{ 2000.0f };
-const float graph_vertial_side_boundary_length{ 1000.0f };
+const int graph_horizontal_side_boundary_length{ 30 };
+const int graph_vertial_side_boundary_length{ 20 };
 
 
 int main()
@@ -56,10 +58,10 @@ int main()
     Graph graph{ 
         time_period_counter, 
         &races, 
-        -graph_horizontal_side_boundary_length + (window_width /2), 
-        graph_horizontal_side_boundary_length + (window_width/2), 
-        -graph_vertial_side_boundary_length + (window_height / 2), 
-        graph_vertial_side_boundary_length + (window_height / 2)
+        -graph_horizontal_side_boundary_length * TEXTURE_WIDTH_f, 
+        graph_horizontal_side_boundary_length* TEXTURE_WIDTH_f,
+        -graph_vertial_side_boundary_length * TEXTURE_WIDTH_f,
+        graph_vertial_side_boundary_length * TEXTURE_WIDTH_f
     };
     Map map{ map_texture, anchor_texture, graph };
     EntityCircle* player_entity{ get_entity_circle(time_period_counter, races.get_random_race()) };

@@ -27,12 +27,12 @@ struct EntityVector
 //eventually make this a template class?: learncpp.com/cpp-tutorial/template-classes/
 class Graph
 {
+	friend class Map;
 private:
 	std::vector<EntityCircle*> m_entities;
 	std::vector<EntityCircle*> m_leaders; // TODO: entities not having m_leader set to true
 	std::vector<Link*> m_links; // this is leaking memory a lot
 	std::vector<Structure> m_structures;
-	sf::Vector2f m_current_offset{};
 	float m_rewire_prob;
 	float m_new_edge_prob;
 	float m_spawn_chance;
@@ -109,9 +109,6 @@ public:
 	void vectorise_nodes(const bool vectorise_all_nodes = true);
 	void reserve_more_links(const float increment_fraction=1.5);
 	void check_entities_have_homes();
-	void update_offset(const float x, const float y);
-	void set_offset(const float x, const float y);
-	void snap_entities_to_grid(const RoadGrid& road_grid) const;
 };
 
 #endif
