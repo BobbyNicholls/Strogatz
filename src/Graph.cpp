@@ -294,9 +294,9 @@ void Graph::propagate_entities(const time_period_t time_period)
         if (uniform_distribution_float(0, 1) < m_spawn_chance)
         {
             EntityCircle* from_entity{ link->from };
-            from_entity->move_to_home(m_current_offset.x, m_current_offset.y);
+            from_entity->move_to_home();
             EntityCircle* to_entity{ link->to };
-            to_entity->move_to_home(m_current_offset.x, m_current_offset.y);
+            to_entity->move_to_home();
             std::cout << "Entities are going home\n";
             if (to_entity->is_paired() && (to_entity->get_partner() == from_entity))
             {

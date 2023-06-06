@@ -1,4 +1,3 @@
-#include "Distributions.h"
 #include "Map.h"
 
 
@@ -587,7 +586,7 @@ void Map::snap_entities_to_grid() const
 	{
 		std::cout << "Entity sent to grid...\n";
 		m_road_grid.send_entity_to_nearest_non_0_ref(
-			entity, m_graph.m_current_offset.x, m_graph.m_current_offset.y
+			entity, GLOBAL_OFFSET_X, GLOBAL_OFFSET_Y, TEXTURE_WIDTH_f
 		);
 	}
 	std::cout << '\n';

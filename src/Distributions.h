@@ -4,7 +4,7 @@
 #include <algorithm> // std::shuffle
 #include <cstdlib>
 #include <random>
-#include<vector>
+#include <vector>
 
 
 class Race;

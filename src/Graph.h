@@ -7,7 +7,6 @@
 #include <SFML/Window.hpp>
 
 #include "EntityCircle.h"
-#include "RoadGrid.h"
 #include "Structure.h"
 
 
@@ -80,7 +79,6 @@ public:
 	float get_max_entity_x_pos() const { return m_max_entity_x_pos; };
 	float get_min_entity_y_pos() const { return m_min_entity_y_pos; };
 	float get_max_entity_y_pos() const { return m_max_entity_y_pos; };
-	const sf::Vector2f& get_current_offset() const { return m_current_offset; };
 	float get_min_x() const { return m_min_x; };
 	float get_max_x() const { return m_max_x; };
 	float get_min_y() const { return m_min_y; };

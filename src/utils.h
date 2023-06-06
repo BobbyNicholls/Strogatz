@@ -5,10 +5,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "Distributions.h"
-
-extern const int edge_buffer;
-extern const int game_height;
-extern const int game_width;
+#include "globals.h"
 
 using id_t = std::uint_fast32_t;
 using time_period_t = std::uint_fast16_t;

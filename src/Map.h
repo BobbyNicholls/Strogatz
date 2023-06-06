@@ -4,16 +4,14 @@
 #include <SFML/Graphics.hpp>
 
 #include "Graph.h"
-
-extern const int TEXTURE_WIDTH;
-extern const float TEXTURE_WIDTH_f;
+#include "RoadGrid.h"
 
 
 class Map
 {
 private:
 	const float m_map_start_loc_x;
-	const float m_location_offset_y;
+	const float m_map_start_loc_y;
 	const int m_map_grid_width;
 	const float m_map_pixel_width;
 	const int m_map_grid_height;

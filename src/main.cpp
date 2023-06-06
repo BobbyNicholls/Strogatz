@@ -8,24 +8,18 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
-#include "EntityCircle.h"
-#include "Graph.h"
 #include "Map.h"
 #include "Race.h"
 #include "Text.h"
-#include "utils.h"
 
-extern const int edge_buffer{ 10 };
-extern const int game_height{ 2400 };
-extern const int game_width{ 3200 };
-extern const int TEXTURE_WIDTH{ 64 };
-extern const float TEXTURE_WIDTH_f{ 64.f };
-constexpr float move_speed{ 400.f };
-constexpr int nr_of_races{ 6 };
-constexpr int window_height{ 1080 };
-constexpr int window_width{ 1920 };
-const int graph_horizontal_side_boundary_length{ 30 };
-const int graph_vertial_side_boundary_length{ 20 };
+
+extern float GLOBAL_OFFSET_X{ 0.0f };
+extern float GLOBAL_OFFSET_Y{ 0.0f };
+void update_global_offset(const float change_in_x, const float change_in_y)
+{
+    GLOBAL_OFFSET_X += change_in_x;
+    GLOBAL_OFFSET_Y += change_in_y;
+}
 
 
 int main()
@@ -53,6 +47,8 @@ int main()
     unsigned int frame_counter{ 0 };
     constexpr unsigned int frames_per_period{ 60 };
     bool draw_links{ false };
+    //float GLOBAL_OFFSET_X{ 0.0f };
+    //float GLOBAL_OFFSET_Y{ 0.0f };
 
     Races races{ nr_of_races };
     Graph graph{ 
@@ -108,7 +104,7 @@ int main()
             map.draw(window, movement.x, movement.y);
             if (draw_links) graph.draw_links(window);
             graph.draw_entities(window, movement.x, movement.y);
-            graph.update_offset(movement.x, movement.y);
+            update_global_offset(movement.x, movement.y);
             while (window.pollEvent(event))
             {
                 switch (event.type)

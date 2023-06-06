@@ -1,10 +1,4 @@
-#include "Distributions.h"
 #include "EntityCircle.h"
-
-
-extern const int edge_buffer;
-extern const int game_height;
-extern const int game_width;
 
 
 EntityCircle* get_entity_circle(const time_period_t time_period, const Race* race)
@@ -185,14 +179,15 @@ void EntityCircle::move_along_path()
 }
 
 
-void EntityCircle::move_to_home(const float offset_x, const float offset_y, const float speed)
+// TODO: USE GLOBAL OFFSET
+void EntityCircle::move_to_home(const float speed)
 {
 	Structure* home{ get_home() };
 	if (home)
 	{
 		move_to_destination(
-			home->get_location_x() + offset_x + uniform_distribution_float(-10, 50),
-			home->get_location_y() + offset_y + uniform_distribution_float(-10, 50),
+			home->get_location_x() + GLOBAL_OFFSET_X + uniform_distribution_float(-10, 50),
+			home->get_location_y() + GLOBAL_OFFSET_Y + uniform_distribution_float(-10, 50),
 			speed
 		);
 	}

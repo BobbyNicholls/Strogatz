@@ -18,7 +18,6 @@ It contains information regarding things every entity must have:
 #ifndef STROG_ENTITY_H
 #define STROG_ENTITY_H
 
-#include "Distributions.h"
 #include "Race.h"
 #include "Structure.h"
 #include "utils.h"
