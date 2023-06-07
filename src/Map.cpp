@@ -126,7 +126,6 @@ void Map::snap_entities_to_grid() const
 
 	for (EntityCircle* entity : m_graph.m_entities)
 	{
-		std::cout << "Entity sent to grid...\n";
 		m_road_grid.send_entity_to_nearest_non_0_ref(
 			entity, 
 			m_map_start_loc_x + m_road_grid.grid_to_map_offset_x + GLOBAL_OFFSET_X,
@@ -134,7 +133,6 @@ void Map::snap_entities_to_grid() const
 			TEXTURE_WIDTH_f
 		);
 	}
-	std::cout << '\n';
 }
 
 
