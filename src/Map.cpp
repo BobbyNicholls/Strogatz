@@ -91,12 +91,8 @@ void Map::build_road_grid()
 	int anchor_ref_y;
 	for (sf::Vector2f anchor_pt : m_graph.m_anchor_points)
 	{
-		anchor_ref_x = static_cast<int>(
-			(anchor_pt.x - (m_map_start_loc_x + m_road_grid.grid_to_map_offset_x)) / TEXTURE_WIDTH_f
-		);
-		anchor_ref_y = static_cast<int>(
-			(anchor_pt.y - (m_map_start_loc_y + m_road_grid.grid_to_map_offset_y)) / TEXTURE_WIDTH_f
-		);
+		anchor_ref_x = translate_x_coord_to_grid_ref(anchor_pt.x);
+		anchor_ref_y = translate_y_coord_to_grid_ref(anchor_pt.y);
 		y_diff = m_road_grid.mid_y_coord - anchor_ref_y;
 		increment = (y_diff > 0) ? -1 : 1;
 
@@ -602,4 +598,20 @@ void Map::draw(sf::RenderWindow& window, const float x_move_distance, const floa
 {
 	m_sprite.move(x_move_distance, y_move_distance);
 	window.draw(m_sprite);
+}
+
+
+const int Map::translate_x_coord_to_grid_ref(const float x_coord) const
+{
+	return static_cast<int>(
+		(x_coord - (m_map_start_loc_x + GLOBAL_OFFSET_X + m_road_grid.grid_to_map_offset_x)) / TEXTURE_WIDTH_f
+	);
+}
+
+
+const int Map::translate_y_coord_to_grid_ref(const float y_coord) const
+{
+	return static_cast<int>(
+		(y_coord - (m_map_start_loc_y + GLOBAL_OFFSET_Y + m_road_grid.grid_to_map_offset_y)) / TEXTURE_WIDTH_f
+	);
 }

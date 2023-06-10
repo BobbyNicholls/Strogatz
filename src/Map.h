@@ -54,6 +54,8 @@ public:
 	void blend_dro(const int left_texture_col, const int right_texture_col, const int pos_x, const int pos_y);
 	void all_one_texture(const int texture_col, const int pos_x, const int pos_y);
 	void snap_entities_to_grid() const;
+	const int translate_x_coord_to_grid_ref(const float x_coord) const;
+	const int translate_y_coord_to_grid_ref(const float y_coord) const;
 };
 
 #endif
