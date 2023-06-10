@@ -221,16 +221,13 @@ void Map::map_textures_to_road_grid(const int road_texture_columm, const int gro
 
 void Map::map_textures_to_anchor_points()
 {
-	int anchor_x;
 	int anchor_y;
 	sf::Sprite sprite;
 	sprite.setTexture(m_anchor_texture);
 
 	for (sf::Vector2f anchor_pt : m_graph.m_anchor_points)
 	{
-		// TODO: this isnt assigning correctly add the grid offset
-		anchor_x = static_cast<int>((anchor_pt.x - m_map_start_loc_x) / TEXTURE_WIDTH_f);
-		anchor_y = static_cast<int>((anchor_pt.y - m_map_start_loc_y) / TEXTURE_WIDTH_f);
+		anchor_y = translate_y_coord_to_grid_ref(anchor_pt.y);
 		if (anchor_y > m_road_grid.mid_y_coord)
 		{
 			sprite.setTextureRect(sf::IntRect(
