@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "Map.h"
 
 
@@ -230,6 +232,7 @@ void Map::map_textures_to_anchor_points()
 
 	for (sf::Vector2f anchor_pt : m_graph.m_anchor_points)
 	{
+		// TODO: this isnt assigning correctly add the grid offset
 		anchor_x = static_cast<int>((anchor_pt.x - m_map_start_loc_x) / TEXTURE_WIDTH_f);
 		anchor_y = static_cast<int>((anchor_pt.y - m_map_start_loc_y) / TEXTURE_WIDTH_f);
 		if (anchor_y > m_road_grid.mid_y_coord)
@@ -251,8 +254,8 @@ void Map::map_textures_to_anchor_points()
 			));
 		}
 		sprite.setPosition(
-			(anchor_x * TEXTURE_WIDTH_f) - TEXTURE_WIDTH_f, 
-			(anchor_y * TEXTURE_WIDTH_f) - TEXTURE_WIDTH_f
+			floorf((anchor_pt.x - m_map_start_loc_x - (2.0f * TEXTURE_WIDTH_f)) / TEXTURE_WIDTH_f) * TEXTURE_WIDTH_f,
+			floorf((anchor_pt.y - m_map_start_loc_y - (2.0f * TEXTURE_WIDTH_f)) / TEXTURE_WIDTH_f) * TEXTURE_WIDTH_f
 		);
 		m_render_texture.draw(sprite);
 	}
@@ -301,8 +304,8 @@ void Map::blend_horizontally(
 	m_blended_texture.display();
 	m_blended_sprite.setTexture(m_blended_texture.getTexture());
 	m_blended_sprite.setPosition(
-		(pos_x + m_road_grid.min_x_coord) * TEXTURE_WIDTH_f,
-		(pos_y + m_road_grid.min_y_coord) * TEXTURE_WIDTH_f
+		m_road_grid.grid_to_map_offset_x + (pos_x * TEXTURE_WIDTH_f),
+		m_road_grid.grid_to_map_offset_y + (pos_y * TEXTURE_WIDTH_f)
 	);
 	m_render_texture.draw(m_blended_sprite);
 }
@@ -350,8 +353,8 @@ void Map::blend_vertically(
 	m_blended_texture.display();
 	m_blended_sprite.setTexture(m_blended_texture.getTexture());
 	m_blended_sprite.setPosition(
-		(pos_x + m_road_grid.min_x_coord) * TEXTURE_WIDTH_f, 
-		(pos_y + m_road_grid.min_y_coord) * TEXTURE_WIDTH_f
+		m_road_grid.grid_to_map_offset_x + (pos_x * TEXTURE_WIDTH_f),
+		m_road_grid.grid_to_map_offset_y + (pos_y * TEXTURE_WIDTH_f)
 	);
 	m_render_texture.draw(m_blended_sprite);
 }
@@ -397,8 +400,8 @@ void Map::blend_uli(
 	m_blended_texture.display();
 	m_blended_sprite.setTexture(m_blended_texture.getTexture());
 	m_blended_sprite.setPosition(
-		(pos_x + m_road_grid.min_x_coord) * TEXTURE_WIDTH_f,
-		(pos_y + m_road_grid.min_y_coord) * TEXTURE_WIDTH_f
+		m_road_grid.grid_to_map_offset_x + (pos_x * TEXTURE_WIDTH_f),
+		m_road_grid.grid_to_map_offset_y + (pos_y * TEXTURE_WIDTH_f)
 	);
 	m_render_texture.draw(m_blended_sprite);
 }
@@ -444,8 +447,8 @@ void Map::blend_dli(
 	m_blended_texture.display();
 	m_blended_sprite.setTexture(m_blended_texture.getTexture());
 	m_blended_sprite.setPosition(
-		(pos_x + m_road_grid.min_x_coord) * TEXTURE_WIDTH_f,
-		(pos_y + m_road_grid.min_y_coord) * TEXTURE_WIDTH_f
+		m_road_grid.grid_to_map_offset_x + (pos_x * TEXTURE_WIDTH_f),
+		m_road_grid.grid_to_map_offset_y + (pos_y * TEXTURE_WIDTH_f)
 	);
 	m_render_texture.draw(m_blended_sprite);
 }
@@ -491,8 +494,8 @@ void Map::blend_uri(
 	m_blended_texture.display();
 	m_blended_sprite.setTexture(m_blended_texture.getTexture());
 	m_blended_sprite.setPosition(
-		(pos_x + m_road_grid.min_x_coord) * TEXTURE_WIDTH_f,
-		(pos_y + m_road_grid.min_y_coord) * TEXTURE_WIDTH_f
+		m_road_grid.grid_to_map_offset_x + (pos_x * TEXTURE_WIDTH_f),
+		m_road_grid.grid_to_map_offset_y + (pos_y * TEXTURE_WIDTH_f)
 	);
 	m_render_texture.draw(m_blended_sprite);
 }
@@ -538,8 +541,8 @@ void Map::blend_dri(
 	m_blended_texture.display();
 	m_blended_sprite.setTexture(m_blended_texture.getTexture());
 	m_blended_sprite.setPosition(
-		(pos_x + m_road_grid.min_x_coord) * TEXTURE_WIDTH_f,
-		(pos_y + m_road_grid.min_y_coord) * TEXTURE_WIDTH_f
+		m_road_grid.grid_to_map_offset_x + (pos_x * TEXTURE_WIDTH_f),
+		m_road_grid.grid_to_map_offset_y + (pos_y * TEXTURE_WIDTH_f)
 	);
 	m_render_texture.draw(m_blended_sprite);
 }
@@ -588,8 +591,8 @@ void Map::all_one_texture(const int texture_col, const int pos_x, const int pos_
 		TEXTURE_WIDTH
 	));
 	sprite.setPosition(
-		(pos_x + m_road_grid.min_x_coord) * TEXTURE_WIDTH_f, 
-		(pos_y + m_road_grid.min_y_coord) * TEXTURE_WIDTH_f
+		m_road_grid.grid_to_map_offset_x + (pos_x * TEXTURE_WIDTH_f),
+		m_road_grid.grid_to_map_offset_y + (pos_y * TEXTURE_WIDTH_f)
 	);
 	m_render_texture.draw(sprite);
 }

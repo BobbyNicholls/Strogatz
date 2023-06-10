@@ -227,8 +227,10 @@ void Graph::rewire_random_edge()
 
     if (uniform_distribution_float(0, 1) < POPULARITY_PROB) new_target = get_preferential_entity();
     else new_target = get_belief_compatible_entity(pivot_entity);
-
-    if ((pivot_entity != new_target) && 
+    std::cout << "New target: " << new_target << '\n';
+    std::cout << "Pivot entity: " << pivot_entity << '\n';
+    if (new_target &&
+        (pivot_entity != new_target) && 
         !(new_target->is_linked_to(pivot_entity)) && 
         (new_target != old_target))
     {
@@ -524,5 +526,6 @@ void Graph::check_entities_have_homes()
             ++homeless_count;
         }
     }
-    std::cout << homeless_count << " total entities are homeless :(\n";
+    if (homeless_count>0) std::cout << homeless_count << " total entities are homeless :(\n";
+    else std::cout << "All entities have homes! :)\n";
 }

@@ -63,7 +63,7 @@ public:
 		const float rewire_prob = 0.004f,
 		const float new_edge_prob = 0.00005f,
 		const float spawn_chance = 0.12f,
-		const int entities_start_size = 15,
+		const int entities_start_size = 10,
 		const int entities_reserve_limit = 400,
 		const int link_limit = 3000,
 		const int clique_min_size = 3,
