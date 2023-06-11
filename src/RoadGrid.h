@@ -78,6 +78,7 @@ public:
 			}
 		}
 		entity->set_position(offset_x + (grid_ref_x * texture_width), offset_y + (grid_ref_y * texture_width));
+		entity->set_current_grid_ref(grid_ref_x, grid_ref_y);
 	}
 };
 

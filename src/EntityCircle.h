@@ -25,7 +25,7 @@ private:
     sf::Color m_outline_colour;
     sf::CircleShape m_shape;
     Pathing m_pathing{};
-    sf::Vector2f m_current_grid_location{};
+    sf::Vector2f m_current_grid_ref{};
 
 public:
     EntityCircle(
@@ -36,6 +36,7 @@ public:
         sf::Color outline_colour = sf::Color(100, 0, 0)
     );
     float get_radius() const { return m_radius; }
+    const sf::Vector2f& get_current_grid_ref() const { return m_current_grid_ref; }
     std::vector<Entity*>& get_links() { return m_links; }
     sf::CircleShape& get_shape() { return m_shape; };
     bool is_pathing() { return static_cast<bool>(m_pathing.steps); };
@@ -65,6 +66,11 @@ public:
     void move_to_entity(const EntityCircle* entity, const int offset = 100);
     void move_along_path();
     void move_to_home(const float speed = 1.5f);
+    void path_to_destination(
+        const float destination_x,
+        const float destination_y,
+        const float speed = 1.5f
+    );
 };
 
 EntityCircle* get_entity_circle(const time_period_t time_period, const Race* race);
