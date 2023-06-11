@@ -41,6 +41,7 @@ public:
     bool is_pathing() { return static_cast<bool>(m_pathing.steps); };
 
     void update_colour();
+    void set_position(const float x_coordinate, const float y_coordinate);
     EntityCircle* set_position_randomly(
         const float min_x,
         const float max_x,

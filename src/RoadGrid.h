@@ -77,9 +77,7 @@ public:
 				--negative_horizontal_iterator;
 			}
 		}
-		entity->move_to_destination(
-			offset_x + (grid_ref_x * texture_width), offset_y + (grid_ref_y * texture_width)
-		);
+		entity->set_position(offset_x + (grid_ref_x * texture_width), offset_y + (grid_ref_y * texture_width));
 	}
 };
 

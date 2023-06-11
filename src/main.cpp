@@ -15,6 +15,7 @@
 
 extern float GLOBAL_OFFSET_X{ 0.0f };
 extern float GLOBAL_OFFSET_Y{ 0.0f };
+
 void update_global_offset(const float change_in_x, const float change_in_y)
 {
     GLOBAL_OFFSET_X += change_in_x;
