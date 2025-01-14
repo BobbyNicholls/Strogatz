@@ -145,9 +145,11 @@
     <ClInclude Include="src\Distributions.h" />
     <ClInclude Include="src\Entity.h" />
     <ClInclude Include="src\EntityCircle.h" />
+    <ClInclude Include="src\globals.h" />
     <ClInclude Include="src\Graph.h" />
     <ClInclude Include="src\Map.h" />
     <ClInclude Include="src\Race.h" />
+    <ClInclude Include="src\RoadGrid.h" />
     <ClInclude Include="src\Structure.h" />
     <ClInclude Include="src\Text.h" />
     <ClInclude Include="src\utils.h" />

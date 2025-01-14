@@ -1,4 +1,5 @@
-#include "Distributions.h"
+#include <math.h>
+
 #include "Map.h"
 
 
@@ -12,17 +13,17 @@ enum Texture
 
 
 Map::Map(const sf::Texture& map_texture, const sf::Texture& anchor_texture, const Graph& graph)
-	: m_location_offset_x { graph.get_min_x() - (2 * TEXTURE_WIDTH_f) },
-	m_location_offset_y{ graph.get_min_y() - (2 * TEXTURE_WIDTH_f) },
-	m_map_grid_width{ static_cast<int>((graph.get_width() + (4 * TEXTURE_WIDTH)) / TEXTURE_WIDTH) + 1 },
-	m_map_pixel_width { graph.get_width() + (4 * TEXTURE_WIDTH) },
-	m_map_grid_height{ static_cast<int>((graph.get_height() + (4 * TEXTURE_WIDTH)) / TEXTURE_WIDTH) + 1 },
-	m_map_pixel_height{ graph.get_height() + (4 * TEXTURE_WIDTH) },
+	: m_map_start_loc_x { graph.get_min_x() },
+	m_map_start_loc_y{ graph.get_min_y() },
+	m_map_grid_width{ static_cast<int>(graph.get_width() / TEXTURE_WIDTH_f) },
+	m_map_pixel_width { graph.get_width() },
+	m_map_grid_height{ static_cast<int>(graph.get_height() / TEXTURE_WIDTH_f) },
+	m_map_pixel_height{ graph.get_height() },
 	m_map_texture{ map_texture }, 
 	m_anchor_texture{ anchor_texture }, 
 	m_graph{ graph }
 {
-	m_render_texture.create(m_map_pixel_width, m_map_pixel_height);
+	m_render_texture.create(static_cast<int>(m_map_pixel_width), static_cast<int>(m_map_pixel_height));
 	m_render_texture.clear(sf::Color::Green);
 	cover_map_with_texture(Texture::grass);
 	build_road_grid();
@@ -30,7 +31,8 @@ Map::Map(const sf::Texture& map_texture, const sf::Texture& anchor_texture, cons
 	map_textures_to_anchor_points();
 	m_render_texture.display();
 	m_sprite.setTexture(m_render_texture.getTexture());
-	m_sprite.setPosition(m_location_offset_x, m_location_offset_y);
+	m_sprite.setPosition(m_map_start_loc_x, m_map_start_loc_y);
+	snap_entities_to_grid();
 }
 
 
@@ -69,38 +71,36 @@ void Map::build_road_grid()
 	* the min x point to the max x point at the height of y_centre.
 	*/
 
-	m_road_grid.min_x_coord = static_cast<int>(
-		(m_graph.get_min_entity_x_pos() - m_location_offset_x) / TEXTURE_WIDTH_f
-	);
-	m_road_grid.max_x_coord = static_cast<int>(
-		(m_graph.get_max_entity_x_pos() - m_location_offset_x) / TEXTURE_WIDTH_f
-	);
-	m_road_grid.min_y_coord = static_cast<int>(
-		(m_graph.get_min_entity_y_pos() - m_location_offset_y) / TEXTURE_WIDTH_f
-	);
-	m_road_grid.max_y_coord = static_cast<int>(
-		(m_graph.get_max_entity_y_pos() - m_location_offset_y) / TEXTURE_WIDTH_f
-	);
-	m_road_grid.width = m_road_grid.max_x_coord - m_road_grid.min_x_coord + 3;
-	m_road_grid.height = m_road_grid.max_y_coord - m_road_grid.min_y_coord + 3;
-	m_road_grid.mid_y_coord = static_cast<int>((m_road_grid.height * 0.5) + m_road_grid.min_y_coord);
+	m_road_grid.width = static_cast<int>(
+		(m_graph.get_max_entity_x_pos() - m_graph.get_min_entity_x_pos()) / TEXTURE_WIDTH_f
+	) + 2; // note, a buffer of 2 texture widths is added here to ensure enough space on the grid around
+		   // the entities.
+	m_road_grid.height = static_cast<int>(
+		(m_graph.get_max_entity_y_pos() - m_graph.get_min_entity_y_pos()) / TEXTURE_WIDTH_f
+	) + 2;
+	m_road_grid.min_x_coord = m_graph.get_min_entity_x_pos() - TEXTURE_WIDTH_f;
+	m_road_grid.min_y_coord = m_graph.get_min_entity_y_pos() - TEXTURE_WIDTH_f;
+	m_road_grid.grid_to_map_offset_x = m_road_grid.min_x_coord - m_map_start_loc_x;
+	m_road_grid.grid_to_map_offset_y = m_road_grid.min_y_coord - m_map_start_loc_y;
+	m_road_grid.mid_y_coord = static_cast<int>(m_road_grid.height * 0.5);
 	m_road_grid.grid.resize(m_road_grid.width * m_road_grid.height);
 
 	int y_diff;
 	int increment;
-	int anchor_x;
-	int anchor_y;
+	int anchor_ref_x;
+	int anchor_ref_y;
 	for (sf::Vector2f anchor_pt : m_graph.m_anchor_points)
 	{
-		anchor_x = static_cast<int>((anchor_pt.x - m_location_offset_x) / TEXTURE_WIDTH_f) - m_road_grid.min_x_coord + 1;
-		anchor_y = static_cast<int>((anchor_pt.y - m_location_offset_y) / TEXTURE_WIDTH_f) - m_road_grid.min_y_coord + 1;
-		y_diff = m_road_grid.mid_y_coord - anchor_y;
+		anchor_ref_x = translate_x_coord_to_grid_ref(anchor_pt.x);
+		anchor_ref_y = translate_y_coord_to_grid_ref(anchor_pt.y);
+		y_diff = m_road_grid.mid_y_coord - anchor_ref_y;
 		increment = (y_diff > 0) ? -1 : 1;
 
 		while (y_diff != 0)
 		{
 			y_diff += increment;
-			m_road_grid.grid[(anchor_y + y_diff) * m_road_grid.width + anchor_x] = 1;
+			// THIS LINE IS BUGGING OUT SOMETIMES
+			m_road_grid.grid[(anchor_ref_y + y_diff) * m_road_grid.width + anchor_ref_x] = 1;
 		}
 	}
 	for (int i{ 0 }; i < m_road_grid.width; ++i)
@@ -108,6 +108,29 @@ void Map::build_road_grid()
 		m_road_grid.grid[(m_road_grid.mid_y_coord * m_road_grid.width) + i] = 1;
 	}
 	print_road_grid();
+	std::cout << '\n';
+}
+
+
+void Map::snap_entities_to_grid() const
+{
+	/*
+	The steps are the following:
+		1) Translate the x,y coords of the location of the EntityCircle to a grid reference
+		2) Iterate over the grid to find the nearest non-0 grid reference
+		3) Translate this grid reference back to x,y coords (reverse of step 1)
+		4) Move to the coords discovered in step 3)
+	*/
+
+	for (EntityCircle* entity : m_graph.m_entities)
+	{
+		m_road_grid.send_entity_to_nearest_non_0_ref(
+			entity, 
+			m_map_start_loc_x + m_road_grid.grid_to_map_offset_x + GLOBAL_OFFSET_X,
+			m_map_start_loc_y + m_road_grid.grid_to_map_offset_y + GLOBAL_OFFSET_Y,
+			TEXTURE_WIDTH_f
+		);
+	}
 }
 
 
@@ -198,15 +221,13 @@ void Map::map_textures_to_road_grid(const int road_texture_columm, const int gro
 
 void Map::map_textures_to_anchor_points()
 {
-	int anchor_x;
 	int anchor_y;
 	sf::Sprite sprite;
 	sprite.setTexture(m_anchor_texture);
 
 	for (sf::Vector2f anchor_pt : m_graph.m_anchor_points)
 	{
-		anchor_x = static_cast<int>((anchor_pt.x - m_location_offset_x) / TEXTURE_WIDTH_f);
-		anchor_y = static_cast<int>((anchor_pt.y - m_location_offset_y) / TEXTURE_WIDTH_f);
+		anchor_y = translate_y_coord_to_grid_ref(anchor_pt.y);
 		if (anchor_y > m_road_grid.mid_y_coord)
 		{
 			sprite.setTextureRect(sf::IntRect(
@@ -226,8 +247,8 @@ void Map::map_textures_to_anchor_points()
 			));
 		}
 		sprite.setPosition(
-			(anchor_x * TEXTURE_WIDTH_f) - TEXTURE_WIDTH_f, 
-			(anchor_y * TEXTURE_WIDTH_f) - TEXTURE_WIDTH_f
+			floorf((anchor_pt.x - m_map_start_loc_x - (2.0f * TEXTURE_WIDTH_f)) / TEXTURE_WIDTH_f) * TEXTURE_WIDTH_f,
+			floorf((anchor_pt.y - m_map_start_loc_y - (2.0f * TEXTURE_WIDTH_f)) / TEXTURE_WIDTH_f) * TEXTURE_WIDTH_f
 		);
 		m_render_texture.draw(sprite);
 	}
@@ -276,8 +297,8 @@ void Map::blend_horizontally(
 	m_blended_texture.display();
 	m_blended_sprite.setTexture(m_blended_texture.getTexture());
 	m_blended_sprite.setPosition(
-		(pos_x + m_road_grid.min_x_coord) * TEXTURE_WIDTH_f,
-		(pos_y + m_road_grid.min_y_coord) * TEXTURE_WIDTH_f
+		m_road_grid.grid_to_map_offset_x + (pos_x * TEXTURE_WIDTH_f),
+		m_road_grid.grid_to_map_offset_y + (pos_y * TEXTURE_WIDTH_f)
 	);
 	m_render_texture.draw(m_blended_sprite);
 }
@@ -325,8 +346,8 @@ void Map::blend_vertically(
 	m_blended_texture.display();
 	m_blended_sprite.setTexture(m_blended_texture.getTexture());
 	m_blended_sprite.setPosition(
-		(pos_x + m_road_grid.min_x_coord) * TEXTURE_WIDTH_f, 
-		(pos_y + m_road_grid.min_y_coord) * TEXTURE_WIDTH_f
+		m_road_grid.grid_to_map_offset_x + (pos_x * TEXTURE_WIDTH_f),
+		m_road_grid.grid_to_map_offset_y + (pos_y * TEXTURE_WIDTH_f)
 	);
 	m_render_texture.draw(m_blended_sprite);
 }
@@ -372,8 +393,8 @@ void Map::blend_uli(
 	m_blended_texture.display();
 	m_blended_sprite.setTexture(m_blended_texture.getTexture());
 	m_blended_sprite.setPosition(
-		(pos_x + m_road_grid.min_x_coord) * TEXTURE_WIDTH_f,
-		(pos_y + m_road_grid.min_y_coord) * TEXTURE_WIDTH_f
+		m_road_grid.grid_to_map_offset_x + (pos_x * TEXTURE_WIDTH_f),
+		m_road_grid.grid_to_map_offset_y + (pos_y * TEXTURE_WIDTH_f)
 	);
 	m_render_texture.draw(m_blended_sprite);
 }
@@ -419,8 +440,8 @@ void Map::blend_dli(
 	m_blended_texture.display();
 	m_blended_sprite.setTexture(m_blended_texture.getTexture());
 	m_blended_sprite.setPosition(
-		(pos_x + m_road_grid.min_x_coord) * TEXTURE_WIDTH_f,
-		(pos_y + m_road_grid.min_y_coord) * TEXTURE_WIDTH_f
+		m_road_grid.grid_to_map_offset_x + (pos_x * TEXTURE_WIDTH_f),
+		m_road_grid.grid_to_map_offset_y + (pos_y * TEXTURE_WIDTH_f)
 	);
 	m_render_texture.draw(m_blended_sprite);
 }
@@ -466,8 +487,8 @@ void Map::blend_uri(
 	m_blended_texture.display();
 	m_blended_sprite.setTexture(m_blended_texture.getTexture());
 	m_blended_sprite.setPosition(
-		(pos_x + m_road_grid.min_x_coord) * TEXTURE_WIDTH_f,
-		(pos_y + m_road_grid.min_y_coord) * TEXTURE_WIDTH_f
+		m_road_grid.grid_to_map_offset_x + (pos_x * TEXTURE_WIDTH_f),
+		m_road_grid.grid_to_map_offset_y + (pos_y * TEXTURE_WIDTH_f)
 	);
 	m_render_texture.draw(m_blended_sprite);
 }
@@ -513,8 +534,8 @@ void Map::blend_dri(
 	m_blended_texture.display();
 	m_blended_sprite.setTexture(m_blended_texture.getTexture());
 	m_blended_sprite.setPosition(
-		(pos_x + m_road_grid.min_x_coord) * TEXTURE_WIDTH_f,
-		(pos_y + m_road_grid.min_y_coord) * TEXTURE_WIDTH_f
+		m_road_grid.grid_to_map_offset_x + (pos_x * TEXTURE_WIDTH_f),
+		m_road_grid.grid_to_map_offset_y + (pos_y * TEXTURE_WIDTH_f)
 	);
 	m_render_texture.draw(m_blended_sprite);
 }
@@ -563,8 +584,8 @@ void Map::all_one_texture(const int texture_col, const int pos_x, const int pos_
 		TEXTURE_WIDTH
 	));
 	sprite.setPosition(
-		(pos_x + m_road_grid.min_x_coord) * TEXTURE_WIDTH_f, 
-		(pos_y + m_road_grid.min_y_coord) * TEXTURE_WIDTH_f
+		m_road_grid.grid_to_map_offset_x + (pos_x * TEXTURE_WIDTH_f),
+		m_road_grid.grid_to_map_offset_y + (pos_y * TEXTURE_WIDTH_f)
 	);
 	m_render_texture.draw(sprite);
 }
@@ -574,4 +595,20 @@ void Map::draw(sf::RenderWindow& window, const float x_move_distance, const floa
 {
 	m_sprite.move(x_move_distance, y_move_distance);
 	window.draw(m_sprite);
+}
+
+
+const int Map::translate_x_coord_to_grid_ref(const float x_coord) const
+{
+	return static_cast<int>(
+		(x_coord - (m_map_start_loc_x + GLOBAL_OFFSET_X + m_road_grid.grid_to_map_offset_x)) / TEXTURE_WIDTH_f
+	);
+}
+
+
+const int Map::translate_y_coord_to_grid_ref(const float y_coord) const
+{
+	return static_cast<int>(
+		(y_coord - (m_map_start_loc_y + GLOBAL_OFFSET_Y + m_road_grid.grid_to_map_offset_y)) / TEXTURE_WIDTH_f
+	);
 }

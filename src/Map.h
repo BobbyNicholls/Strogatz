@@ -4,33 +4,18 @@
 #include <SFML/Graphics.hpp>
 
 #include "Graph.h"
-
-constexpr int TEXTURE_WIDTH{ 64 };
-constexpr float TEXTURE_WIDTH_f{ 64.f };
-
-
-struct RoadGrid
-{
-	std::vector<uint8_t> grid;
-	int width{};
-	int height{};
-	int min_x_coord{};
-	int max_x_coord{};
-	int min_y_coord{};
-	int max_y_coord{};
-	int mid_y_coord{}; // for the horizonal road's y coordinate
-};
+#include "RoadGrid.h"
 
 
 class Map
 {
 private:
-	const float m_location_offset_x;
-	const float m_location_offset_y;
+	const float m_map_start_loc_x;
+	const float m_map_start_loc_y;
 	const int m_map_grid_width;
-	const int m_map_pixel_width;
+	const float m_map_pixel_width;
 	const int m_map_grid_height;
-	const int m_map_pixel_height;
+	const float m_map_pixel_height;
 	const int m_panel_size{ 4 };
 	const int m_panels_per_row{ (TEXTURE_WIDTH / m_panel_size) };
 	const float m_neatness_scaler{ 0.3f }; // TODO: rename `roughness_scaler`? more accurate
@@ -68,6 +53,9 @@ public:
 	void blend_uro(const int left_texture_col, const int right_texture_col, const int pos_x, const int pos_y);
 	void blend_dro(const int left_texture_col, const int right_texture_col, const int pos_x, const int pos_y);
 	void all_one_texture(const int texture_col, const int pos_x, const int pos_y);
+	void snap_entities_to_grid() const;
+	const int translate_x_coord_to_grid_ref(const float x_coord) const;
+	const int translate_y_coord_to_grid_ref(const float y_coord) const;
 };
 
 #endif

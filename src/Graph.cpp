@@ -7,6 +7,113 @@
 // the graph or having their edge rewired.
 float POPULARITY_PROB{ 0.3f };
 
+
+Graph::Graph(
+    const time_period_t start_time,
+    const Races* races,
+    const float min_x,
+    const float max_x,
+    const float min_y,
+    const float max_y,
+    const float rewire_prob,
+    const float new_edge_prob,
+    const float spawn_chance,
+    const int entities_start_size,
+    const int entities_reserve_limit,
+    const int link_limit,
+    const int clique_min_size,
+    const int clique_max_size
+)
+    : m_min_x{ min_x },
+    m_max_x{ max_x },
+    m_min_y{ min_y },
+    m_max_y{ max_y },
+    m_rewire_prob{ rewire_prob },
+    m_new_edge_prob{ new_edge_prob },
+    m_spawn_chance{ spawn_chance },
+    m_entities_start_size{ entities_start_size },
+    m_clique_min_size{ clique_min_size },
+    m_clique_max_size{ clique_max_size },
+    m_link_limit{ link_limit }
+{
+    /*
+    Creates a Barabasi-Albert graph with slight modification for performance.
+    For each edge:
+     - add new node with preferential attachment
+     - with chance `new_edge_prob` choose random node to attach to other node
+     preferentially
+     - with chance `rewire_prob` randomly choose edge, rewire one randomly chosen end
+     preferentially
+    */
+    // todo: make a set of non-anchors then make it less likely to attch to those?
+
+    sf::Vector2f pos{};
+    assert((m_min_x < m_max_x) && "Graph min_x must be smaller than max_x");
+    assert((m_min_y < m_max_y) && "Graph min_y must be smaller than max_y");
+    m_entities.reserve(entities_reserve_limit);
+    m_links.reserve(m_link_limit);
+    m_entity_vectors.reserve(100);
+
+    m_entities.push_back(get_entity_circle(start_time, races->get_random_race()));
+    m_entities.push_back(get_entity_circle(start_time, races->get_random_race()));
+    link_entities(m_entities[0], m_entities[1]);
+    m_entities[0]->set_position_randomly(
+        m_min_x * 0.5f, m_max_x * 0.5f, m_min_y * 0.5f, m_max_y * 0.5f
+    );
+    m_entities[1]->set_position_randomly(
+        m_min_x * 0.5f, m_max_x * 0.5f, m_min_y * 0.5f, m_max_y * 0.5f
+    )->move_to_links();
+
+    EntityCircle* chosen_entity{ nullptr };
+    std::set<EntityCircle*> link_anchors{ m_entities[0] };
+    for (int i{ 2 }; i < m_entities_start_size; ++i)
+    {
+        EntityCircle* new_entity{ get_entity_circle(start_time, races->get_random_race()) };
+        m_entities.push_back(new_entity);
+        chosen_entity = add_preferential_links(new_entity);
+        if (uniform_distribution_float(0, 1) < m_new_edge_prob)
+        {
+            add_random_edge(static_cast<int>(m_entities.size()) - 1);
+        }
+        if (uniform_distribution_float(0, 1) < m_rewire_prob)
+        {
+            rewire_random_edge();
+        }
+        if (link_anchors.contains(chosen_entity))
+        {
+            new_entity->set_position_relative_to_links(
+                m_min_x * 0.5f, m_max_x * 0.5f, m_min_y * 0.5f, m_max_y * 0.5f
+            );
+        }
+        else
+        {
+            new_entity->set_position_randomly(
+                m_min_x * 0.5f, m_max_x * 0.5f, m_min_y * 0.5f, m_max_y * 0.5f
+            );
+            link_anchors.insert(new_entity);
+        }
+        pos = new_entity->get_shape().getPosition();
+        if (pos.x > m_max_entity_x_pos) m_max_entity_x_pos = pos.x;
+        else if (pos.x < m_min_entity_x_pos) m_min_entity_x_pos = pos.x;
+        if (pos.y > m_max_entity_y_pos) m_max_entity_y_pos = pos.y;
+        else if (pos.y < m_min_entity_y_pos) m_min_entity_y_pos = pos.y;
+    }
+    seed_cliques_and_leaders();
+    m_anchor_points.reserve(link_anchors.size());
+    m_structures.reserve(link_anchors.size());
+    for (EntityCircle* anchor : link_anchors)
+    {
+        m_anchor_points.push_back(anchor->get_shape().getPosition());
+        m_structures.push_back(Structure(
+            static_cast<float>(m_anchor_points.back().x),
+            static_cast<float>(m_anchor_points.back().y),
+            Structure::Index::home
+        ));
+        anchor->set_home(&(m_structures.back()));
+    }
+}
+
+
 void Graph::link_entities(EntityCircle* entity_from, EntityCircle* entity_to)
 {
     if (!entity_from->is_linked_to(entity_to))
@@ -120,8 +227,10 @@ void Graph::rewire_random_edge()
 
     if (uniform_distribution_float(0, 1) < POPULARITY_PROB) new_target = get_preferential_entity();
     else new_target = get_belief_compatible_entity(pivot_entity);
-
-    if ((pivot_entity != new_target) && 
+    std::cout << "New target: " << new_target << '\n';
+    std::cout << "Pivot entity: " << pivot_entity << '\n';
+    if (new_target &&
+        (pivot_entity != new_target) && 
         !(new_target->is_linked_to(pivot_entity)) && 
         (new_target != old_target))
     {
@@ -131,102 +240,6 @@ void Graph::rewire_random_edge()
         link_entities(pivot_entity, new_target);
         old_target->move_to_links();
         pivot_entity->move_to_entity(new_target);
-    }
-}
-
-
-Graph::Graph(
-    const time_period_t start_time,
-    const Races* races,
-    const int min_x,
-    const int max_x,
-    const int min_y,
-    const int max_y,
-    const float rewire_prob,
-    const float new_edge_prob,
-    const float spawn_chance,
-    const int entities_start_size,
-    const int entities_reserve_limit,
-    const int link_limit,
-    const int clique_min_size,
-    const int clique_max_size
-)
-    : m_min_x{ min_x },
-    m_max_x{ max_x },
-    m_min_y{ min_y },
-    m_max_y{ max_y },
-    m_rewire_prob{ rewire_prob },
-    m_new_edge_prob{ new_edge_prob },
-    m_spawn_chance{ spawn_chance },
-    m_entities_start_size { entities_start_size },
-    m_clique_min_size { clique_min_size },
-    m_clique_max_size{ clique_max_size },
-    m_link_limit{ link_limit }
-{
-    /*
-    Creates a Barabasi-Albert graph with slight modification for performance.
-    For each edge:
-     - add new node with preferential attachment
-     - with chance `new_edge_prob` choose random node to attach to other node 
-     preferentially
-     - with chance `rewire_prob` randomly choose edge, rewire one randomly chosen end 
-     preferentially
-    */
-    // todo: make a set of non-anchors then make it less likely to attch to those?
-    assert((m_min_x < m_max_x) && "Graph min_x must be smaller than max_x");
-    assert((m_min_y < m_max_y) && "Graph min_y must be smaller than max_y");
-    m_entities.reserve(entities_reserve_limit);
-    m_links.reserve(m_link_limit);
-    m_entity_vectors.reserve(100);
-
-    m_entities.push_back(get_entity_circle(start_time, races->get_random_race()));
-    m_entities.push_back(get_entity_circle(start_time, races->get_random_race()));
-    link_entities(m_entities[0], m_entities[1]);
-    m_entities[0]->set_position_randomly(m_min_x, m_max_x, m_min_y, m_max_y);
-    m_entities[1]->set_position_randomly(m_min_x, m_max_x, m_min_y, m_max_y)->move_to_links();
-
-    EntityCircle* chosen_entity{ nullptr };
-    std::set<EntityCircle*> link_anchors{ m_entities[0] };
-    for (int i{ 2 }; i < m_entities_start_size; ++i)
-    {
-        EntityCircle* new_entity{ get_entity_circle(start_time, races->get_random_race()) };
-        m_entities.push_back(new_entity);
-        chosen_entity = add_preferential_links(new_entity);
-        if (uniform_distribution_float(0, 1) < m_new_edge_prob)
-        {
-            add_random_edge(static_cast<int>(m_entities.size()) - 1);
-        }
-        if (uniform_distribution_float(0, 1) < m_rewire_prob)
-        {
-            rewire_random_edge();
-        }
-        if (link_anchors.contains(chosen_entity))
-        {
-            new_entity->set_position_relative_to_links(m_min_x, m_max_x, m_min_y, m_max_y);
-        }
-        else
-        {
-            new_entity->set_position_randomly(m_min_x, m_max_x, m_min_y, m_max_y);
-            link_anchors.insert(new_entity);
-        }
-        sf::Vector2f pos{ new_entity->get_shape().getPosition() };
-        if (pos.x > m_max_entity_x_pos) m_max_entity_x_pos = pos.x;
-        else if (pos.x < m_min_entity_x_pos) m_min_entity_x_pos = pos.x;
-        if (pos.y > m_max_entity_y_pos) m_max_entity_y_pos = pos.y;
-        else if (pos.y < m_min_entity_y_pos) m_min_entity_y_pos = pos.y;
-    }
-    seed_cliques_and_leaders();
-    m_anchor_points.reserve(link_anchors.size());
-    m_structures.reserve(link_anchors.size());
-    for (EntityCircle* anchor : link_anchors)
-    {
-        m_anchor_points.push_back(anchor->get_shape().getPosition());
-        m_structures.push_back(Structure(
-            static_cast<float>(m_anchor_points.back().x),
-            static_cast<float>(m_anchor_points.back().y),
-            Structure::Index::home
-        ));
-        anchor->set_home(&(m_structures.back()));
     }
 }
 
@@ -283,9 +296,9 @@ void Graph::propagate_entities(const time_period_t time_period)
         if (uniform_distribution_float(0, 1) < m_spawn_chance)
         {
             EntityCircle* from_entity{ link->from };
-            from_entity->move_to_home(m_current_offset.x, m_current_offset.y);
+            from_entity->move_to_home();
             EntityCircle* to_entity{ link->to };
-            to_entity->move_to_home(m_current_offset.x, m_current_offset.y);
+            to_entity->move_to_home();
             std::cout << "Entities are going home\n";
             if (to_entity->is_paired() && (to_entity->get_partner() == from_entity))
             {
@@ -299,7 +312,7 @@ void Graph::propagate_entities(const time_period_t time_period)
                 link_entities(from_entity, child_entity);
                 link_entities(to_entity, child_entity);
                 child_entity->set_home(from_entity->get_home());
-                child_entity->set_position_relative_to_links(m_min_x, m_max_x, m_min_y, m_max_y);
+                child_entity->set_position_to_home();
             }
 
             else if (
@@ -513,11 +526,6 @@ void Graph::check_entities_have_homes()
             ++homeless_count;
         }
     }
-    std::cout << homeless_count << " total entities are homeless :(\n";
-}
-
-void Graph::update_offset(const float x, const float y)
-{
-    m_current_offset.x += x;
-    m_current_offset.y += y;
+    if (homeless_count>0) std::cout << homeless_count << " total entities are homeless :(\n";
+    else std::cout << "All entities have homes! :)\n";
 }

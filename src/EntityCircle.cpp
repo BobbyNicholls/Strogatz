@@ -1,10 +1,4 @@
-#include "Distributions.h"
 #include "EntityCircle.h"
-
-
-extern const int edge_buffer;
-extern const int game_height;
-extern const int game_width;
 
 
 EntityCircle* get_entity_circle(const time_period_t time_period, const Race* race)
@@ -59,11 +53,17 @@ void EntityCircle::update_colour()
 }
 
 
+void EntityCircle::set_position(const float x_coordinate, const float y_coordinate)
+{
+	m_shape.setPosition(x_coordinate, y_coordinate);
+}
+
+
 EntityCircle* EntityCircle::set_position_randomly(
-	const int min_x, 
-	const int max_x,
-	const int min_y,
-	const int max_y
+	const float min_x, 
+	const float max_x,
+	const float min_y,
+	const float max_y
 )
 {
 	m_shape.setPosition(
@@ -71,6 +71,19 @@ EntityCircle* EntityCircle::set_position_randomly(
 		uniform_distribution_float(min_y, max_y)
 	);
 	return this;
+}
+
+
+void EntityCircle::set_position_to_home()
+{
+	Structure* home{ get_home() };
+	if (home)
+	{
+		m_shape.setPosition(
+			home->get_location_x() + uniform_distribution_float(-10, 50),
+			home->get_location_y() + uniform_distribution_float(-10, 50)
+		);
+	}
 }
 
 
@@ -101,10 +114,10 @@ EntityCircle* EntityCircle::move_to_links(const int offset)
 
 
 void EntityCircle::set_position_relative_to_links(
-	const int min_x,
-	const int max_x,
-	const int min_y,
-	const int max_y,
+	const float min_x,
+	const float max_x,
+	const float min_y,
+	const float max_y,
 	const int offset
 )
 {
@@ -155,6 +168,25 @@ void EntityCircle::move_to_destination(
 }
 
 
+void EntityCircle::path_to_destination(
+	const float destination_x,
+	const float destination_y,
+	const float speed
+)
+{
+	const sf::Vector2f& pos{ m_shape.getPosition() };
+	float x_diff{ destination_x - pos.x };
+	float y_diff{ destination_y - pos.y };
+	int steps{ static_cast<int>(sqrt((x_diff * x_diff) + (y_diff * y_diff)) / speed) };
+	if (steps)
+	{
+		m_pathing.steps = steps;
+		m_pathing.x_move = x_diff / steps;
+		m_pathing.y_move = y_diff / steps;
+	}
+}
+
+
 void EntityCircle::move_to_entity(const EntityCircle* entity, const int offset)
 {
 	const sf::Vector2f& pos{ entity->m_shape.getPosition() };
@@ -172,14 +204,14 @@ void EntityCircle::move_along_path()
 }
 
 
-void EntityCircle::move_to_home(const float offset_x, const float offset_y, const float speed)
+void EntityCircle::move_to_home(const float speed)
 {
 	Structure* home{ get_home() };
 	if (home)
 	{
 		move_to_destination(
-			home->get_location_x() + offset_x,
-			home->get_location_y() + offset_y,
+			home->get_location_x() + GLOBAL_OFFSET_X + uniform_distribution_float(-10, 50),
+			home->get_location_y() + GLOBAL_OFFSET_Y + uniform_distribution_float(-10, 50),
 			speed
 		);
 	}
