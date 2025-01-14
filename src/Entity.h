@@ -34,7 +34,7 @@ private:
 	Structure* m_home{ nullptr };
 	bool m_paired { false };
 	bool m_leader { false };
-	id_t m_id;
+	id_type m_id;
 
 	Entity* m_partner{ nullptr };
 	std::vector<Entity*> m_children; // this does nothing and can contain dangling pointers
@@ -49,7 +49,7 @@ public:
 	Entity(time_period_t birth_time, const Race* race);
 
 	time_period_t get_birth_time() const { return m_birth_time; }
-	id_t get_id() const { return m_id; }
+	id_type get_id() const { return m_id; }
 	std::vector<Entity*>& get_links() { return m_links; } // this func should be const?
 	Entity* get_partner() const { return m_partner; };
 	const Race* get_race() const { return m_race; }

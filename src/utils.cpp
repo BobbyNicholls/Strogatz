@@ -1,8 +1,8 @@
 #include "utils.h"
 
-id_t generate_id()
+id_type generate_id()
 {
-    static id_t s_entity_id{ 0 };
+    static id_type s_entity_id{ 0 };
     return s_entity_id++;
 }
 

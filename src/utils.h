@@ -7,13 +7,13 @@
 #include "Distributions.h"
 #include "globals.h"
 
-using id_t = std::uint_fast32_t;
+using id_type = std::uint_fast32_t;
 using time_period_t = std::uint_fast16_t;
 
 
 //bool check_for_double_linkage(Graph& graph);
 //bool check_for_entity_position_bug(Graph& graph);
-id_t generate_id();
+id_type generate_id();
 sf::Vector2f get_movement(const float move_distance);
 void load_texture(sf::Texture& texture, const std::string& texture_name);
 
